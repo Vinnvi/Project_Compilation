@@ -65,7 +65,6 @@ typedef struct _Tree {
   } u;
 } Tree, *TreeP;
 
-
 typedef union
       { char *S;
         char C;
@@ -75,3 +74,69 @@ typedef union
 } YYSTYPE;
 
 #define YYSTYPE YYSTYPE
+
+
+
+/* definition des structures dans lesquelles nous allons stocker toutes
+ * nos donnees, faire fonctionner le programme : classes, methodes... */
+ 
+typedef struct _Class class, *classP;
+typedef struct _Att att, *attP;
+typedef struct _Method method, *methodP;
+typedef struct _Object object, *objectP;
+typedef struct _Pile pile, *pileP;
+typedef struct _Expression expr, *exprP;
+ 
+struct _Class{
+	 char* name; /* identificateur */
+	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
+	 attP attributs; /*pointeur sur la liste des attributs de la classe*/
+	 struct _Class *m; /*classe mere*/
+	 struct _Class *next; /*Pour chainer les classes*/
+};
+
+struct _Att{ /*attribut*/
+	char* name;
+	struct _Class type;
+	struct _Class valeur;
+	struct _Class *next;
+};
+
+struct _Method{
+	char* name; /* identificateur */
+	struct _Class *typeRetour; /* type retour methode */
+	struct _Method *methodeMere; /*Override*/
+	attP parametres; /* Liste des parametres */
+	instrP instructions; /*Liste des expressions*/
+	struct _Method *next;
+};
+
+struct _Object{
+	char* name; /* identificateur */
+	methodP lmethodes; /* pointeur sur la liste des methodes de l'objet */
+	attP attributs; /* pointeur sur la liste des attributs de l'objet */
+	struct _Object *next;
+};
+
+/* la structure d'une pile */
+struct _Pile{
+	struct _Class *donnee; /*Valeur de l element de la pile*/
+	struct _pile *precedent; /* lien vers autre element pile*/
+}; 
+
+struct _Expression{
+	struct _Identificateur *ident;
+	struct _Constante *constante;
+	struct _Selection *select;
+	struct _Cast *cast;
+	struct _Instantiation *instant;
+	struct _Message *message;
+	struct _InstrOpe *instrope;
+	
+};
+	
+
+
+
+
+
