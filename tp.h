@@ -86,7 +86,8 @@ typedef struct _Method method, *methodP;
 typedef struct _Object object, *objectP;
 typedef struct _Pile pile, *pileP;
 typedef struct _Expression expr, *exprP;
- 
+typedef struct _Instruction instr,*instrP;
+
 struct _Class{
 	 char* name; /* identificateur */
 	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
@@ -95,13 +96,17 @@ struct _Class{
 	 struct _Class *next; /*Pour chainer les classes*/
 };
 
-struct _Att{ /*attribut*/
-	char* name;
-	struct _Class type;
-	struct _Class valeur;
-	struct _Class *next;
+
+/*Structure d'un attribut */
+struct _Att{
+	char* name; /* Nom de l'attribut */
+	struct _Class type; /*type de l'attribut */
+	struct _Class valeur; /* valeur de l'attribut */
+	struct _Class *next; /* pointeur vers l'attribut suivant */
 };
 
+
+/* Structure d'une méthode */
 struct _Method{
 	char* name; /* identificateur */
 	struct _Class *typeRetour; /* type retour methode */
@@ -111,6 +116,7 @@ struct _Method{
 	struct _Method *next;
 };
 
+/* structure d'un objet*/
 struct _Object{
 	char* name; /* identificateur */
 	methodP lmethodes; /* pointeur sur la liste des methodes de l'objet */
@@ -118,11 +124,15 @@ struct _Object{
 	struct _Object *next;
 };
 
-/* la structure d'une pile */
+/* la structure d'une pile (pas encore bien definie pouir le moment) */
 struct _Pile{
 	struct _Class *donnee; /*Valeur de l element de la pile*/
 	struct _pile *precedent; /* lien vers autre element pile*/
 }; 
+
+
+/****Not defined****/
+
 
 struct _Expression{
 	struct _Identificateur *ident;
@@ -134,9 +144,53 @@ struct _Expression{
 	struct _InstrOpe *instrope;
 	
 };
-	
 
 
+struct _Identificateur{
+    char * nomIdentificateur;
+};
+
+/*Structure d'une selection ( = expression.nom)*/
+struct _Selection{
+    struct _Expression expression; /*expression*/
+    att nom; /* nom de l'attribut de la classe */
+};
+
+/* Structure d'un Cast (= (nomClasse espression) ) */
+struct _Cast{
+    struct _Class *nomClasse;
+    struct _Expression expression;
+    
+};
+
+struct _Argument{
+    char* name; /*Nom de la variable entrée en argument*/
+    struct _Class classe; /*classe de l'argument */
+    struct _Expression expr; 
+};
+
+struct _Instantation{
+    struct _Class classe;
+    struct _Argument *lArguments;   
+};
+
+struct _Message{
+    struct _Expression expr;
+    method mehtode;
+};
 
 
+//
+enum typeNode{
+    Add,
+    Mult,
+    Div,
+    Minus,
+    NotDefined,
+    NumberValue
+};
 
+struct ASTTree{
+    typeNode type; // type de la valeur;
+     
+};
