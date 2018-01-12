@@ -4,6 +4,9 @@ CFLAGS=-Wall -ansi -I./ -g
 LDFLAGS= -g -lfl
 tp : $(OBJ)
 	$(CC) -o tp $(OBJ) $(LDFLAGS)
+	
+test_lex_pr : tp_l.o test_lex_pr.c tp_y.h tp.h
+	$(CC) $(CFLAGS) -Wno-unused-function -Wno-implicit-function-declaration -o test_lex_pr test_lex_pr.c  tp_l.o $(LDFLAGS)
 
 tp.c :
 	echo ''
