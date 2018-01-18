@@ -1,0 +1,30 @@
+/*     override def h(x : Integer := 3, y: Integer) : Integer := super.h(x, y)
+ */
+
+class A() is {
+    override 
+def
+ h
+(
+x 
+: 
+Integer
+ := 
+3,
+ y:
+ Integer
+)
+ : 
+Integer
+ := 
+super
+.
+h
+(
+x
+,
+ y
+)
+
+
+{}

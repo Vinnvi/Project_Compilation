@@ -67,8 +67,8 @@ typedef struct _Tree {
 
 
 typedef union
-      { char *S;
-        char C;
+{ 	char *S;
+    char C;
 	int I;
 	TreeP pT;
 	VarDeclP pV; /* same comment as above */

@@ -64,30 +64,30 @@ ListInstructions: Instruction ListInstructions
 Instruction : Expression ';'
 | RETURN ';'
 | ArgumentOuCible AFF Expression ';'
-| IF Operation THEN InstIfElse ELSE InstIfElse
+| IF Valeur THEN InstIfElse ELSE InstIfElse
 ;
 
-InstIfElse : Instruction 
-| Bloc
+InstIfElse : Instruction ';'
+| '{' ListInstructionsOpt '}'
 ;
 
-Expression: Instanciation
+Expression: '(' ClassId Expression ')'
+| Instanciation
+| ArgumentOuCible
 | Operation
 ;
 
 Valeur : ArgumentOuCible
+| '('Expression')'
 ;
 
-Operation : Operation RelOp Operation 
-| Operation ADD Operation
-| Operation SUB Operation
-| Operation PROD Operation
-| Operation QUOT Operation
-| Operation REST Operation
-| Operation AND Operation
-| ADD Operation
-| SUB Operation
-| Valeur
+Operation : Valeur RelOp Valeur 
+| Valeur ADD Valeur
+| Valeur SUB Valeur
+| Valeur PROD Valeur
+| Valeur QUOT Valeur
+| Valeur REST Valeur
+| Valeur AND Valeur
 ;
 
 Instanciation: NEW ClassId '(' ListArgumentsOpt ')'
@@ -149,12 +149,13 @@ Extends: EXTENDS ClassId '(' ListArgumentsOpt ')'
 ListArgumentsOpt : ListArguments
 |
 ;
-ListArguments: Expression ',' ListArguments
-| Expression
+ListArguments: ArgumentOuCible ',' ListArguments
+| ArgumentOuCible
 ;
 ArgumentOuCible: ListSelection
 | ThisSelect
 | Cste
+| Cstr
 | Selection
 ;
 
@@ -173,9 +174,6 @@ SelWithClassID : ListSelection
 
 Selection : Id
 | Message
-| Cstr
-| '('Expression')'
-| '(' ClassId Expression ')'
 ;
 
 Message : Id '('ListArgumentsOpt')'

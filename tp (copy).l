@@ -5,12 +5,10 @@ Upper	[A-Z]
 Lettre	[a-zA-Z]
 LC 	({Lettre}|{Chiffre})
 Delim   [ \n\t\r]
-BS      \\.
-Guill	"\""
+BS      \\
 PasBSG [^\\"]
-GuillInside ({PasBSG}|{BS})
-String {Guill}{GuillInside}*{Guill}
-Symbole ['();:,{}]|{BS}
+Guill	"\""
+Symbole [&();:,{}]|{Guill}|{BS}
 Star  		"*"
 NotStar		[^*]
 NotStarPar      [^*/]
@@ -29,7 +27,7 @@ extern int yylineno;
 extern int yylex();
 
 int keywordOrId() { 
-  /* A COMPLETER */ /* ([^\\]|[\\.]) */
+  /* A COMPLETER */
   if (! strcmp(yytext, "if")) return IF;
   if (! strcmp(yytext, "then")) return THEN;
   if (! strcmp(yytext, "else")) return ELSE; /* cc tp.y */
@@ -64,14 +62,12 @@ void lexError(char c) {
 %%
 {Entier} 		{ yylval.I = atoi(yytext); return(Cste); }
 {Symbole}		{ return(yytext[0]); } /* peut-etre les diviser??? */
-{String}		{ yylval.S = yytext; return(Cstr); }
 
 "+"				{ return(ADD); }
 "-"				{ return(SUB); }
 "*"				{ return(PROD); }
 "/"				{ return(QUOT); }
 "%"				{ return(REST); }
-"&"             { return(AND); }
 
 "."				{ return(DOT); }
 

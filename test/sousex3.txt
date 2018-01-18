@@ -1,0 +1,39 @@
+object CouleurFactory is
+{  var theBlanc: Couleur := new Couleur();
+   var theNoir : Couleur := new Couleur(1);
+   var theGris : Couleur := new Couleur(2);
+
+  def blanc() : Couleur := theBlanc
+  def noir() : Couleur := theNoir
+  def gris() : Couleur := theGris
+}
+
+/* ci-dessous on ne met pas var devant x et y sinon ca definirait deux
+ * nouveaux champs qui masqueraient ceux herites de Point
+ */
+class PointColore(x: Integer := 0, y:Integer:= 0,
+                  var coul: Couleur := CouleurFactory.blanc())
+      extends Point(x, y) is {
+
+  def couleur() : Couleur := coul
+
+  def colore() : Integer := coul.estGris() <> 0
+
+  override def clone() : Point /* pas PointColore. Pas de covariance ! */
+  /* ci-dessous x et y sont les champs herites de Point */
+       := new PointColore(x, y, coul)
+
+  def estGris() : Integer := coul.estGris()
+
+/* En-tete incorrect: on ne peut pas redonner ou modifier l'expression
+ * d'une valeur par defaut lors d'une redefinition:
+ * override def print(verbose : Integer := 0)
+ * Ci-dessous verbose a une valeur par defaut implicite, définie dans la
+ * methode print de Point.
+ */
+  override def print(verbose : Integer) is {
+      if verbose then "Inside PointColore::print".println(); else { }
+      super.print();  /* usage classique de super */
+      this.couleur().name().println();
+  }
+}

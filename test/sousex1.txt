@@ -1,0 +1,44 @@
+/* ATTENTION: ce ficher n'a pour l'instant ete verifie que pour les aspects
+ * lexicaux et syntaxiques.
+ * Il peut subsister des erreurs contextuelles qui seront indiquees
+ * ulterieurement.
+ * Il sert principalement à donner des exemples des differentes
+ * constructions.
+ * Les resultats donnés à l'exécution seront precises ulterieurement aussi.
+ */
+object CptPoint is           /* Compteur d'instances de Point */
+{ var next : Integer := 1;   /* index de la prochaine instance de Point */
+  def incr() : Integer is { result := next; next := next + 1;}
+  def howMany() : Integer := next - 1
+}
+
+/* ###########################################################################################*/
+
+class Couleur(var coul: Integer := 0)
+   /* 3 couleurs : couleur = 0, 1 ou 2
+    * Valeur initiale a 0 par defaut mais modifiable en passant un argument
+    * explicitement. Le corps du constructeur garantit qu'on a bien que
+    * trois couleurs.
+    */
+  { if coul < 0 then coul := 0;
+    else if coul > 2 then coul := 0; else {}
+  }
+ is
+ {
+  def name(verbose: Integer := 0) : String is {
+      var aux : String;
+      is
+      if verbose then "Inside Couleur::couleur".println(); else {}
+      if coul = 0 then result:= "Blanc";
+      else { var dummy : String; is
+             if coul = 1 then aux := "Noir"; else aux := "Gris";
+	     result := aux;
+           }
+  }
+
+  def estGris() : Integer is {
+     "Inside Couleur::estGris".println();
+     result := coul = 2;
+  }
+
+}

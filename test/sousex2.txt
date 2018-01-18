@@ -1,0 +1,67 @@
+
+class Point(var x: Integer, var y: Integer := 0, var name: String := "")
+      { CptPoint.incr(); } is
+{ var hasClone : Integer := 0;   /* attributs supplementaires */
+  /* la valeur du champ ci-dessous est indefinie si hasClone vaut 0.
+   * Le probleme est qu'on n'a pas l'equivalent de NULL (du bon type)
+   * dans le langage. On ne peut pas utiliser un 'object' pour cela car
+   * un objet n'a pas de type defini.
+  */
+  var clone : Point;
+
+  def setName(s: String) is { name := s; }
+
+  def getx() : Integer := this.x      /* pas de this implicite */
+
+  def gety() : Integer := this.y
+
+  def cloned() : Integer := hasClone <> 0
+
+  def move(dx: Integer, dy: Integer, verbose: Integer := 0) is {
+      x := x + dx; y := y + dy;
+      if verbose then { this.print(); } else {}
+  }
+
+  def print(verbose : Integer := 0 ) is {
+      if verbose then "".println(); else { }
+      /* Exemples avec l'operateur & de concatenation de chaines */
+      name.print();
+      ( "= (" & x.toString() & ", " & y.toString() & ")" ).println();
+  }
+
+  /* par defaut, on ajoute un ' au nom de l'objet. On pourra le changer
+   * avec setName
+   */
+  def clone() : Point is
+  { this.clone = 1;
+    /* On memorise le dernier clone construit à partir de cet objet */
+    this.clone := new Point(x, y, this.name & "'");
+    result := this.clone;
+  }
+
+  /* imprime le clone de cet objet, s'il existe, ainsi que recursivement
+   * les clones de ce dernier
+   */
+  def allClones () is {
+    if hasClone <> 0 then { this.print(); this.clone.allClones(); }
+    else { }
+  }
+
+  def egal(p: Point) : Integer is {
+   /* ils sont egaux s'ils ont memes coordonnees */
+       var b1 : Integer := p.x - x;
+       var b2 : Integer := p.y - y;
+       is
+       if b1 then result := 0; else result := b2 = 0;
+  }
+
+  def egal2(p: Point) : Integer is {  /* autre version */
+    var b1 : Integer := p.x - x;
+    var b2: Integer;
+    is
+    result := 0;
+    if b1 then { return; } else { }
+       b2 := p.y - y;
+       result := b2 = 0;
+  }
+}
