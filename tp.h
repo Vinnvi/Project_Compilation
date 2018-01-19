@@ -108,7 +108,8 @@ struct _Class{
 	 char* name; /* identificateur */
 	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
      methodP constructeur;
-     attP attributs;
+     attP attributs; /*Attributs de la classe*/
+     VarDeclP parametres; /* liste des parametres de la classe */
 	 struct _Class *super; /*classe mere*/
 	 struct _Class *next; /*Pour chainer les classes*/
 };
@@ -118,7 +119,7 @@ struct _Class{
 /* Structure d'une méthode */
 struct _Method{
 	char* name; /* identificateur */
-    VarDecl param; /*liste des parametres*/
+    VarDeclP param; /*liste des parametres*/
     TreeP body; /*Corps de la methode*/
 	struct _Class *typeRetour; /* type retour methode */
 	struct _Method *methodeMere; /*Override*/
@@ -143,11 +144,9 @@ struct _Att{
 	struct _Att *next; /* pointeur vers l'attribut suivant */
 };
 
-/****Not defined****/
 
-
+:/*
 struct _Expression{
-    /*L'expression correspond a une de ces structures. */
     union{
 	    struct _Identificateur *ident;
 	    struct _Constante *constante;
@@ -161,18 +160,16 @@ struct _Expression{
 };
 
 
-struct _Identificateur{ /*Probleme de Portée ?*/
+struct _Identificateur{
     char * nomIdentificateur;
 };
 
-
-/*Structure d'une selection ( = expression.nom)*/
 struct _Selection{
-    struct _Expression expression; /*expression associée*/
-    VarDecl nom; /* nom de l'attribut de la classe */
+    struct _Expression expression; 
+    VarDecl nom;
 };
 
-/* Structure d'un Cast (= (nomClasse espression) ) */
+
 struct _Cast{
     struct _Class *nomClasse;
     struct _Expression *expression;
@@ -185,23 +182,24 @@ struct _Instantation{
     struct _att *listeParam;
 };
 
-struct _Message{ /*fonction */
-    struct _Expression destinataire; /*o.f() dans l'exemple*/
-    struct _Method message; /* g() dans l'exemple */
-    VarDecl param; /* liste des parametres */
+struct _Message{ 
+    struct _Expression destinataire; 
+    struct _Method message; 
+    VarDecl param;
     method mehtode; 
 };
 
 struct _exprOpe{
     struct _Expression *expressionLeft;
     struct _Expression *expressionRight;
-    /*operateur*/
+    
 };
 
+*/
 
 struct _Instruction{
     union{
-        struct _Expression *exp;
+        TreeP exp;
         struct _bloc *bloc;
         TreeP aff;
         struct _ifThenElse *ifThenElse;
@@ -210,7 +208,7 @@ struct _Instruction{
 };
 
 struct _ifThenElse{
-    struct _Expression *expressionIf;
+    TreeP *expressionIf;
     struct _Instruction *instructionThen;
     struct _Instruction *instructionElse;
 };
