@@ -24,13 +24,19 @@ typedef unsigned char bool;
  * Il y a surement des choses a recuperer en plus de ce que vous avez
  * produit pour le tp.
  */
+ 
 #define NE	1
 #define EQ	2
 #define LT	3
 #define LE	4
 #define GT	5
 #define GE	6
-
+#define PLUS 7
+#define MIN 8
+#define TIMES 9
+#define DIV 10
+#define MOD 11
+#define CONC 12
 
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */

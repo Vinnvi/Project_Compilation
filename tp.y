@@ -3,6 +3,7 @@
 %token<S> Id ClassId Cstr
 %token<I> Cste 
 %token<C> RelOp
+/* ^ Pour chaque non terminal faut faire ça ^ */
 /* indications de precedence (en ordre croissant) et d'associativite. Les
  * operateurs sur une meme ligne (separes par un espace) ont la meme priorite.
  */
@@ -23,7 +24,7 @@ extern void yyerror(char *);
 %}
 
 %%
-Programme : DefClasseObjetOpt Bloc
+Programme : DefClasseObjetOpt Bloc 
 ;
 
 DefClasseObjetOpt : DefClasseObjet  
@@ -67,27 +68,27 @@ Instruction : Expression ';'
 | IF Operation THEN InstIfElse ELSE InstIfElse
 ;
 
-InstIfElse : Instruction 
-| Bloc
+InstIfElse : Instruction    {$$ = $1}
+| Bloc                      {$$ = $1}
 ;
 
-Expression: Instanciation
-| Operation
+Expression: Instanciation   {$$ = $1}
+| Operation                 {$$ = $1}   
 ;
 
-Valeur : ArgumentOuCible
+Valeur : ArgumentOuCible    {$$ = $1}
 ;
 
-Operation : Operation RelOp Operation 
-| Operation ADD Operation
-| Operation SUB Operation
-| Operation PROD Operation
-| Operation QUOT Operation
-| Operation REST Operation
-| Operation AND Operation
-| ADD Operation
-| SUB Operation
-| Valeur
+Operation : Operation RelOp Operation           {$$ = makeTree(yylval.C, 2, $1, $3);}
+| Operation ADD Operation                       {$$ = makeTree(PLUS, 2, $1, $3);}
+| Operation SUB Operation                       {$$ = makeTree(MINUS, 2, $1, $3);}
+| Operation PROD Operation                      {$$ = makeTree(TIMES, 2, $1, $3);}    
+| Operation QUOT Operation                      {$$ = makeTree(DIV, 2, $1, $3);}
+| Operation REST Operation                  	{$$ = makeTree(MOD, 2, $1, $3);}
+| Operation AND Operation 						{$$ = makeTree(CONC, 2, $1, $3);}
+| ADD Operation                                 {$$ = makeTree(PLUS, 1, $2);}                                 
+| SUB Operation                                 {$$ = makeTree(MINUS, 1, $2);}
+| Valeur                                        {$$ = $1}
 ;
 
 Instanciation: NEW ClassId '(' ListArgumentsOpt ')'
