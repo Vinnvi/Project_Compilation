@@ -31,13 +31,34 @@ typedef unsigned char bool;
 #define LE	4
 #define GT	5
 #define GE	6
-#define PLUS 7
-#define MIN 8
-#define TIMES 9
-#define DIV 10
-#define MOD 11
-#define CONC 12
 
+#define EADD 	7
+#define ESUB 	8
+#define EMUL 	9
+#define EQUOT 	10	
+#define EREST 	11
+#define EAND 	12
+#define EAFF	12321
+#define EDOT 17
+
+#define CSTE 	13
+#define CSTR 	14
+#define ID 	15
+#define CLASS 	16
+/* faire des étiquettes genre TYPE? CAST? et y attribuer des règles genre QQCHS -> Id dans le cas où on fait des casts ou ce genre de choses*/
+
+
+#define CAST 18
+#define ITE 15641
+
+#define LCHAMP 19
+#define LARG 19
+#define LPARAM 19
+#define LMETH 19
+#define LINST 12
+#define LCLASS 19
+
+#define MSG 20
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -76,8 +97,12 @@ typedef union
 { 	char *S;
     char C;
 	int I;
+    bool B;
 	TreeP pT;
 	VarDeclP pV; /* same comment as above */
+    methodP MethP;
+    classP ClasseP;
+    objectP ObjetP;
 } YYSTYPE;
 
 #define YYSTYPE YYSTYPE
@@ -136,7 +161,7 @@ struct _Object{
 	struct _Object *next;
 };
 
-/*structure d'un attribut*/
+/*structure d'un attribut*/ /*REVOIR CONTENU*/
 struct _Att{
 	char* name; /* Nom de l'attribut */
 	struct _Class type; /*type de l'attribut */

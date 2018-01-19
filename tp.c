@@ -195,3 +195,15 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
   tree->u.lvar = lvar;
   return(tree);
 }
+class makeClass(char* nameP, methodP lmethodesP, methodP constructeurP, attP attributsP, VarDeclP parametresP, struct _Class *superP){
+	class nouvClasse = NEW(1, class);
+	nouvClasse->name = nameP;
+	nouvClasse->lmethodes = lmethodesP;
+	nouvClasse->constructeur = constructeurP;
+	nouvClasse->attributs = attributsP;
+	nouvClasse->parametres = parametresP;
+	nouvClasse->constructeur = constructeurP;
+	
+	nouvClasse->next = NIL(class);
+	return nouvClasse;
+} 
