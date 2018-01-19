@@ -75,3 +75,142 @@ typedef union
 } YYSTYPE;
 
 #define YYSTYPE YYSTYPE
+
+/* definition des structures dans lesquelles nous allons stocker toutes
+ * nos donnees, faire fonctionner le programme : classes, methodes... */
+ 
+typedef struct _Class class, *classP;
+typedef struct _Att att, *attP;
+typedef struct _Method method, *methodP;
+typedef struct _Object object, *objectP;
+typedef struct _Pile pile, *pileP;
+typedef struct _Expression expr, *exprP;
+typedef struct _Instruction instr,*instrP;
+typedef struct _Programme prog,*ProgP;
+/* revoir * ou non *       */
+
+
+/* structure du programme  */
+struct _Programme{
+	classP classes; /*classes du programme */
+	objectP objets; /*objets du programme */
+	TreeP main; /* bloc main */
+};
+
+/*Structure d'une classe */
+struct _Class{
+	 char* name; /* identificateur */
+	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
+     methodP constructeur;
+     attP attributs;
+	 struct _Class *super; /*classe mere*/
+	 struct _Class *next; /*Pour chainer les classes*/
+};
+
+
+
+/* Structure d'une méthode */
+struct _Method{
+	char* name; /* identificateur */
+    VarDecl param; /*liste des parametres*/
+    TreeP body; /*Corps de la methode*/
+	struct _Class *typeRetour; /* type retour methode */
+	struct _Method *methodeMere; /*Override*/
+    bool redef;
+	struct _Method *next;
+};
+
+/* structure d'un objet*/
+struct _Object{
+	char* name; /* identificateur */
+    TreeP body; /*corps de l'objet*/
+	methodP lmethodes; /* pointeur sur la liste des methodes de l'objet */
+	attP attributs; /* pointeur sur la liste des attributs de l'objet */
+	struct _Object *next;
+};
+
+/*structure d'un attribut*/
+struct _Att{
+	char* name; /* Nom de l'attribut */
+	struct _Class type; /*type de l'attribut */
+	/*   struct _Class valeur; */ /* valeur de l'attribut */
+	struct _Att *next; /* pointeur vers l'attribut suivant */
+};
+
+/****Not defined****/
+
+
+struct _Expression{
+    /*L'expression correspond a une de ces structures. */
+    union{
+	    struct _Identificateur *ident;
+	    struct _Constante *constante;
+	    struct _Selection *select;
+	    struct _Cast *cast;
+	    struct _Instantiation *instant;
+	    struct _Message *message;
+	    struct _exprOpe *exprOpe;
+    } monU;
+    struct _Expression *next;
+};
+
+
+struct _Identificateur{ /*Probleme de Portée ?*/
+    char * nomIdentificateur;
+};
+
+
+/*Structure d'une selection ( = expression.nom)*/
+struct _Selection{
+    struct _Expression expression; /*expression associée*/
+    VarDecl nom; /* nom de l'attribut de la classe */
+};
+
+/* Structure d'un Cast (= (nomClasse espression) ) */
+struct _Cast{
+    struct _Class *nomClasse;
+    struct _Expression *expression;
+    
+};
+
+
+struct _Instantation{
+    struct _Class *classe;
+    struct _att *listeParam;
+};
+
+struct _Message{ /*fonction */
+    struct _Expression destinataire; /*o.f() dans l'exemple*/
+    struct _Method message; /* g() dans l'exemple */
+    VarDecl param; /* liste des parametres */
+    method mehtode; 
+};
+
+struct _exprOpe{
+    struct _Expression *expressionLeft;
+    struct _Expression *expressionRight;
+    /*operateur*/
+};
+
+
+struct _Instruction{
+    union{
+        struct _Expression *exp;
+        struct _bloc *bloc;
+        TreeP aff;
+        struct _ifThenElse *ifThenElse;
+    } monU2;
+    struct _Instruction *next;
+};
+
+struct _ifThenElse{
+    struct _Expression *expressionIf;
+    struct _Instruction *instructionThen;
+    struct _Instruction *instructionElse;
+};
+
+
+struct _bloc{
+   TreeP lInstruction;
+};
+

@@ -82,6 +82,11 @@ int main(int argc, char **argv) {
    * Si yyparse renvoie autre chose que 0 c'est que le programme avait une
    * erreur lexicale ou syntaxique
    */
+
+  printf("Analyse syntaxique réussie\n");
+
+   
+
   if (out != NIL(FILE) && out != stdout) fclose(out);
   return res ? SYNTAX_ERROR : errorCode;
 }
