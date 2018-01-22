@@ -73,6 +73,17 @@ typedef unsigned char bool;
 #define UNEXPECTED	10O
 
 
+/* structures necessaires pour le programme */
+typedef struct _Class class, *classP;
+typedef struct _Att att, *attP;
+typedef struct _Method method, *methodP;
+typedef struct _Object object, *objectP;
+typedef struct _Pile pile, *pileP;
+typedef struct _Expression expr, *exprP;
+typedef struct _Instruction instr,*instrP;
+typedef struct _Programme prog,*ProgP;
+
+
 /* Adapt as needed. Currently it is simply a list of names ! */
 typedef struct _varDecl {
   char *name;
@@ -106,20 +117,6 @@ typedef union
 } YYSTYPE;
 
 #define YYSTYPE YYSTYPE
-
-/* definition des structures dans lesquelles nous allons stocker toutes
- * nos donnees, faire fonctionner le programme : classes, methodes... */
- 
-typedef struct _Class class, *classP;
-typedef struct _Att att, *attP;
-typedef struct _Method method, *methodP;
-typedef struct _Object object, *objectP;
-typedef struct _Pile pile, *pileP;
-typedef struct _Expression expr, *exprP;
-typedef struct _Instruction instr,*instrP;
-typedef struct _Programme prog,*ProgP;
-/* revoir * ou non *       */
-
 
 /* structure du programme  */
 struct _Programme{
