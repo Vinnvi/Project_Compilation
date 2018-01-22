@@ -195,34 +195,80 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
   tree->u.lvar = lvar;
   return(tree);
 }
-class makeClass(char* nameP, methodP lmethodesP, methodP constructeurP, attP attributsP, VarDeclP parametresP, struct _Class *superP){
-	class nouvClasse = NEW(1, class);
-	nouvClasse->name = nameP;
-	nouvClasse->lmethodes = lmethodesP;
-	nouvClasse->constructeur = constructeurP;
-	nouvClasse->attributs = attributsP;
-	nouvClasse->parametres = parametresP;
-	nouvClasse->constructeur = constructeurP;
-	
-	nouvClasse->next = NIL(class);
-	return nouvClasse;
-} 
 
-MethodP makeMethodExpr(bool redef, char* name, VarDeclP param, char* type, TreeP expr) {
-	MethodP newMethod = NEW(1, Method);
-	newMethod->overriden = overriden;
-	newMethod->name = name;
-	newMethod->params = params;
-	newMethod->returnType = type;
-	newMethod->body = expr;
-	newMethod->isBlock = FALSE;
-	newMethod->next = NIL(Method);
-	return newMethod;
+void lancerCompilation(TreeP def, TreeP arbre){
+    /*TODO
+    TODO
+    TODO
+    */
 }
 
+/* les P à la fin des paramètres c'est P comme "Paramètre" et pas Pointeur. (my bad) */
+classeP makeClass(char* nameP,  TreeP parametresP, TreeP superP, TreeP constructeurP, TreeP attributsP, TreeP lmethodesP){
+	classeP nouvClasse = NEW(1, classe);
+	nouvClasse->name = nameP;
+	/*nouvClasse->lmethodes = lmethodesP; TODO BLALAL*/ 
+	nouvClasse->constructeur = constructeurP;
+	/*nouvClasse->attributs = attributsP; TODO pareil qu'en dessous */
+	/*nouvClasse->parametres = parametresP; TODO construire les paramètres à partir de l'arbre */
+	/*nouvClasse->super = superP; TODO ici le traitement à faire est autre : il faut lire le nom de la classe qui est extended et chercher le pointeur vers la classe correspondant */
+	
+	nouvClasse->next = NIL(classe);
+	return nouvClasse;
+} 
+/*
+//A voir si on fait 2 fonctions, necessair ou non? Body peut il prendre expr comme il peut prendre bloc
+methodP makeMethodExpr(bool redef, char* name, VarDeclP param, char* typeRetour, TreeP body) {
+	MethodP nouvMethode = NEW(1, method);
+	nouvMethode->redef = redef;
+	nouvMethode->name = name;
+	nouvMethode->param = param;
+	//TODO 
+    //if (type == NIL(char)){
+	//	nouvMethode->typeRetourP = "Void";
+	//}
+    //else { nouvMethode->typeRetourP = type; }
+	nouvMethode->body = expr;
+	nouvMethode->next = NIL(method);
+	return nouvMethode;
+}
+*/
+methodP makeMethod(bool redefP, char* nameP, TreeP paramP, char* typeRetourP, TreeP bodyP) {
+	methodP nouvMethode = NEW(1, method);
+	nouvMethode->redef = redefP;
+	nouvMethode->name = nameP;
+	/*nouvMethode->param = paramP; TODO construire à partir de l'arbre */
+    /* TODO
+	if (type == NIL(char)){
+		nouvMethode->typeRetourP = "Void";
+	}
+	else { nouvMethode->typeRetourP = type; }
+    */
+	nouvMethode->body = bodyP;
+	nouvMethode->next = NIL(method);
+	return nouvMethode;
+}
 
+VarDeclP makeVar(bool aVar, char *name, char* type, TreeP expr){
+    VarDeclP nouvVar = NEW(1, VarDecl);
+    nouvVar->name = name;
+    /*nouvVar->type = type; TODO fonction qui retourne un type */
+    nouvVar->expr = expr;
+    nouvVar->aVar = aVar;
 
+    nouvVar->next = NIL(VarDecl);
+    return nouvVar;
+}
 
+objectP makeObjet(char* name, TreeP attributs, TreeP lmethodes){
+    objectP nouvObjet = NEW(1, object);
+    nouvObjet->name = name;
+    /*nouvObjet->lmethodes = lmethodes;
+    nouvObjet->attributs = attributs; TODO lire les arbres làààà */
+    
+    nouvObjet->next = NIL(object);
+    return nouvObjet;
+}
 
 
 

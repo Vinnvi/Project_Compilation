@@ -1,17 +1,18 @@
 /* attention: NEW est defini dans tp.h Utilisez un autre nom de token */
-%token IS CLASS VAR EXTENDS DEF OVERRIDE IF THEN ELSE AFF /*add*/ RETURN THIS OBJ ADD SUB PROD QUOT REST NEW DOT AND
+%token IS CLASS VAR EXTENDS DEF OVERRIDE IF THEN ELSE AFF /*add*/ RETURN OBJ ADD SUB PROD QUOT REST NEW DOT AND
 %token<S> Id ClassId Cstr
 %token<I> Cste 
 %token<C> RelOp
-%type <B> OverrideOpt
-%type<MethP> ListMethodeOpt ListMethode Methode
-%type<ClasseP> Classe NomClasseOpt DefClasseObjetOpt DefClasseObjet ObjetouClasse
-%type<ObjetP> Objet
-%type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc BlocNonVide DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message Instanciation
-%type<attP> Champ ListChamp ListChampOpt ListParametreOpt ListParametres Parametre ListParametresDef ParametreDef VarOpt ListArgumentsOpt ListArguments ArgumentOuCible Valeur
+%token<ClasseP> THIS
+%type<B> OverrideOpt VarOpt
+%type<MethP>  Methode
+%type<S> NomClasseOpt  
+%type<ClasseP> Classe
+%type<ObjetP> Objet 
+%type<CouOP> ObjetouClasse
+%type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc BlocNonVide DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Valeur ListChamp ListChampOpt ListArgumentsOpt ListArguments ListParametresDef ListParametreOpt ListParametres Instanciation ListMethodeOpt ListMethode Extends ExtendsOpt
+%type<pV> Parametre ParametreDef Champ 
 
-
-/* ^ Pour chaque non terminal faut faire ça ^ */
 /* indications de precedence (en ordre croissant) et d'associativite. Les
  * operateurs sur une meme ligne (separes par un espace) ont la meme priorite.
  */
@@ -32,38 +33,38 @@ extern void yyerror(char *);
 %}
 
 %%
-Programme : DefClasseObjetOpt Bloc 
+Programme : DefClasseObjetOpt Bloc { lancerCompilation($1, $2); }
 ;
 
 DefClasseObjetOpt : DefClasseObjet   {$$ = $1; /* Demander au prof si on fait un arbre à 1 fils ou pas besoin*/}
-|                                    {$$ = NIL(class);}
+|                                    {$$ = NIL(Tree);}
 ;
 
 DefClasseObjet : ObjetouClasse DefClasseObjet   {$$ = makeTree(LCLASS, 2, $1, $2);}
-| ObjetouClasse                                 {$$ = $1;}
+| ObjetouClasse                                 {$$ = makeTree(LCLASS, 1, $1);}
 ;
 
-ObjetouClasse : Objet   {$$ = $1;}
-| Classe                {$$ = $1;}
+ObjetouClasse : Objet   {$$ = (CouOP)$1;}
+| Classe                {$$ = (CouOP)$1;}
 ;
 
-Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}'
+Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}' {$$ = makeObjet($2,$5,$6); }
 ;
 
 BlocOpt : Bloc  {$$ = $1;}
 |               { $$ = NIL(Tree); }
 ;
 
-Bloc: '{' ListInstructionsOpt '}'           { $$ = makeTree(BLOC, 2, $2, NIL(Tree)); } //here
-| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(BLOC, 2, $2, $4); } //here
+Bloc: '{' ListInstructionsOpt '}'           { $$ = makeTree(EBLOC, 2, $2, NIL(Tree)); } //here
+| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(EBLOC, 2, $2, $4); } //here
 ;
 
 BlocNonVide: '{' ListInstructions '}'       {$$ = $2;}
-| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(BLOC, 2, makeLeafLCh(LISTCH, $2), $4);   } //here
+| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(EBLOC, 2, $2, $4);   } //here
 ;
 
 ListInstructionsOpt : ListInstructions  {$$ = $1;}
-|                                       {$$ = NIL(instr);}
+|                                       {$$ = NIL(Tree);}
 ;
 
 ListInstructions: Instruction ListInstructions      {$$ = makeTree(LINST, 2, $1, $2);}
@@ -71,7 +72,7 @@ ListInstructions: Instruction ListInstructions      {$$ = makeTree(LINST, 2, $1,
 ;
 
 Instruction : Expression ';'                        {$$ = $1;}
-| RETURN ';'                                        
+| RETURN ';'                                        {$$ = makeLeafStr(ERETURN, NIL(char));}
 | ArgumentOuCible AFF Expression ';'                {$$ = makeTree(EAFF, 2, $1, $3);}
 | IF Operation THEN InstIfElse ELSE InstIfElse      {$$ = makeTree(ITE, 3, $2, $4, $6);}
 ;
@@ -99,60 +100,60 @@ Operation : Operation RelOp Operation           {$$ = makeTree(yylval.C, 2, $1, 
 | Valeur                                        {$$ = $1;}
 ;
 
-Instanciation: NEW ClassId '(' ListArgumentsOpt ')' 
+Instanciation: NEW ClassId '(' ListArgumentsOpt ')' {$$ = makeTree(ENEW, 2, $2, $4);}
 ;
 
 Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS '{'ListChampOpt ListMethodeOpt'}' { $$ = makeClass($2, $4, $6, $7, $10, $11); } //here
 ;
 
 ListMethodeOpt : ListMethode    {$$ = $1;}
-|                               {$$ = NIL(method);}
+|                               {$$ = NIL(Tree);}
 ;
 
 ListMethode : Methode ListMethode   {$$ = makeTree(LPARAM, 2, $1, $2);}
-| Methode                           {$$ = $1;}
+| Methode                           {$$ = makeTree(LPARAM, 1, $1);}
 ;
 
-Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression  { $$ = makeMethodExpr($1, $3, $5, $8, $10); }
-|  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS BlocNonVide        { $$ = makeMethodBloc($1, $3, $5, $7, $9); }
+Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression  { $$ = makeMethod($1, $3, $5, $8, $10); }
+|  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS BlocNonVide        { $$ = makeMethod($1, $3, $5, $7, $9); }
 ;
 
-NomClasseOpt : ':' ClassId  {$$ = makeLeafStr(CLASS, $2);}
-|                           {$$ = NIL(class);}
+NomClasseOpt : ':' ClassId  {$$ = $2;}
+|                           {$$ = NIL(char);}
 ;
 
 ListParametreOpt : ListParametres   {$$ = $1;}
 | ListParametresDef                 {$$ = $1;}
-|                                   {$$ = NIL(varDecl);}
+|                                   {$$ = NIL(Tree);}
 ;
 
 ListParametres : Parametre ',' ListParametres       {$$ = makeTree(LPARAM, 2, $1, $3);}
 | Parametre',' ListParametresDef                    {$$ = makeTree(LPARAM, 2, $1, $3);}
-| Parametre                                         {$$ = $1;}
+| Parametre                                         {$$ = makeTree(LPARAM, 1, $1);}
 ;
 
-Parametre : VarOpt Id ':' ClassId
+Parametre : VarOpt Id ':' ClassId {$$ = makeVar($1,$2,$4,NIL(Tree));}
 ;
 
 ListParametresDef : ParametreDef',' ListParametresDef   {$$ = makeTree(LPARAM, 2, $1, $3);}
-| ParametreDef                                          {$$ = $1;}
+| ParametreDef                                          {$$ = makeTree(LPARAM, 1, $1);}
 ;
 
-ParametreDef : VarOpt Id ':' ClassId AFF Expression
+ParametreDef : VarOpt Id ':' ClassId AFF Expression     {$$ = makeVar($1,$2,$4,$6);}
 ;
 
-VarOpt: VAR     {$$ = $1;}
-|               {$$ = NULL;}
+VarOpt: VAR     {$$ = TRUE;}
+|               {$$ = FALSE;}
 ;
 
 DeclExpressionOpt : AFF Expression      {$$ = makeTree(EAFF, 1, $2); /* pas sur? un $1 = $2 suffit ptet jsute*/}
-|                                       {$$ = NIL(varDecl);}
+|                                       {$$ = NIL(Tree);}
 ;
 
 ExtendsOpt : Extends    {$$ = $1;}
-|                       {$$ = NIL(class);}
+|                       {$$ = NIL(Tree);}
 ;
-Extends: EXTENDS ClassId '(' ListArgumentsOpt ')'
+Extends: EXTENDS ClassId '(' ListArgumentsOpt ')' { $$ = makeTree(EEXTND, 2, makeLeafStr(ID, $2), $4); }
 ;
 
 ListArgumentsOpt : ListArguments    {$$ = $1;}
@@ -163,13 +164,13 @@ ListArguments: Expression ',' ListArguments     {$$ = makeTree(LARG, 2, $1, $3);
 ;
 ArgumentOuCible: ListSelection  {$$ = $1;}
 | ThisSelect                    {$$ = $1;}
-| Cste                          {$$ = makeLeafInt(CSTR, $1);}
+| Cste                          {$$ = makeLeafInt(CSTE, $1);}
 | Selection                     {$$ = $1;}
 ;
 
-ThisSelect : THIS DOT ListSelection             { $$ = makeTree(, 2, $1, NIL(Tree)); }
-| THIS DOT Selection                            
-| THIS
+ThisSelect : THIS DOT ListSelection             { $$ = makeTree(EDOT, 2, $1, $3); }
+| THIS DOT Selection                            { $$ = makeTree(EDOT, 2, $1, $3); }                            
+| THIS                                          { $$ = makeLeafStr(ETHIS, "this"); }
 ;
 
 ListSelection : SelWithClassID DOT Selection    {$$ = makeTree(EDOT, 2, $1, $3);}
@@ -180,7 +181,7 @@ SelWithClassID : ListSelection      {$$ = $1;}
 | ClassId                           {$$ = makeLeafStr(CLASS, $1);}
 ;
 
-Selection : Id                  {$$ = makeLeafInt(ID, $1);}
+Selection : Id                  {$$ = makeLeafStr(ID, $1);}
 | Message                       {$$ = $1;}
 | Cstr                          {$$ = makeLeafStr(CSTR, $1);}
 | '('Expression')'              {$$ = $2;}
@@ -191,18 +192,18 @@ Message : Id '('ListArgumentsOpt')' {$$ = makeTree(MSG, 2, $1, $3);}
 ;
 
 ListChampOpt : ListChamp    {$$ = $1;}
-|                           {$$ = NIL(varDecl);}
+|                           {$$ = NIL(Tree);}
 ;
 
 ListChamp : Champ ListChamp     {$$ = makeTree(LCHAMP, 2, $1, $2);} 
-| Champ                         {$$ = $1;}
+| Champ                         {$$ = makeTree(LCHAMP, 1, $1);}
 ;
 
-Champ : VAR Id ':' ClassId DeclExpressionOpt';'
+Champ : VAR Id ':' ClassId DeclExpressionOpt';' {$$ = makeVar(TRUE,$2,$4,$5);}
 ;
 
-OverrideOpt : OVERRIDE      {$$ = true;}
-|                           {$$ = false;}
+OverrideOpt : OVERRIDE      {$$ = TRUE;}
+|                           {$$ = FALSE;}
 ;
 
 

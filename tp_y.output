@@ -159,21 +159,21 @@ THEN (265) 22
 ELSE (266) 22
 AFF (267) 21 44 57 60
 RETURN (268) 20
-THIS (269) 73 74 75
-OBJ (270) 8
-ADD (271) 29 35
-SUB (272) 30 36
-PROD (273) 31
-QUOT (274) 32
-REST (275) 33
-NEW (276) 38
-DOT (277) 73 74 76
-AND (278) 34
-Id (279) 44 45 54 57 80 85 90
-ClassId (280) 8 38 39 44 46 54 57 64 79 84 90
-Cstr (281) 82
-Cste (282) 71
-RelOp (283) 28
+OBJ (269) 8
+ADD (270) 29 35
+SUB (271) 30 36
+PROD (272) 31
+QUOT (273) 32
+REST (274) 33
+NEW (275) 38
+DOT (276) 73 74 76
+AND (277) 34
+Id (278) 44 45 54 57 80 85 90
+ClassId (279) 8 38 39 44 46 54 57 64 79 84 90
+Cstr (280) 82
+Cste (281) 71
+RelOp (282) 28
+THIS (283) 73 74 75
 
 
 Nonterminals, with rules where they appear
@@ -380,14 +380,14 @@ State 12
     VAR      shift, and go to state 17
     IF       shift, and go to state 18
     RETURN   shift, and go to state 19
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 16 (ListInstructionsOpt)
@@ -458,13 +458,13 @@ State 18
 
    22 Instruction: IF . Operation THEN InstIfElse ELSE InstIfElse
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -486,26 +486,38 @@ State 19
 
 State 20
 
-   73 ThisSelect: THIS . DOT ListSelection
-   74           | THIS . DOT Selection
-   75           | THIS .
+   35 Operation: ADD . Operation
 
-    DOT  shift, and go to state 56
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
 
-    $default  reduce using rule 75 (ThisSelect)
+    Valeur           go to state 33
+    Operation        go to state 56
+    ArgumentOuCible  go to state 54
+    ThisSelect       go to state 37
+    ListSelection    go to state 38
+    SelWithClassID   go to state 39
+    Selection        go to state 40
+    Message          go to state 41
 
 
 State 21
 
-   35 Operation: ADD . Operation
+   36 Operation: SUB . Operation
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -520,63 +532,51 @@ State 21
 
 State 22
 
-   36 Operation: SUB . Operation
+   38 Instanciation: NEW . ClassId '(' ListArgumentsOpt ')'
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
-    '('      shift, and go to state 28
-
-    Valeur           go to state 33
-    Operation        go to state 58
-    ArgumentOuCible  go to state 54
-    ThisSelect       go to state 37
-    ListSelection    go to state 38
-    SelWithClassID   go to state 39
-    Selection        go to state 40
-    Message          go to state 41
+    ClassId  shift, and go to state 58
 
 
 State 23
 
-   38 Instanciation: NEW . ClassId '(' ListArgumentsOpt ')'
-
-    ClassId  shift, and go to state 59
-
-
-State 24
-
    80 Selection: Id .
    85 Message: Id . '(' ListArgumentsOpt ')'
 
-    '('  shift, and go to state 60
+    '('  shift, and go to state 59
 
     $default  reduce using rule 80 (Selection)
 
 
-State 25
+State 24
 
    79 SelWithClassID: ClassId .
 
     $default  reduce using rule 79 (SelWithClassID)
 
 
-State 26
+State 25
 
    82 Selection: Cstr .
 
     $default  reduce using rule 82 (Selection)
 
 
-State 27
+State 26
 
    71 ArgumentOuCible: Cste .
 
     $default  reduce using rule 71 (ArgumentOuCible)
+
+
+State 27
+
+   73 ThisSelect: THIS . DOT ListSelection
+   74           | THIS . DOT Selection
+   75           | THIS .
+
+    DOT  shift, and go to state 60
+
+    $default  reduce using rule 75 (ThisSelect)
 
 
 State 28
@@ -584,14 +584,14 @@ State 28
    83 Selection: '(' . Expression ')'
    84          | '(' . ClassId Expression ')'
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
     ClassId  shift, and go to state 61
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 62
@@ -627,14 +627,14 @@ State 31
 
     IF       shift, and go to state 18
     RETURN   shift, and go to state 19
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 18 (ListInstructions)
@@ -879,22 +879,6 @@ State 55
 
 State 56
 
-   73 ThisSelect: THIS DOT . ListSelection
-   74           | THIS DOT . Selection
-
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    '('      shift, and go to state 28
-
-    ListSelection   go to state 85
-    SelWithClassID  go to state 39
-    Selection       go to state 86
-    Message         go to state 41
-
-
-State 57
-
    28 Operation: Operation . RelOp Operation
    29          | Operation . ADD Operation
    30          | Operation . SUB Operation
@@ -911,7 +895,7 @@ State 57
     $default  reduce using rule 35 (Operation)
 
 
-State 58
+State 57
 
    28 Operation: Operation . RelOp Operation
    29          | Operation . ADD Operation
@@ -929,35 +913,35 @@ State 58
     $default  reduce using rule 36 (Operation)
 
 
-State 59
+State 58
 
    38 Instanciation: NEW ClassId . '(' ListArgumentsOpt ')'
 
-    '('  shift, and go to state 87
+    '('  shift, and go to state 85
 
 
-State 60
+State 59
 
    85 Message: Id '(' . ListArgumentsOpt ')'
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 66 (ListArgumentsOpt)
 
-    Expression        go to state 88
+    Expression        go to state 86
     Valeur            go to state 33
     Operation         go to state 34
     Instanciation     go to state 35
-    ListArgumentsOpt  go to state 89
-    ListArguments     go to state 90
+    ListArgumentsOpt  go to state 87
+    ListArguments     go to state 88
     ArgumentOuCible   go to state 54
     ThisSelect        go to state 37
     ListSelection     go to state 38
@@ -966,19 +950,35 @@ State 60
     Message           go to state 41
 
 
+State 60
+
+   73 ThisSelect: THIS DOT . ListSelection
+   74           | THIS DOT . Selection
+
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    '('      shift, and go to state 28
+
+    ListSelection   go to state 89
+    SelWithClassID  go to state 39
+    Selection       go to state 90
+    Message         go to state 41
+
+
 State 61
 
    79 SelWithClassID: ClassId .
    84 Selection: '(' ClassId . Expression ')'
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 79 (SelWithClassID)
@@ -1027,13 +1027,13 @@ State 66
 
    29 Operation: Operation ADD . Operation
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1050,13 +1050,13 @@ State 67
 
    30 Operation: Operation SUB . Operation
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1073,13 +1073,13 @@ State 68
 
    31 Operation: Operation PROD . Operation
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1096,13 +1096,13 @@ State 69
 
    32 Operation: Operation QUOT . Operation
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1119,13 +1119,13 @@ State 70
 
    33 Operation: Operation REST . Operation
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1142,13 +1142,13 @@ State 71
 
    34 Operation: Operation AND . Operation
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1165,13 +1165,13 @@ State 72
 
    28 Operation: Operation RelOp . Operation
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1188,14 +1188,14 @@ State 73
 
    21 Instruction: ArgumentOuCible AFF . Expression ';'
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 100
@@ -1214,8 +1214,8 @@ State 74
 
    76 ListSelection: SelWithClassID DOT . Selection
 
-    Id    shift, and go to state 24
-    Cstr  shift, and go to state 26
+    Id    shift, and go to state 23
+    Cstr  shift, and go to state 25
     '('   shift, and go to state 28
 
     Selection  go to state 101
@@ -1228,14 +1228,14 @@ State 75
 
     IF       shift, and go to state 18
     RETURN   shift, and go to state 19
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     ListInstructions  go to state 102
@@ -1343,14 +1343,14 @@ State 84
 
     IF       shift, and go to state 18
     RETURN   shift, and go to state 19
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '{'      shift, and go to state 12
     '('      shift, and go to state 28
 
@@ -1371,44 +1371,26 @@ State 84
 
 State 85
 
-   73 ThisSelect: THIS DOT ListSelection .
-   77 SelWithClassID: ListSelection .
-
-    DOT       reduce using rule 77 (SelWithClassID)
-    $default  reduce using rule 73 (ThisSelect)
-
-
-State 86
-
-   74 ThisSelect: THIS DOT Selection .
-   78 SelWithClassID: Selection .
-
-    DOT       reduce using rule 78 (SelWithClassID)
-    $default  reduce using rule 74 (ThisSelect)
-
-
-State 87
-
    38 Instanciation: NEW ClassId '(' . ListArgumentsOpt ')'
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 66 (ListArgumentsOpt)
 
-    Expression        go to state 88
+    Expression        go to state 86
     Valeur            go to state 33
     Operation         go to state 34
     Instanciation     go to state 35
     ListArgumentsOpt  go to state 120
-    ListArguments     go to state 90
+    ListArguments     go to state 88
     ArgumentOuCible   go to state 54
     ThisSelect        go to state 37
     ListSelection     go to state 38
@@ -1417,7 +1399,7 @@ State 87
     Message           go to state 41
 
 
-State 88
+State 86
 
    67 ListArguments: Expression . ',' ListArguments
    68              | Expression .
@@ -1427,18 +1409,36 @@ State 88
     $default  reduce using rule 68 (ListArguments)
 
 
-State 89
+State 87
 
    85 Message: Id '(' ListArgumentsOpt . ')'
 
     ')'  shift, and go to state 122
 
 
-State 90
+State 88
 
    65 ListArgumentsOpt: ListArguments .
 
     $default  reduce using rule 65 (ListArgumentsOpt)
+
+
+State 89
+
+   73 ThisSelect: THIS DOT ListSelection .
+   77 SelWithClassID: ListSelection .
+
+    DOT       reduce using rule 77 (SelWithClassID)
+    $default  reduce using rule 73 (ThisSelect)
+
+
+State 90
+
+   74 ThisSelect: THIS DOT Selection .
+   78 SelWithClassID: Selection .
+
+    DOT       reduce using rule 78 (SelWithClassID)
+    $default  reduce using rule 74 (ThisSelect)
 
 
 State 91
@@ -1745,17 +1745,17 @@ State 121
 
    67 ListArguments: Expression ',' . ListArguments
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
-    Expression       go to state 88
+    Expression       go to state 86
     Valeur           go to state 33
     Operation        go to state 34
     Instanciation    go to state 35
@@ -1860,14 +1860,14 @@ State 134
 
    60 DeclExpressionOpt: AFF . Expression
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 144
@@ -1895,14 +1895,14 @@ State 136
 
     IF       shift, and go to state 18
     RETURN   shift, and go to state 19
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '{'      shift, and go to state 12
     '('      shift, and go to state 28
 
@@ -1939,24 +1939,24 @@ State 139
 
    64 Extends: EXTENDS ClassId '(' . ListArgumentsOpt ')'
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 66 (ListArgumentsOpt)
 
-    Expression        go to state 88
+    Expression        go to state 86
     Valeur            go to state 33
     Operation         go to state 34
     Instanciation     go to state 35
     ListArgumentsOpt  go to state 147
-    ListArguments     go to state 90
+    ListArguments     go to state 88
     ArgumentOuCible   go to state 54
     ThisSelect        go to state 37
     ListSelection     go to state 38
@@ -1983,14 +1983,14 @@ State 142
 
    57 ParametreDef: VarOpt Id ':' ClassId AFF . Expression
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 150
@@ -2180,14 +2180,14 @@ State 162
 
    44 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF . Expression
 
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 165
@@ -2210,14 +2210,14 @@ State 163
     VAR      shift, and go to state 17
     IF       shift, and go to state 18
     RETURN   shift, and go to state 19
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     ListInstructions  go to state 166
@@ -2277,14 +2277,14 @@ State 169
 
     IF       shift, and go to state 18
     RETURN   shift, and go to state 19
-    THIS     shift, and go to state 20
-    ADD      shift, and go to state 21
-    SUB      shift, and go to state 22
-    NEW      shift, and go to state 23
-    Id       shift, and go to state 24
-    ClassId  shift, and go to state 25
-    Cstr     shift, and go to state 26
-    Cste     shift, and go to state 27
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
     '('      shift, and go to state 28
 
     ListInstructions  go to state 170

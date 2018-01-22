@@ -38,27 +38,31 @@ typedef unsigned char bool;
 #define EQUOT 	10	
 #define EREST 	11
 #define EAND 	12
-#define EAFF	12321
-#define EDOT 17
+#define EAFF	13
+#define EDOT    14
+#define EEXTND  15
+#define ETHIS   16
+#define ERETURN 17
 
-#define CSTE 	13
-#define CSTR 	14
-#define ID 	15
-#define CLASS 	16
+#define CSTE 	18
+#define CSTR 	19
+#define ID 	    20
+#define ECLASS  21
 /* faire des étiquettes genre TYPE? CAST? et y attribuer des règles genre QQCHS -> Id dans le cas où on fait des casts ou ce genre de choses*/
 
 
-#define CAST 18
-#define ITE 15641
+#define CAST 22
+#define ITE 23
 
-#define LCHAMP 19
-#define LARG 19
-#define LPARAM 19
-#define LMETH 19
-#define LINST 12
-#define LCLASS 19
-
-#define MSG 20
+#define LCHAMP 24
+#define LARG 25
+#define LPARAM 26
+#define LMETH 27
+#define LINST 28
+#define LCLASS 29
+#define MSG 30
+#define EBLOC 31
+#define ENEW 32
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -74,7 +78,7 @@ typedef unsigned char bool;
 
 
 /* structures necessaires pour le programme */
-typedef struct _Class class, *classP;
+typedef struct _Classe classe, *classeP;
 typedef struct _Att att, *attP;
 typedef struct _Method method, *methodP;
 typedef struct _Object object, *objectP;
@@ -82,17 +86,22 @@ typedef struct _Pile pile, *pileP;
 typedef struct _Expression expr, *exprP;
 typedef struct _Instruction instr,*instrP;
 typedef struct _Programme prog,*ProgP;
-
+typedef struct _Tree Tree,*TreeP;
+typedef union _ClasseOuObjet CouO, *CouOP;
 
 /* Adapt as needed. Currently it is simply a list of names ! */
 typedef struct _varDecl {
   char *name;
   struct _varDecl *next;
+  struct _Classe *type; 
+  TreeP expr;
+  bool aVar;
+
 } VarDecl, *VarDeclP;
 
 
 /* la structure d'un arbre (noeud ou feuille) */
-typedef struct _Tree {
+struct _Tree {
   short op;         /* etiquette de l'operateur courant */
   short nbChildren; /* nombre de sous-arbres */
   union {
@@ -101,7 +110,7 @@ typedef struct _Tree {
     VarDeclP lvar;  /* ne pas utiliser tant qu'on n'en a pas besoin :-) */
     struct _Tree **children; /* tableau des sous-arbres */
   } u;
-} Tree, *TreeP;
+};
 
 
 typedef union
@@ -112,28 +121,30 @@ typedef union
 	TreeP pT;
 	VarDeclP pV; /* same comment as above */
     methodP MethP;
-    classP ClasseP;
+    classeP ClasseP;
     objectP ObjetP;
+    CouOP CouOP;
+    attP attP;
 } YYSTYPE;
 
 #define YYSTYPE YYSTYPE
 
 /* structure du programme  */
 struct _Programme{
-	classP classes; /*classes du programme */
+	classeP classes; /*classes du programme */
 	objectP objets; /*objets du programme */
 	TreeP main; /* bloc main */
 };
 
 /*Structure d'une classe */
-struct _Class{
+struct _Classe{
 	 char* name; /* identificateur */
 	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
-     methodP constructeur;
+     TreeP constructeur;
      attP attributs; /*Attributs de la classe*/
      VarDeclP parametres; /* liste des parametres de la classe */
-	 struct _Class *super; /*classe mere*/
-	 struct _Class *next; /*Pour chainer les classes*/
+	 struct _Classe *super; /*classe mere*/
+	 struct _Classe *next; /*Pour chainer les classes*/
 };
 
 
@@ -143,7 +154,7 @@ struct _Method{
 	char* name; /* identificateur */
     VarDeclP param; /*liste des parametres*/
     TreeP body; /*Corps de la methode*/
-	struct _Class *typeRetour; /* type retour methode */
+	struct _Classe *typeRetour; /* type retour methode */
 	struct _Method *methodeMere; /*Override*/
     bool redef;
 	struct _Method *next;
@@ -152,22 +163,28 @@ struct _Method{
 /* structure d'un objet*/
 struct _Object{
 	char* name; /* identificateur */
-    TreeP body; /*corps de l'objet*/
+    /*TreeP body; corps de l'objet*/
 	methodP lmethodes; /* pointeur sur la liste des methodes de l'objet */
 	attP attributs; /* pointeur sur la liste des attributs de l'objet */
 	struct _Object *next;
 };
 
+union _ClasseOuObjet{
+	classe c;
+    object o;
+};
+
 /*structure d'un attribut*/ /*REVOIR CONTENU*/
 struct _Att{
 	char* name; /* Nom de l'attribut */
-	struct _Class type; /*type de l'attribut */
-	/*   struct _Class valeur; */ /* valeur de l'attribut */
+	struct _Classe type; /*type de l'attribut */
+	/*   struct _Classe valeur; */ /* valeur de l'attribut */
 	struct _Att *next; /* pointeur vers l'attribut suivant */
 };
 
 
-:/*
+
+/*
 struct _Expression{
     union{
 	    struct _Identificateur *ident;
@@ -193,14 +210,14 @@ struct _Selection{
 
 
 struct _Cast{
-    struct _Class *nomClasse;
+    struct _Classe *nomClasse;
     struct _Expression *expression;
     
 };
 
 
 struct _Instantation{
-    struct _Class *classe;
+    struct _Classe *classe;
     struct _att *listeParam;
 };
 
@@ -235,8 +252,35 @@ struct _ifThenElse{
     struct _Instruction *instructionElse;
 };
 
-
 struct _bloc{
    TreeP lInstruction;
 };
+
+TreeP makeTree(short op, int nbChildren, ...);
+TreeP makeLeafLVar(short op, VarDeclP lvar);
+TreeP makeLeafInt(short op, int val);
+TreeP makeLeafStr(short op, char *str);
+
+
+void lancerCompilation(TreeP def, TreeP arbre);
+classeP makeClass(char* nameP,  TreeP parametresP, TreeP superP, TreeP constructeurP, TreeP attributsP, TreeP lmethodesP);
+VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
+objectP makeObjet(char* name, TreeP attributs, TreeP lmethodes);
+methodP makeMethod(bool redefP, char* nameP, TreeP paramP, char* typeRetourP, TreeP bodyP);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
