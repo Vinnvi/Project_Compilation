@@ -50,16 +50,16 @@ ObjetouClasse : Objet   {$$ = $1;}
 Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}'
 ;
 
-BlocOpt : Bloc {$$ = $1;}
-|   
+BlocOpt : Bloc  {$$ = $1;}
+|               { $$ = NIL(Tree); }
 ;
 
-Bloc: '{' ListInstructionsOpt '}'
-| '{' ListChamp IS ListInstructions '}'
+Bloc: '{' ListInstructionsOpt '}'           { $$ = makeTree(BLOC, 2, $2, NIL(Tree)); } //here
+| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(BLOC, 2, $2, $4); } //here
 ;
 
 BlocNonVide: '{' ListInstructions '}'       {$$ = $2;}
-| '{' ListChamp IS ListInstructions '}'
+| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(BLOC, 2, makeLeafLCh(LISTCH, $2), $4);   } //here
 ;
 
 ListInstructionsOpt : ListInstructions  {$$ = $1;}
@@ -99,10 +99,10 @@ Operation : Operation RelOp Operation           {$$ = makeTree(yylval.C, 2, $1, 
 | Valeur                                        {$$ = $1;}
 ;
 
-Instanciation: NEW ClassId '(' ListArgumentsOpt ')'
+Instanciation: NEW ClassId '(' ListArgumentsOpt ')' 
 ;
 
-Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS '{'ListChampOpt ListMethodeOpt'}'
+Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS '{'ListChampOpt ListMethodeOpt'}' { $$ = makeClass($2, $4, $6, $7, $10, $11); } //here
 ;
 
 ListMethodeOpt : ListMethode    {$$ = $1;}
@@ -113,8 +113,8 @@ ListMethode : Methode ListMethode   {$$ = makeTree(LPARAM, 2, $1, $2);}
 | Methode                           {$$ = $1;}
 ;
 
-Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression
-|  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS BlocNonVide
+Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression  { $$ = makeMethodExpr($1, $3, $5, $8, $10); }
+|  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS BlocNonVide        { $$ = makeMethodBloc($1, $3, $5, $7, $9); }
 ;
 
 NomClasseOpt : ':' ClassId  {$$ = makeLeafStr(CLASS, $2);}
@@ -167,8 +167,8 @@ ArgumentOuCible: ListSelection  {$$ = $1;}
 | Selection                     {$$ = $1;}
 ;
 
-ThisSelect : THIS DOT ListSelection     
-| THIS DOT Selection    
+ThisSelect : THIS DOT ListSelection             { $$ = makeTree(, 2, $1, NIL(Tree)); }
+| THIS DOT Selection                            
 | THIS
 ;
 

@@ -207,3 +207,37 @@ class makeClass(char* nameP, methodP lmethodesP, methodP constructeurP, attP att
 	nouvClasse->next = NIL(class);
 	return nouvClasse;
 } 
+
+MethodP makeMethodExpr(bool redef, char* name, VarDeclP param, char* type, TreeP expr) {
+	MethodP newMethod = NEW(1, Method);
+	newMethod->overriden = overriden;
+	newMethod->name = name;
+	newMethod->params = params;
+	newMethod->returnType = type;
+	newMethod->body = expr;
+	newMethod->isBlock = FALSE;
+	newMethod->next = NIL(Method);
+	return newMethod;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
