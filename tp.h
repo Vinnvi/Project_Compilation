@@ -76,15 +76,10 @@ typedef unsigned char bool;
 #define EVAL_ERROR	50	/* dubious when writing a compiler ! */
 #define UNEXPECTED	10O
 
-
 /* structures necessaires pour le programme */
 typedef struct _Classe classe, *classeP;
-typedef struct _Att att, *attP;
 typedef struct _Method method, *methodP;
 typedef struct _Object object, *objectP;
-typedef struct _Pile pile, *pileP;
-typedef struct _Expression expr, *exprP;
-typedef struct _Instruction instr,*instrP;
 typedef struct _Programme prog,*ProgP;
 typedef struct _Tree Tree,*TreeP;
 typedef union _ClasseOuObjet CouO, *CouOP;
@@ -99,7 +94,6 @@ typedef struct _varDecl {
 
 } VarDecl, *VarDeclP;
 
-
 /* la structure d'un arbre (noeud ou feuille) */
 struct _Tree {
   short op;         /* etiquette de l'operateur courant */
@@ -112,7 +106,6 @@ struct _Tree {
   } u;
 };
 
-
 typedef union
 { 	char *S;
     char C;
@@ -124,7 +117,6 @@ typedef union
     classeP ClasseP;
     objectP ObjetP;
     CouOP CouOP;
-    attP attP;
 } YYSTYPE;
 
 #define YYSTYPE YYSTYPE
@@ -141,7 +133,7 @@ struct _Classe{
 	 char* name; /* identificateur */
 	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
      TreeP constructeur;
-     attP attributs; /*Attributs de la classe*/
+     VarDeclP attributs; /*Attributs de la classe*/
      VarDeclP parametres; /* liste des parametres de la classe */
 	 struct _Classe *super; /*classe mere*/
 	 struct _Classe *next; /*Pour chainer les classes*/
@@ -165,7 +157,7 @@ struct _Object{
 	char* name; /* identificateur */
     /*TreeP body; corps de l'objet*/
 	methodP lmethodes; /* pointeur sur la liste des methodes de l'objet */
-	attP attributs; /* pointeur sur la liste des attributs de l'objet */
+	VarDeclP attributs; /* pointeur sur la liste des attributs de l'objet */
 	struct _Object *next;
 };
 
@@ -173,68 +165,6 @@ union _ClasseOuObjet{
 	classe c;
     object o;
 };
-
-/*structure d'un attribut*/ /*REVOIR CONTENU*/
-struct _Att{
-	char* name; /* Nom de l'attribut */
-	struct _Classe type; /*type de l'attribut */
-	/*   struct _Classe valeur; */ /* valeur de l'attribut */
-	struct _Att *next; /* pointeur vers l'attribut suivant */
-};
-
-
-
-/*
-struct _Expression{
-    union{
-	    struct _Identificateur *ident;
-	    struct _Constante *constante;
-	    struct _Selection *select;
-	    struct _Cast *cast;
-	    struct _Instantiation *instant;
-	    struct _Message *message;
-	    struct _exprOpe *exprOpe;
-    } monU;
-    struct _Expression *next;
-};
-
-
-struct _Identificateur{
-    char * nomIdentificateur;
-};
-
-struct _Selection{
-    struct _Expression expression; 
-    VarDecl nom;
-};
-
-
-struct _Cast{
-    struct _Classe *nomClasse;
-    struct _Expression *expression;
-    
-};
-
-
-struct _Instantation{
-    struct _Classe *classe;
-    struct _att *listeParam;
-};
-
-struct _Message{ 
-    struct _Expression destinataire; 
-    struct _Method message; 
-    VarDecl param;
-    method mehtode; 
-};
-
-struct _exprOpe{
-    struct _Expression *expressionLeft;
-    struct _Expression *expressionRight;
-    
-};
-
-*/
 
 struct _Instruction{
     union{
@@ -263,10 +193,10 @@ TreeP makeLeafStr(short op, char *str);
 
 
 void lancerCompilation(TreeP def, TreeP arbre);
-classeP makeClass(char* nameP,  TreeP parametresP, TreeP superP, TreeP constructeurP, TreeP attributsP, TreeP lmethodesP);
+classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP);
 VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
-objectP makeObjet(char* name, TreeP attributs, TreeP lmethodes);
-methodP makeMethod(bool redefP, char* nameP, TreeP paramP, char* typeRetourP, TreeP bodyP);
+objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes);
+methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP);
 
 
 

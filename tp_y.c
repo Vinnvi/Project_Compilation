@@ -1400,7 +1400,7 @@ yyreduce:
 
   case 9:
 #line 51 "tp.y" /* yacc.c:1646  */
-    {(yyval.ObjetP) = makeObjet((yyvsp[-5].S),(yyvsp[-2].pT),(yyvsp[-1].pT)); }
+    {(yyval.ObjetP) = makeObjet((yyvsp[-5].S),(yyvsp[-2].pV),(yyvsp[-1].MethP)); }
 #line 1405 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1424,7 +1424,7 @@ yyreduce:
 
   case 13:
 #line 59 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EBLOC, 2, (yyvsp[-3].pT), (yyvsp[-1].pT)); }
+    { (yyval.pT) = makeTree(EBLOC, 2, (yyvsp[-3].pV), (yyvsp[-1].pT)); }
 #line 1429 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1436,7 +1436,7 @@ yyreduce:
 
   case 15:
 #line 63 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EBLOC, 2, (yyvsp[-3].pT), (yyvsp[-1].pT));   }
+    { (yyval.pT) = makeTree(EBLOC, 2, (yyvsp[-3].pV), (yyvsp[-1].pT));   }
 #line 1441 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1586,43 +1586,43 @@ yyreduce:
 
   case 40:
 #line 106 "tp.y" /* yacc.c:1646  */
-    { (yyval.ClasseP) = makeClass((yyvsp[-10].S), (yyvsp[-8].pT), (yyvsp[-6].pT), (yyvsp[-5].pT), (yyvsp[-2].pT), (yyvsp[-1].pT)); }
+    { (yyval.ClasseP) = makeClass((yyvsp[-10].S), (yyvsp[-8].pV), (yyvsp[-6].pT), (yyvsp[-5].pT), (yyvsp[-2].pV), (yyvsp[-1].MethP)); }
 #line 1591 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 41:
 #line 109 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.MethP) = (yyvsp[0].MethP);}
 #line 1597 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 42:
 #line 110 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = NIL(Tree);}
+    {(yyval.MethP) = NIL(method);}
 #line 1603 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 43:
 #line 113 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LPARAM, 2, (yyvsp[-1].MethP), (yyvsp[0].pT));}
+    {(yyval.MethP) = (yyvsp[-1].MethP); (yyvsp[-1].MethP)->next = (yyvsp[0].MethP);}
 #line 1609 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 44:
 #line 114 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LPARAM, 1, (yyvsp[0].MethP));}
+    {(yyval.MethP) = (yyvsp[0].MethP);}
 #line 1615 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 45:
 #line 117 "tp.y" /* yacc.c:1646  */
-    { (yyval.MethP) = makeMethod((yyvsp[-9].B), (yyvsp[-7].S), (yyvsp[-5].pT), (yyvsp[-2].S), (yyvsp[0].pT)); }
+    { (yyval.MethP) = makeMethod((yyvsp[-9].B), (yyvsp[-7].S), (yyvsp[-5].pV), (yyvsp[-2].S), (yyvsp[0].pT)); }
 #line 1621 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 46:
 #line 118 "tp.y" /* yacc.c:1646  */
-    { (yyval.MethP) = makeMethod((yyvsp[-8].B), (yyvsp[-6].S), (yyvsp[-4].pT), (yyvsp[-2].S), (yyvsp[0].pT)); }
+    { (yyval.MethP) = makeMethod((yyvsp[-8].B), (yyvsp[-6].S), (yyvsp[-4].pV), (yyvsp[-2].S), (yyvsp[0].pT)); }
 #line 1627 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1640,37 +1640,37 @@ yyreduce:
 
   case 49:
 #line 125 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.pV) = (yyvsp[0].pV);}
 #line 1645 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 50:
 #line 126 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.pV) = (yyvsp[0].pV);}
 #line 1651 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 51:
 #line 127 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = NIL(Tree);}
+    {(yyval.pV) = NIL(VarDecl);}
 #line 1657 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 52:
 #line 130 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LPARAM, 2, (yyvsp[-2].pV), (yyvsp[0].pT));}
+    {(yyval.pV) = (yyvsp[-2].pV); (yyvsp[-2].pV)->next = (yyvsp[0].pV);}
 #line 1663 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 53:
 #line 131 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LPARAM, 2, (yyvsp[-2].pV), (yyvsp[0].pT));}
+    {(yyval.pV) = (yyvsp[-2].pV); (yyvsp[-2].pV)->next = (yyvsp[0].pV);}
 #line 1669 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 54:
 #line 132 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LPARAM, 1, (yyvsp[0].pV));}
+    {(yyval.pV) = (yyvsp[0].pV);}
 #line 1675 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1682,13 +1682,13 @@ yyreduce:
 
   case 56:
 #line 138 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LPARAM, 2, (yyvsp[-2].pV), (yyvsp[0].pT));}
+    {(yyval.pV) = (yyvsp[-2].pV); (yyvsp[-2].pV)->next = (yyvsp[0].pV);}
 #line 1687 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 57:
 #line 139 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LPARAM, 1, (yyvsp[0].pV));}
+    {(yyval.pV) = (yyvsp[0].pV);}
 #line 1693 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1868,25 +1868,25 @@ yyreduce:
 
   case 87:
 #line 194 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.pV) = (yyvsp[0].pV);}
 #line 1873 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 88:
 #line 195 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = NIL(Tree);}
+    {(yyval.pV) = NIL(VarDecl);}
 #line 1879 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 89:
 #line 198 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LCHAMP, 2, (yyvsp[-1].pV), (yyvsp[0].pT));}
+    {(yyval.pV) = (yyvsp[-1].pV); (yyvsp[-1].pV)->next = (yyvsp[0].pV);}
 #line 1885 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 90:
 #line 199 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(LCHAMP, 1, (yyvsp[0].pV));}
+    {(yyval.pV) = (yyvsp[0].pV);}
 #line 1891 "tp_y.c" /* yacc.c:1646  */
     break;
 
