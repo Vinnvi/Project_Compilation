@@ -75,8 +75,8 @@ void lexError(char c) {
 
 "."				{ return(DOT); }
 
-{Lower}{LC}*	{ return keywordOrId(); } /* add */
-{Upper}{LC}*	{ return keywordOrClass(); } /* add, c'est pas CLASS qu'il faut retourner là... => Id? */
+{Lower}{LC}*	{ yylval.S = yytext; return keywordOrId(); } 
+{Upper}{LC}*	{ yylval.S = yytext; return keywordOrClass(); } 
 
 {Delim}+		{ }
 {Comm}			{ }

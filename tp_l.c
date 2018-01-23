@@ -896,12 +896,12 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 #line 78 "tp.l"
-{ return keywordOrId(); } /* add */
+{ yylval.S = yytext; return keywordOrId(); } 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 79 "tp.l"
-{ return keywordOrClass(); } /* add, c'est pas CLASS qu'il faut retourner là... => Id? */
+{ yylval.S = yytext; return keywordOrClass(); } 
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */

@@ -127,6 +127,7 @@ void yyerror(char *ignore) {
  * pas directement. Elle ne fait qu'allouer, sans remplir les champs
  */
 TreeP makeNode(int nbChildren, short op) {
+  printf("%d\n",nbChildren); 
   TreeP tree = NEW(1, Tree);
   tree->op = op;
   tree->nbChildren = nbChildren;
@@ -199,6 +200,9 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
 void lancerCompilation(TreeP def, TreeP arbre){
     /*TODO
     */
+   /*classes = classe;*/
+   affichageArbre(arbre,0);
+   
 }
 
 /* les P à la fin des paramètres c'est P comme "Paramètre" et pas Pointeur. (my bad) */
@@ -252,6 +256,64 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     return nouvObjet;
 }
 
+void affichageArbre(TreeP tree,int niveauArbre){
+    
+    int i,j = 0;
+    if(tree == NULL){
+        printf("NIL");
+    }       
+    else if(tree->nbChildren > 0 && niveauArbre<2){
+        for (i=0;i<=tree->nbChildren;i++) {
+            for (j=0;j<niveauArbre+1;j++)
+                printf("\t");
+            if(tree->u.children[i] != NULL)
+                affichageArbre(tree->u.children[i],niveauArbre+1);
+        }          
+    }
+    else{  
+        printf("%hi:%d\n",tree->op, niveauArbre);
+    } 
+}
+
+
+char* recupEtiquette(short op){
+    switch(op){
+        case 1 : return "NE";
+        case 2 : return "EQ";
+        case 3 : return "LT";
+        case 4 : return "LE";
+        case 5 : return "GT";
+        case 6 : return "GE";
+        case 7 : return "EADD";
+        case 8 : return "ESUB";
+        case 9 : return "EMUL";
+        case 10 : return "EQUOT";
+        case 11 : return "EREST";
+        case 12 : return "EAND";
+        case 13 : return "EAFF";
+        case 14 : return "EDOT";
+        case 15 : return "EEXTND";
+        case 16 : return "ETHIS";
+        case 17 : return "ERETURN";
+        case 18 : return "CSTE";
+        case 19 : return "CSTR";
+        case 20 : return "ID";
+        case 21 : return "ECLASS";
+        case 22 : return "CAST";
+        case 23 : return "ITE";
+        case 24 : return "LCHAMP";
+        case 25 : return "LARG";
+        case 26 : return "LPARAM";
+        case 27 : return "LMETH";
+        case 28 : return "LINST";
+        case 29 : return "LCLASS";
+        case 30 : return "MSG";
+        case 31 : return "EBLOC";
+        case 32 : return "ENEW";
+        default : return "ERREUR";
+    }   
+    
+}
 
 
 

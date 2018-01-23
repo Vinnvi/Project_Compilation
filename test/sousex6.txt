@@ -1,50 +1,6 @@
 { /* Bloc qui correspond au programme principal */
   var p1: Point := new Point(1, 5, "p1");
-  var p2: Point := new Point(2, 3, "p2");
-  var p3 : Point := new Point(); /* utilise toutes les valeurs par defaut */
-  /* Incorrect: les types ne sont pas consideres quand on decide s'il faut
-   * utiliser les valeurs par defaut. Si on donne un argument, ca doit
-   * forcement correspondre au premier parametre, etc. Ci-dessous, on ne
-   * peut pas omettre les coordonnees et ne passer que la couleur !
-   * var err : PointColore := new PointColore(new Couleur(25));
-   */
-  var o : PointColore := new PointColore(0, 0, (new Couleur(0)).blanc());
-  var pn : PointNoir := new PointNoir(+1, -1);
-  /* Incorrect: le constructeur de PointNoir n'est pas une redefinition
-   * du constructeur de PointColore ou de Point. Il ne beneficie donc
-   * pas de valeurs par defaut pour ses arguments (masi on aurait pu en
-   * prevoir dans sa definition)
-   * var pn2 : PointNoir := new PointNoir();
-   */
-  var dp : DefaultPoint := new DefaultPoint();
 is
   p2.move(p1.getx(), p1.gety());
-  o.setName("origine");
-  p2.move(p1.getx()-2*5-3, p1.gety());
-  o.print();
-  p2.print();
-  o.clone().print();
-  o.clone().move(54, 36).print(true);
-  O.allClones();
-  /* Ne doit pas compiler car clone() renvoie statiquement un Point alors
-   * que o est declare comme PointColore
-   * o := o.clone();
-   */
-  p1 := p1.clone().move(+2, -3);
-  p1.print();
-  o.clone().print();
-  "test(Point, PointColore, PointNoir)".println();
-  unTest.test(p1, o, pn);
-  "test(PointNoir, PointNoir, PointNoir)".println();
-  unTest.test(pn, pn, pn);
-  p1 := pn; /* affectation entre pointeurs ! */
-  unTest.test2(o);
-  unTest.test2(pn);
-  o := pn;  /* Idem : on doit avoir de la liaison dynamique ci-dessous */
 
-  "test(PointNoir, PointNoir, PointNoir)".println();
-  unTest.test(p1, o, pn);
-  unTest.test2(o);
-  unTest.test2(pn);
-  "\nDone".println();
 }

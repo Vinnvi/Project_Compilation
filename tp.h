@@ -198,8 +198,8 @@ VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
 objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes);
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP);
 
-
-
+char* recupEtiquette(short op);
+void affichageArbre(TreeP tree,int niveauArbre);
 
 
 
