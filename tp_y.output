@@ -171,9 +171,9 @@ AND (277) 34
 Id (278) 44 45 54 57 80 85 90
 ClassId (279) 8 38 39 44 46 54 57 64 79 84 90
 Cstr (280) 82
-Cste (281) 71
-RelOp (282) 28
-THIS (283) 73 74 75
+THIS (281) 73 74 75
+Cste (282) 71
+RelOp (283) 28
 
 
 Nonterminals, with rules where they appear
@@ -386,8 +386,8 @@ State 12
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 16 (ListInstructionsOpt)
@@ -463,8 +463,8 @@ State 18
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -493,8 +493,8 @@ State 20
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -516,8 +516,8 @@ State 21
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -563,13 +563,6 @@ State 25
 
 State 26
 
-   71 ArgumentOuCible: Cste .
-
-    $default  reduce using rule 71 (ArgumentOuCible)
-
-
-State 27
-
    73 ThisSelect: THIS . DOT ListSelection
    74           | THIS . DOT Selection
    75           | THIS .
@@ -577,6 +570,13 @@ State 27
     DOT  shift, and go to state 60
 
     $default  reduce using rule 75 (ThisSelect)
+
+
+State 27
+
+   71 ArgumentOuCible: Cste .
+
+    $default  reduce using rule 71 (ArgumentOuCible)
 
 
 State 28
@@ -590,8 +590,8 @@ State 28
     Id       shift, and go to state 23
     ClassId  shift, and go to state 61
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 62
@@ -633,8 +633,8 @@ State 31
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 18 (ListInstructions)
@@ -930,8 +930,8 @@ State 59
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 66 (ListArgumentsOpt)
@@ -977,8 +977,8 @@ State 61
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 79 (SelWithClassID)
@@ -1032,8 +1032,8 @@ State 66
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1055,8 +1055,8 @@ State 67
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1078,8 +1078,8 @@ State 68
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1101,8 +1101,8 @@ State 69
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1124,8 +1124,8 @@ State 70
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1147,8 +1147,8 @@ State 71
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1170,8 +1170,8 @@ State 72
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Valeur           go to state 33
@@ -1194,8 +1194,8 @@ State 73
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 100
@@ -1234,8 +1234,8 @@ State 75
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     ListInstructions  go to state 102
@@ -1349,8 +1349,8 @@ State 84
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '{'      shift, and go to state 12
     '('      shift, and go to state 28
 
@@ -1379,8 +1379,8 @@ State 85
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 66 (ListArgumentsOpt)
@@ -1751,8 +1751,8 @@ State 121
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 86
@@ -1866,8 +1866,8 @@ State 134
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 144
@@ -1901,8 +1901,8 @@ State 136
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '{'      shift, and go to state 12
     '('      shift, and go to state 28
 
@@ -1945,8 +1945,8 @@ State 139
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     $default  reduce using rule 66 (ListArgumentsOpt)
@@ -1989,8 +1989,8 @@ State 142
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 150
@@ -2186,8 +2186,8 @@ State 162
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     Expression       go to state 165
@@ -2216,8 +2216,8 @@ State 163
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     ListInstructions  go to state 166
@@ -2283,8 +2283,8 @@ State 169
     Id       shift, and go to state 23
     ClassId  shift, and go to state 24
     Cstr     shift, and go to state 25
-    Cste     shift, and go to state 26
-    THIS     shift, and go to state 27
+    THIS     shift, and go to state 26
+    Cste     shift, and go to state 27
     '('      shift, and go to state 28
 
     ListInstructions  go to state 170

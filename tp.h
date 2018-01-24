@@ -63,6 +63,17 @@ typedef unsigned char bool;
 #define MSG 30
 #define EBLOC 31
 #define ENEW 32
+#define OVER 33
+#define CHMP 34
+#define EEXPR 35
+#define ESEL 36
+#define EARG 37
+#define EVAR 38
+#define EPAR 39
+#define EMETHOD 40
+#define EOBJ 41
+#define EPROG 42
+#define LSEL 43
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -192,7 +203,7 @@ TreeP makeLeafInt(short op, int val);
 TreeP makeLeafStr(short op, char *str);
 
 
-void lancerCompilation(TreeP def, TreeP arbre);
+/*void lancerCompilation(TreeP def, TreeP arbre);*/
 classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP);
 VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
 objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes);

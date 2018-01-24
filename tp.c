@@ -127,7 +127,6 @@ void yyerror(char *ignore) {
  * pas directement. Elle ne fait qu'allouer, sans remplir les champs
  */
 TreeP makeNode(int nbChildren, short op) {
-  printf("%d\n",nbChildren); 
   TreeP tree = NEW(1, Tree);
   tree->op = op;
   tree->nbChildren = nbChildren;
@@ -197,13 +196,9 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
   return(tree);
 }
 
-void lancerCompilation(TreeP def, TreeP arbre){
-    /*TODO
-    */
-   /*classes = classe;*/
-   affichageArbre(arbre,0);
+/*void lancerCompilation(TreeP root){
    
-}
+}*/
 
 /* les P à la fin des paramètres c'est P comme "Paramètre" et pas Pointeur. (my bad) */
 classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, /*TreeP ou Method?*/TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP){
@@ -259,10 +254,11 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
 void affichageArbre(TreeP tree,int niveauArbre){
     
     int i,j = 0;
+    printf("Je possede %d enfants\n",tree->nbChildren); 
     if(tree == NULL){
         printf("NIL");
     }       
-    else if(tree->nbChildren > 0 && niveauArbre<2){
+    else if(tree->nbChildren > 0 && niveauArbre<4){
         for (i=0;i<=tree->nbChildren;i++) {
             for (j=0;j<niveauArbre+1;j++)
                 printf("\t");
