@@ -29,6 +29,12 @@ int errorCode = NO_ERROR; /* defini dans tp.h */
 
 FILE *out; /* fichier de sortie pour le code engendre */
 
+classeP classes = NIL(classe); /* liste des classes*/
+objectP objets = NIL(object); /*liste des objets */
+
+/* classes predefinies int str et void */
+classeP cInteger,cString, cVoid;
+int taille=0;
 
 int main(int argc, char **argv) {
   int fi;
@@ -199,7 +205,15 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
 }
 
 void lancerCompilation(TreeP root){
-	affichageArbre(root,0);   
+	affichageArbre(root,0);
+    
+    /* definition des classes prefinies*/
+    cInteger = makeClass("Integer",NULL,NULL,NULL,NULL,NULL);
+    cVoid = makeClass("Void",NULL,NULL,NULL,NULL,NULL);
+    cString = makeClass("String",NULL,NULL,NULL,NULL,NULL);
+    printf("hello");   
+    affichageClasses();
+    affichageObjets();
 }
 
 /* les P à la fin des paramètres c'est P comme "Paramètre" et pas Pointeur. (my bad) */
@@ -210,9 +224,11 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP sup
 	/*nouvClasse->constructeur = constructeurP;*/
 	nouvClasse->attributs = attributsP; 
 	nouvClasse->parametres = parametresP;
+    nouvClasse->super = superP; /*a refaire*/
 	/*nouvClasse->super = superP; TODO ici le traitement à faire est autre : il faut lire le nom de la classe qui est extended et chercher le pointeur vers la classe correspondant */
 	
 	nouvClasse->next = NIL(classe);
+    addClasse(nouvClasse);
 	return nouvClasse;
 } 
 
@@ -247,9 +263,10 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     objectP nouvObjet = NEW(1, object);
     nouvObjet->name = name;
     nouvObjet->lmethodes = lmethodes;
-    nouvObjet->attributs = attributs;
-    
+    nouvObjet->attributs = attributs;    
     nouvObjet->next = NIL(object);
+    
+    addObjet(nouvObjet);
     return nouvObjet;
 }
 
@@ -325,9 +342,38 @@ char* recupEtiquette(short op){
     
 }
 
+void addClasse(classeP c){
+    c->next = classes;
+    classes = c;
+}
+
+void addObjet(objectP o){
+    o->next = objets;
+    objets = o;
+}
 
 
+void affichageClasses(){
+    classeP listClass = NEW(1, classe);
+    listClass = classes;
+    printf("\n ---Liste des classes--- \n");
+    while(listClass != NIL(classe)){
+        printf("%s\n",listClass->name);
+        printf("affichage tree\n");
+        affichageArbre(listClass->super,0);
+        listClass = listClass->next;
+    }
+}
 
+void affichageObjets(){
+    objectP listClass = NEW(1, object);
+    listClass = objets;
+    printf("\n ---Liste des objets--- \n");
+    while(listClass != NIL(object)){
+        printf("%s\n",listClass->name);
+        listClass = listClass->next;
+    }
+}
 
 
 

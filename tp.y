@@ -28,7 +28,7 @@ extern void yyerror(char *);
 %}
 
 %%
-Programme : DefClasseObjetOpt Bloc { $$ = makeTree(EPROG, 2, $1, $2); affichageArbre($$, 0); }
+Programme : DefClasseObjetOpt Bloc { $$ = makeTree(EPROG, 2, $1, $2); lancerCompilation($$); }
 ;
 
 DefClasseObjetOpt : DefClasseObjet   {$$ = $1;}
@@ -43,7 +43,7 @@ ObjetouClasse : Objet   {$$ = $1;}
 | Classe                {$$ = $1;}
 ;
 
-Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}' {$$ = makeTree(EOBJ, 3, makeLeafStr(EIDCLASS, $2),$5,$6); }
+Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}' {$$ = makeTree(EOBJ, 3, makeLeafStr(EIDCLASS, $2),$5,$6); makeObjet($2,NULL,NULL); }
 ;
 
 BlocOpt : Bloc  {$$ = $1;}
@@ -98,7 +98,7 @@ Operation : Operation RelOp Operation           {$$ = makeTree(yylval.C, 2, $1, 
 Instanciation: NEW ClassId '(' ListArgumentsOpt ')' {$$ = makeTree(ENEW, 2, makeLeafStr(EIDCLASS, $2), $4);}
 ;
 
-Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS '{'ListChampOpt ListMethodeOpt'}' { $$ = makeTree(ECLASS, 6, makeLeafStr(EIDCLASS, $2), $4, $6, $7, $10, $11); } 
+Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS '{'ListChampOpt ListMethodeOpt'}' { $$ = makeTree(ECLASS, 6, makeLeafStr(EIDCLASS, $2), $4, $6, $7, $10, $11); makeClass($2,NULL,$6,NULL,NULL,NULL);} 
 ;
 
 ListMethodeOpt : ListMethode    {$$ = makeTree(LMETH, 1, $1);}

@@ -146,7 +146,7 @@ struct _Classe{
      TreeP constructeur;
      VarDeclP attributs; /*Attributs de la classe*/
      VarDeclP parametres; /* liste des parametres de la classe */
-	 struct _Classe *super; /*classe mere*/
+	 TreeP super; /*classe mere*/
 	 struct _Classe *next; /*Pour chainer les classes*/
 };
 
@@ -209,12 +209,14 @@ VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
 objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes);
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP);
 
+
+void lancerCompilation(TreeP root);
 char* recupEtiquette(short op);
 void affichageArbre(TreeP tree,int niveauArbre);
-
-
-
-
+void addClasse(classeP c);
+void affichageClasses();
+void addObjet(objectP o);
+void affichageObjets();
 
 
 

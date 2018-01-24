@@ -1362,7 +1362,7 @@ yyreduce:
     {
         case 2:
 #line 31 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EPROG, 2, (yyvsp[-1].pT), (yyvsp[0].pT)); affichageArbre((yyval.pT), 0); }
+    { (yyval.pT) = makeTree(EPROG, 2, (yyvsp[-1].pT), (yyvsp[0].pT)); lancerCompilation((yyval.pT)); }
 #line 1367 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1404,7 +1404,7 @@ yyreduce:
 
   case 9:
 #line 46 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(EOBJ, 3, makeLeafStr(EIDCLASS, (yyvsp[-5].S)),(yyvsp[-2].pT),(yyvsp[-1].pT)); }
+    {(yyval.pT) = makeTree(EOBJ, 3, makeLeafStr(EIDCLASS, (yyvsp[-5].S)),(yyvsp[-2].pT),(yyvsp[-1].pT)); makeObjet((yyvsp[-5].S),NULL,NULL); }
 #line 1409 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1590,7 +1590,7 @@ yyreduce:
 
   case 40:
 #line 101 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(ECLASS, 6, makeLeafStr(EIDCLASS, (yyvsp[-10].S)), (yyvsp[-8].pT), (yyvsp[-6].pT), (yyvsp[-5].pT), (yyvsp[-2].pT), (yyvsp[-1].pT)); }
+    { (yyval.pT) = makeTree(ECLASS, 6, makeLeafStr(EIDCLASS, (yyvsp[-10].S)), (yyvsp[-8].pT), (yyvsp[-6].pT), (yyvsp[-5].pT), (yyvsp[-2].pT), (yyvsp[-1].pT)); makeClass((yyvsp[-10].S),NULL,(yyvsp[-6].pT),NULL,NULL,NULL);}
 #line 1595 "tp_y.c" /* yacc.c:1646  */
     break;
 
