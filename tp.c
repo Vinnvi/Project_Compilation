@@ -127,11 +127,13 @@ void yyerror(char *ignore) {
  * pas directement. Elle ne fait qu'allouer, sans remplir les champs
  */
 TreeP makeNode(int nbChildren, short op) {
+  printf("Je possede %d enfant, eti : %hi nameEti : %s \n",nbChildren, op,recupEtiquette(op));
   TreeP tree = NEW(1, Tree);
   tree->op = op;
   tree->nbChildren = nbChildren;
   tree->u.children = nbChildren > 0 ? NEW(nbChildren, TreeP) : NIL(TreeP);
   return(tree);
+
 }
 
 
@@ -196,9 +198,9 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
   return(tree);
 }
 
-/*void lancerCompilation(TreeP root){
-   
-}*/
+void lancerCompilation(TreeP root){
+	affichageArbre(root,0);   
+}
 
 /* les P à la fin des paramètres c'est P comme "Paramètre" et pas Pointeur. (my bad) */
 classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, /*TreeP ou Method?*/TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP){
@@ -254,21 +256,21 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
 void affichageArbre(TreeP tree,int niveauArbre){
     
     int i,j = 0;
-    printf("Je possede %d enfants\n",tree->nbChildren); 
-    if(tree == NULL){
-        printf("NIL");
+    if(tree == NIL(Tree)){
+        printf("NIL\n");
     }       
-    else if(tree->nbChildren > 0 && niveauArbre<4){
-        for (i=0;i<=tree->nbChildren;i++) {
-            for (j=0;j<niveauArbre+1;j++)
-                printf("\t");
-            if(tree->u.children[i] != NULL)
-                affichageArbre(tree->u.children[i],niveauArbre+1);
+    else if(tree->nbChildren > 0 ){
+        printf("%s(%hi):%d:(nbchildren=%d)\n", recupEtiquette(tree->op),tree->op,niveauArbre,tree->nbChildren);
+        for (i=0;i<tree->nbChildren;i++) {
+            for (j=0;j<niveauArbre;j++)
+                printf("__");
+            affichageArbre(tree->u.children[i],niveauArbre+1);
         }          
     }
     else{  
-        printf("%hi:%d\n",tree->op, niveauArbre);
+        printf("%s(%hi):%d\n", recupEtiquette(tree->op),tree->op, niveauArbre);
     } 
+
 }
 
 
@@ -293,7 +295,7 @@ char* recupEtiquette(short op){
         case 17 : return "ERETURN";
         case 18 : return "CSTE";
         case 19 : return "CSTR";
-        case 20 : return "ID";
+        case 20 : return "EID";
         case 21 : return "ECLASS";
         case 22 : return "CAST";
         case 23 : return "ITE";
@@ -306,6 +308,18 @@ char* recupEtiquette(short op){
         case 30 : return "MSG";
         case 31 : return "EBLOC";
         case 32 : return "ENEW";
+        case 33 : return "over";
+        case 34 : return "CHMP";
+        case 35 : return "EEXPR";
+        case 36 : return "ESEL";
+        case 37 : return "EARG";
+        case 38 : return "EVAR";
+        case 39 : return "EPAR";
+        case 40 : return "EMETHOD";
+        case 41 : return "EOBJ";
+        case 42 : return "EPROG";
+        case 43 : return "LSEL";
+        case 44 : return "EIDCLASS";
         default : return "ERREUR";
     }   
     

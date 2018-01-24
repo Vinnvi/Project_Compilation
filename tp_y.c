@@ -1362,7 +1362,7 @@ yyreduce:
     {
         case 2:
 #line 31 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EPROG, 2, (yyvsp[-1].pT), (yyvsp[0].pT)); /*affichageArbre($$, 0);*/ }
+    { (yyval.pT) = makeTree(EPROG, 2, (yyvsp[-1].pT), (yyvsp[0].pT)); affichageArbre((yyval.pT), 0); }
 #line 1367 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1404,7 +1404,7 @@ yyreduce:
 
   case 9:
 #line 46 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(EOBJ, 3, (yyvsp[-5].S),(yyvsp[-2].pT),(yyvsp[-1].pT)); }
+    {(yyval.pT) = makeTree(EOBJ, 3, makeLeafStr(EIDCLASS, (yyvsp[-5].S)),(yyvsp[-2].pT),(yyvsp[-1].pT)); }
 #line 1409 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1584,13 +1584,13 @@ yyreduce:
 
   case 39:
 #line 98 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(ENEW, 2, (yyvsp[-3].S), (yyvsp[-1].pT));}
+    {(yyval.pT) = makeTree(ENEW, 2, makeLeafStr(EIDCLASS, (yyvsp[-3].S)), (yyvsp[-1].pT));}
 #line 1589 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 40:
 #line 101 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(ECLASS, 6, (yyvsp[-10].S), (yyvsp[-8].pT), (yyvsp[-6].pT), (yyvsp[-5].pT), (yyvsp[-2].pT), (yyvsp[-1].pT)); }
+    { (yyval.pT) = makeTree(ECLASS, 6, makeLeafStr(EIDCLASS, (yyvsp[-10].S)), (yyvsp[-8].pT), (yyvsp[-6].pT), (yyvsp[-5].pT), (yyvsp[-2].pT), (yyvsp[-1].pT)); }
 #line 1595 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1620,19 +1620,19 @@ yyreduce:
 
   case 45:
 #line 112 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EMETHOD, 5, (yyvsp[-9].pT), (yyvsp[-7].S), (yyvsp[-5].pT), (yyvsp[-2].S), (yyvsp[0].pT)); }
+    { (yyval.pT) = makeTree(EMETHOD, 5, (yyvsp[-9].pT), makeLeafStr(EID, (yyvsp[-7].S)), (yyvsp[-5].pT), makeLeafStr(EIDCLASS, (yyvsp[-2].S)), (yyvsp[0].pT)); }
 #line 1625 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 46:
 #line 113 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EMETHOD, 5, (yyvsp[-8].pT), (yyvsp[-6].S), (yyvsp[-4].pT), (yyvsp[-2].pT), (yyvsp[0].pT)); }
+    { (yyval.pT) = makeTree(EMETHOD, 5, (yyvsp[-8].pT), makeLeafStr(EID, (yyvsp[-6].S)), (yyvsp[-4].pT), (yyvsp[-2].pT), (yyvsp[0].pT)); }
 #line 1631 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 47:
 #line 116 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeLeafStr(ECLASS, (yyvsp[0].S));}
+    {(yyval.pT) = makeLeafStr(EIDCLASS, (yyvsp[0].S));}
 #line 1637 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1680,7 +1680,7 @@ yyreduce:
 
   case 55:
 #line 130 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(EPAR, 3, (yyvsp[-3].pT), (yyvsp[-2].S), (yyvsp[0].S));}
+    {(yyval.pT) = makeTree(EPAR, 3, (yyvsp[-3].pT), makeLeafStr(EID, (yyvsp[-2].S)), makeLeafStr(EIDCLASS, (yyvsp[0].S)));}
 #line 1685 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1698,7 +1698,7 @@ yyreduce:
 
   case 58:
 #line 137 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(EPAR, 4, (yyvsp[-5].pT), (yyvsp[-4].S), (yyvsp[-2].S), (yyvsp[0].pT));}
+    {(yyval.pT) = makeTree(EPAR, 4, (yyvsp[-5].pT), makeLeafStr(EID, (yyvsp[-4].S)), makeLeafStr(EIDCLASS, (yyvsp[-2].S)), (yyvsp[0].pT));}
 #line 1703 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1740,7 +1740,7 @@ yyreduce:
 
   case 65:
 #line 151 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EEXTND, 2, makeLeafStr(ID, (yyvsp[-3].S)), (yyvsp[-1].pT)); }
+    { (yyval.pT) = makeTree(EEXTND, 2, makeLeafStr(EIDCLASS, (yyvsp[-3].S)), (yyvsp[-1].pT)); }
 #line 1745 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1794,13 +1794,13 @@ yyreduce:
 
   case 74:
 #line 166 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EDOT, 2, (yyvsp[-2].S), (yyvsp[0].pT)); }
+    { (yyval.pT) = makeTree(EDOT, 2, makeLeafStr(ETHIS, "this"), (yyvsp[0].pT)); }
 #line 1799 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 75:
 #line 167 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EDOT, 2, (yyvsp[-2].S), (yyvsp[0].pT)); }
+    { (yyval.pT) = makeTree(EDOT, 2, makeLeafStr(ETHIS, "this"), (yyvsp[0].pT)); }
 #line 1805 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1830,13 +1830,13 @@ yyreduce:
 
   case 80:
 #line 176 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeLeafStr(CLASS, (yyvsp[0].S));}
+    {(yyval.pT) = makeLeafStr(EIDCLASS, (yyvsp[0].S));}
 #line 1835 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 81:
 #line 179 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeLeafStr(ID, (yyvsp[0].S));}
+    {(yyval.pT) = makeLeafStr(EID, (yyvsp[0].S));}
 #line 1841 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1860,13 +1860,13 @@ yyreduce:
 
   case 85:
 #line 183 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(CAST, 2, (yyvsp[-2].S), (yyvsp[-1].pT));}
+    {(yyval.pT) = makeTree(CAST, 2, makeLeafStr(EIDCLASS, (yyvsp[-2].S)), (yyvsp[-1].pT));}
 #line 1865 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 86:
 #line 186 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(MSG, 2, (yyvsp[-3].S), (yyvsp[-1].pT));}
+    {(yyval.pT) = makeTree(MSG, 2, makeLeafStr(EID, (yyvsp[-3].S)), (yyvsp[-1].pT));}
 #line 1871 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1896,7 +1896,7 @@ yyreduce:
 
   case 91:
 #line 197 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(CHMP, 3, (yyvsp[-4].S), (yyvsp[-2].S), (yyvsp[-1].pT));}
+    {(yyval.pT) = makeTree(CHMP, 3, makeLeafStr(EID, (yyvsp[-4].S)), makeLeafStr(EIDCLASS, (yyvsp[-2].S)), (yyvsp[-1].pT));}
 #line 1901 "tp_y.c" /* yacc.c:1646  */
     break;
 

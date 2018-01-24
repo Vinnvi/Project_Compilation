@@ -28,7 +28,7 @@ extern void yyerror(char *);
 %}
 
 %%
-Programme : DefClasseObjetOpt Bloc { $$ = makeTree(EPROG, 2, $1, $2); /*affichageArbre($$, 0);*/ }
+Programme : DefClasseObjetOpt Bloc { $$ = makeTree(EPROG, 2, $1, $2); affichageArbre($$, 0); }
 ;
 
 DefClasseObjetOpt : DefClasseObjet   {$$ = $1;}
@@ -43,7 +43,7 @@ ObjetouClasse : Objet   {$$ = $1;}
 | Classe                {$$ = $1;}
 ;
 
-Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}' {$$ = makeTree(EOBJ, 3, $2,$5,$6); }
+Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}' {$$ = makeTree(EOBJ, 3, makeLeafStr(EIDCLASS, $2),$5,$6); }
 ;
 
 BlocOpt : Bloc  {$$ = $1;}
@@ -95,10 +95,10 @@ Operation : Operation RelOp Operation           {$$ = makeTree(yylval.C, 2, $1, 
 | Valeur                                        {$$ = $1;}
 ;
 
-Instanciation: NEW ClassId '(' ListArgumentsOpt ')' {$$ = makeTree(ENEW, 2, $2, $4);}
+Instanciation: NEW ClassId '(' ListArgumentsOpt ')' {$$ = makeTree(ENEW, 2, makeLeafStr(EIDCLASS, $2), $4);}
 ;
 
-Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS '{'ListChampOpt ListMethodeOpt'}' { $$ = makeTree(ECLASS, 6, $2, $4, $6, $7, $10, $11); } 
+Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS '{'ListChampOpt ListMethodeOpt'}' { $$ = makeTree(ECLASS, 6, makeLeafStr(EIDCLASS, $2), $4, $6, $7, $10, $11); } 
 ;
 
 ListMethodeOpt : ListMethode    {$$ = makeTree(LMETH, 1, $1);}
@@ -109,11 +109,11 @@ ListMethode : Methode ListMethode   {$$ = makeTree(LMETH, 2, $1, $2);}
 | Methode                           {$$ = makeTree(LMETH, 1, $1);}
 ;
 
-Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression  { $$ = makeTree(EMETHOD, 5, $1, $3, $5, $8, $10); }
-|  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS BlocNonVide        { $$ = makeTree(EMETHOD, 5, $1, $3, $5, $7, $9); }
+Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression  { $$ = makeTree(EMETHOD, 5, $1, makeLeafStr(EID, $3), $5, makeLeafStr(EIDCLASS, $8), $10); }
+|  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS BlocNonVide        { $$ = makeTree(EMETHOD, 5, $1, makeLeafStr(EID, $3), $5, $7, $9); }
 ;
 
-NomClasseOpt : ':' ClassId  {$$ = makeLeafStr(ECLASS, $2);}
+NomClasseOpt : ':' ClassId  {$$ = makeLeafStr(EIDCLASS, $2);}
 |                           {$$ = NIL(Tree);}
 ;
 
@@ -127,14 +127,14 @@ ListParametres : Parametre ',' ListParametres       {$$ = makeTree(LPARAM, 2, $1
 | Parametre                                         {$$ = makeTree(LPARAM, 1, $1);}
 ;
 
-Parametre : VarOpt Id ':' ClassId {$$ = makeTree(EPAR, 3, $1, $2, $4);}
+Parametre : VarOpt Id ':' ClassId {$$ = makeTree(EPAR, 3, $1, makeLeafStr(EID, $2), makeLeafStr(EIDCLASS, $4));}
 ;
 
 ListParametresDef : ParametreDef',' ListParametresDef   {$$ = makeTree(LPARAM, 2, $1, $3);}
 | ParametreDef                                          {$$ = makeTree(LPARAM, 1, $1);}
 ;
 
-ParametreDef : VarOpt Id ':' ClassId AFF Expression     {$$ = makeTree(EPAR, 4, $1, $2, $4, $6);}
+ParametreDef : VarOpt Id ':' ClassId AFF Expression     {$$ = makeTree(EPAR, 4, $1, makeLeafStr(EID, $2), makeLeafStr(EIDCLASS, $4), $6);}
 ;
 
 VarOpt: VAR     {$$ = makeLeafStr(EVAR, "var");}
@@ -148,7 +148,7 @@ DeclExpressionOpt : AFF Expression      {$$ = makeTree(EAFF, 1, $2);}
 ExtendsOpt : Extends    {$$ = makeTree(EEXTND, 1, $1);}
 |                       {$$ = NIL(Tree);}
 ;
-Extends: EXTENDS ClassId '(' ListArgumentsOpt ')' { $$ = makeTree(EEXTND, 2, makeLeafStr(ID, $2), $4); }
+Extends: EXTENDS ClassId '(' ListArgumentsOpt ')' { $$ = makeTree(EEXTND, 2, makeLeafStr(EIDCLASS, $2), $4); }
 ;
 
 ListArgumentsOpt : ListArguments    {$$ = makeTree(LARG, 1, $1);}
@@ -163,8 +163,8 @@ ArgumentOuCible: ListSelection  {$$ = makeTree(EARG, 1, $1);}
 | Selection                     {$$ = makeTree(EARG, 1, $1);}
 ;
 
-ThisSelect : THIS DOT ListSelection             { $$ = makeTree(EDOT, 2, $1, $3); }
-| THIS DOT Selection                            { $$ = makeTree(EDOT, 2, $1, $3); }                            
+ThisSelect : THIS DOT ListSelection             { $$ = makeTree(EDOT, 2, makeLeafStr(ETHIS, "this"), $3); }
+| THIS DOT Selection                            { $$ = makeTree(EDOT, 2, makeLeafStr(ETHIS, "this"), $3); }                            
 | THIS                                          { $$ = makeLeafStr(ETHIS, "this"); }
 ;
 
@@ -173,17 +173,17 @@ ListSelection : SelWithClassID DOT Selection    {$$ = makeTree(EDOT, 2, $1, $3);
 
 SelWithClassID : ListSelection      {$$ = makeTree(LSEL, 1, $1);}
 | Selection                         {$$ = makeTree(LSEL, 1, $1);}
-| ClassId                           {$$ = makeLeafStr(CLASS, $1);}
+| ClassId                           {$$ = makeLeafStr(EIDCLASS, $1);}
 ;
 
-Selection : Id                  {$$ = makeLeafStr(ID, $1);}
+Selection : Id                  {$$ = makeLeafStr(EID, $1);}
 | Message                       {$$ = makeTree(ESEL, 1, $1);}
 | Cstr                          {$$ = makeLeafStr(CSTR, $1);}
 | '('Expression')'              {$$ = makeTree(ESEL, 1, $2);}
-| '(' ClassId Expression ')'    {$$ = makeTree(CAST, 2, $2, $3);}
+| '(' ClassId Expression ')'    {$$ = makeTree(CAST, 2, makeLeafStr(EIDCLASS, $2), $3);}
 ;
 
-Message : Id '('ListArgumentsOpt')' {$$ = makeTree(MSG, 2, $1, $3);}
+Message : Id '('ListArgumentsOpt')' {$$ = makeTree(MSG, 2, makeLeafStr(EID, $1), $3);}
 ;
 
 ListChampOpt : ListChamp    {$$ = makeTree(LCHAMP, 1, $1);}
@@ -194,7 +194,7 @@ ListChamp : Champ ListChamp     {$$ = makeTree(LCHAMP, 2, $1, $2);}
 | Champ                         {$$ = makeTree(LCHAMP, 1, $1);}
 ;
 
-Champ : VAR Id ':' ClassId DeclExpressionOpt';' {$$ = makeTree(CHMP, 3, $2, $4, $5);}
+Champ : VAR Id ':' ClassId DeclExpressionOpt';' {$$ = makeTree(CHMP, 3, makeLeafStr(EID, $2), makeLeafStr(EIDCLASS, $4), $5);}
 ;
 
 OverrideOpt : OVERRIDE      {$$ = makeLeafStr(OVER, "override");}

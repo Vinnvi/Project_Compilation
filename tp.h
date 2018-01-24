@@ -46,14 +46,13 @@ typedef unsigned char bool;
 
 #define CSTE 	18
 #define CSTR 	19
-#define ID 	    20
+#define EID      20
 #define ECLASS  21
 /* faire des étiquettes genre TYPE? CAST? et y attribuer des règles genre QQCHS -> Id dans le cas où on fait des casts ou ce genre de choses*/
 
 
 #define CAST 22
 #define ITE 23
-
 #define LCHAMP 24
 #define LARG 25
 #define LPARAM 26
@@ -74,6 +73,7 @@ typedef unsigned char bool;
 #define EOBJ 41
 #define EPROG 42
 #define LSEL 43
+#define EIDCLASS 44
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
