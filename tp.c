@@ -133,7 +133,6 @@ void yyerror(char *ignore) {
  * pas directement. Elle ne fait qu'allouer, sans remplir les champs
  */
 TreeP makeNode(int nbChildren, short op) {
-  printf("Je possede %d enfant, eti : %hi nameEti : %s \n",nbChildren, op,recupEtiquette(op));
   TreeP tree = NEW(1, Tree);
   tree->op = op;
   tree->nbChildren = nbChildren;
@@ -205,7 +204,7 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
 }
 
 void lancerCompilation(TreeP root){
-	affichageArbre(root,0);
+	/*affichageArbre(root,0);*/
     
     /* definition des classes prefinies*/
     cInteger = makeClass("Integer",NULL,NULL,NULL,NULL,NULL);
@@ -217,17 +216,15 @@ void lancerCompilation(TreeP root){
 }
 
 /* les P à la fin des paramètres c'est P comme "Paramètre" et pas Pointeur. (my bad) */
-classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, /*TreeP ou Method?*/TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP){
+classeP makeClass(char* nameP,  VarDeclP parametresP,TreeP superP, /*TreeP ou Method?*/TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP){
 	classeP nouvClasse = NEW(1, classe);
 	nouvClasse->name = nameP;
 	nouvClasse->lmethodes = lmethodesP; 
 	/*nouvClasse->constructeur = constructeurP;*/
 	nouvClasse->attributs = attributsP; 
 	nouvClasse->parametres = parametresP;
-    nouvClasse->super = superP; /*a refaire*/
-	/*nouvClasse->super = superP; TODO ici le traitement à faire est autre : il faut lire le nom de la classe qui est extended et chercher le pointeur vers la classe correspondant */
-	
-	nouvClasse->next = NIL(classe);
+    nouvClasse->super = getClasseMere(superP); /*A poursuivre*/
+	/*nouvClasse->next = NIL(classe);*/
     addClasse(nouvClasse);
 	return nouvClasse;
 } 
@@ -358,9 +355,10 @@ void affichageClasses(){
     listClass = classes;
     printf("\n ---Liste des classes--- \n");
     while(listClass != NIL(classe)){
-        printf("%s\n",listClass->name);
-        printf("affichage tree\n");
-        affichageArbre(listClass->super,0);
+        printf("Nom de classe : %s ",listClass->name);
+        if(listClass->super != NULL){
+            printf("Classe mere : %s\n",listClass->super->name);
+        }
         listClass = listClass->next;
     }
 }
@@ -370,9 +368,58 @@ void affichageObjets(){
     listClass = objets;
     printf("\n ---Liste des objets--- \n");
     while(listClass != NIL(object)){
-        printf("%s\n",listClass->name);
         listClass = listClass->next;
     }
+    
+}
+
+
+/* A partir du Tree P de la classe, avoir le pointeur de la classe mere*/
+classeP getClasseMere(TreeP tree){
+    char* res = NULL;    
+    int i,indice = 0;
+    
+    if(tree == NIL(Tree)){
+        res = NULL;
+    }       
+    else{
+        TreeP arbre [5];
+        arbre[0] = tree;
+        while(1){
+            if(strcmp(recupEtiquette(arbre[indice]->op),"EIDCLASS") == 0 ){
+                res = arbre[indice]->u.str;
+                break;
+            }
+            else{
+                for (i=0;i<arbre[indice]->nbChildren;i++){
+                    arbre[indice+(i+1)] = arbre[indice]->u.children[i];
+                }
+                indice++;
+            }  
+        }
+    }
+
+    classeP c = getPointeurClasse(res);
+    return c;
+
+    
+}
+
+classeP getPointeurClasse(char* s){
+    classeP listClass = NEW(1, classe);
+    listClass = classes;
+    if(s == NULL){
+        return NULL;
+    }
+    while(listClass != NIL(classe)){
+        if(strcmp(listClass->name,s)==0){
+            return listClass;
+        }
+        else{
+            listClass = listClass->next;
+        }
+    }
+    return NULL;
 }
 
 

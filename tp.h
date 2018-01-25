@@ -146,7 +146,7 @@ struct _Classe{
      TreeP constructeur;
      VarDeclP attributs; /*Attributs de la classe*/
      VarDeclP parametres; /* liste des parametres de la classe */
-	 TreeP super; /*classe mere*/
+	 classeP super; /*classe mere*/
 	 struct _Classe *next; /*Pour chainer les classes*/
 };
 
@@ -204,7 +204,7 @@ TreeP makeLeafStr(short op, char *str);
 
 
 /*void lancerCompilation(TreeP def, TreeP arbre);*/
-classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP);
+classeP makeClass(char* nameP,  VarDeclP parametresP,TreeP superP, TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP);
 VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
 objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes);
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP);
@@ -217,8 +217,8 @@ void addClasse(classeP c);
 void affichageClasses();
 void addObjet(objectP o);
 void affichageObjets();
-
-
+classeP getClasseMere(TreeP tree);
+classeP getPointeurClasse(char* s);
 
 
 
