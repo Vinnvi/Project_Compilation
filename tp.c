@@ -89,7 +89,6 @@ int main(int argc, char **argv) {
    * erreur lexicale ou syntaxique
    */
 
-  printf("Analyse syntaxique réussie\n");
 
    
 
@@ -264,7 +263,6 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     nouvObjet->lmethodes = lmethodes;
     nouvObjet->attributs = attributs;    
     nouvObjet->next = NIL(object);
-    
     addObjet(nouvObjet);
     return nouvObjet;
 }
@@ -366,11 +364,12 @@ void affichageClasses(){
 }
 
 void affichageObjets(){
-    objectP listClass = NEW(1, object);
-    listClass = objets;
+    objectP listObjet = NEW(1, object);
+    listObjet = objets;
     printf("\n ---Liste des objets--- \n");
-    while(listClass != NIL(object)){
-        listClass = listClass->next;
+    while(listObjet != NIL(object)){
+        printf("%s\n",listObjet->name);
+        listObjet = listObjet->next;
     }
     
 }
