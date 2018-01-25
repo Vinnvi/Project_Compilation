@@ -214,7 +214,6 @@ VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
 objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes);
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP);
 
-
 void lancerCompilation(TreeP defClasses, TreeP root);
 char* recupEtiquette(short op);
 void affichageArbre(TreeP tree,int niveauArbre);
@@ -224,7 +223,8 @@ void addObjet(objectP o);
 void affichageObjets();
 classeP getClasseMere(TreeP tree);
 classeP getPointeurClasse(char* s);
-
+void addMethode(methodP m);
+void affichageMethodes();
 
 
 

@@ -120,7 +120,7 @@ ListMethodeOpt : ListMethode    {$$ = $1;}
 |                               {$$ = NIL(method);}
 ;
 
-ListMethode : Methode ListMethode   {$$ = $1; $1->next = $2;}
+ListMethode : Methode ListMethode   {$$ = $1; $1->next = $2;} /* TODO creer une liste fermee */
 | Methode                           {$$ = $1;}
 ;
 
@@ -163,7 +163,7 @@ DeclExpressionOpt : AFF Expression      {$$ = makeTree(EAFF, 1, $2);}
 ExtendsOpt : Extends    {$$ = $1;}
 |                       {$$ = NIL(Tree);}
 ;
-Extends: EXTENDS ClassId '(' ListArgumentsOpt ')' { $$ = makeTree(EEXTND, 2, makeLeafStr(EID, $2), $4); }
+Extends: EXTENDS ClassId '(' ListArgumentsOpt ')' { $$ = makeTree(EEXTND, 2, makeLeafStr(EIDCLASS, $2), $4); }
 ;
 
 ListArgumentsOpt : ListArguments    {$$ = $1;}

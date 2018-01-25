@@ -1743,7 +1743,7 @@ yyreduce:
 
   case 66:
 #line 166 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EEXTND, 2, makeLeafStr(EID, (yyvsp[-3].S)), (yyvsp[-1].pT)); }
+    { (yyval.pT) = makeTree(EEXTND, 2, makeLeafStr(EIDCLASS, (yyvsp[-3].S)), (yyvsp[-1].pT)); }
 #line 1748 "tp_y.c" /* yacc.c:1646  */
     break;
 

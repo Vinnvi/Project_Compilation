@@ -31,6 +31,7 @@ FILE *out; /* fichier de sortie pour le code engendre */
 
 classeP classes = NIL(classe); /* liste des classes*/
 objectP objets = NIL(object); /*liste des objets */
+methodP methodes = NIL(method); /*liste des objets */
 
 /* classes predefinies int str et void */
 classeP cInteger,cString, cVoid;
@@ -212,6 +213,7 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     cString = makeClass("String",NULL,NULL,NULL,NULL);
     affichageClasses();
     affichageObjets();
+    affichageMethodes();
 }
 
 classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, TreeP corps){
@@ -222,7 +224,7 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP sup
     /*nouvClasse->attributs = getChild(corps, 0);
 	nouvClasse->lmethodes = getChild(corps, 1);*/ 
 	/*nouvClasse->constructeur = constructeurP;*/ 
-
+    nouvClasse->super = getClasseMere(superP);
 	/*nouvClasse->super = superP; TODO ici le traitement à faire est autre : il faut lire le nom de la classe qui est extended et chercher le pointeur vers la classe correspondant */
 	
 	nouvClasse->next = NIL(classe);
@@ -241,7 +243,9 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	}
 	else { nouvMethode->typeRetourP = type; }
     */
+    
 	nouvMethode->body = bodyP;
+    addMethode(nouvMethode);
 	nouvMethode->next = NIL(method);
 	return nouvMethode;
 }
@@ -263,6 +267,7 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     nouvObjet->lmethodes = lmethodes;
     nouvObjet->attributs = attributs;    
     nouvObjet->next = NIL(object);
+    
     addObjet(nouvObjet);
     return nouvObjet;
 }
@@ -349,15 +354,24 @@ void addObjet(objectP o){
     objets = o;
 }
 
+void addMethode(methodP m){
+    printf("%s\n",m->name);
+    m->next = methodes;
+    methodes = m;
+}
 
 void affichageClasses(){
     classeP listClass = NEW(1, classe);
     listClass = classes;
     printf("\n ---Liste des classes--- \n");
     while(listClass != NIL(classe)){
-        printf("Nom de classe : %s \n",listClass->name);
+        printf("Nom de classe : %s ",listClass->name);
         if(listClass->super != NULL){
-            printf("Classe mere : %s\n",listClass->super->name);
+            printf("| Classe mere : %s\n",listClass->super->name);
+            
+        }
+        else{
+            printf("\n");
         }
         listClass = listClass->next;
     }
@@ -370,6 +384,17 @@ void affichageObjets(){
     while(listObjet != NIL(object)){
         printf("%s\n",listObjet->name);
         listObjet = listObjet->next;
+    }
+    
+}
+
+void affichageMethodes(){
+    methodP listMethodes = NEW(1, method);
+    listMethodes = methodes;
+    printf("\n ---Liste des methodes--- \n");
+    while(listMethodes != NIL(method)){
+        printf("%s\n",listMethodes->name);
+        listMethodes = listMethodes->next;
     }
     
 }
