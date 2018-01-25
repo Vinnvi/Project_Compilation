@@ -74,6 +74,7 @@ typedef unsigned char bool;
 #define EPROG 42
 #define LSEL 43
 #define EIDCLASS 44
+#define ECORPS 45
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -114,6 +115,9 @@ struct _Tree {
     int val;        /* valeur de la feuille si op = Cste */
     VarDeclP lvar;  /* ne pas utiliser tant qu'on n'en a pas besoin :-) */
     struct _Tree **children; /* tableau des sous-arbres */
+    methodP lmeth;
+    objectP lobj;
+    classeP lclass;
   } u;
 };
 
@@ -203,14 +207,15 @@ TreeP makeLeafInt(short op, int val);
 TreeP makeLeafStr(short op, char *str);
 
 
-/*void lancerCompilation(TreeP def, TreeP arbre);*/
-classeP makeClass(char* nameP,  VarDeclP parametresP,TreeP superP, TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP);
+
+
+classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, TreeP corps);
 VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
 objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes);
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP);
 
 
-void lancerCompilation(TreeP root);
+void lancerCompilation(TreeP defClasses, TreeP root);
 char* recupEtiquette(short op);
 void affichageArbre(TreeP tree,int niveauArbre);
 void addClasse(classeP c);

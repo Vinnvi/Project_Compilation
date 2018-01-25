@@ -68,9 +68,9 @@ extern int yydebug;
     Id = 278,
     ClassId = 279,
     Cstr = 280,
-    THIS = 281,
-    Cste = 282,
-    RelOp = 283
+    Cste = 281,
+    RelOp = 282,
+    THIS = 283
   };
 #endif
 

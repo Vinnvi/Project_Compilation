@@ -203,28 +203,30 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
   return(tree);
 }
 
-void lancerCompilation(TreeP root){
+
+void lancerCompilation(TreeP defClasses, TreeP root){
 	/*affichageArbre(root,0);*/
     
     /* definition des classes prefinies*/
-    cInteger = makeClass("Integer",NULL,NULL,NULL,NULL,NULL);
-    cVoid = makeClass("Void",NULL,NULL,NULL,NULL,NULL);
-    cString = makeClass("String",NULL,NULL,NULL,NULL,NULL);
-    printf("hello");   
+    cInteger = makeClass("Integer",NULL,NULL,NULL,NULL);
+    cVoid = makeClass("Void",NULL,NULL,NULL,NULL);
+    cString = makeClass("String",NULL,NULL,NULL,NULL);
     affichageClasses();
     affichageObjets();
 }
 
-/* les P à la fin des paramètres c'est P comme "Paramètre" et pas Pointeur. (my bad) */
-classeP makeClass(char* nameP,  VarDeclP parametresP,TreeP superP, /*TreeP ou Method?*/TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP){
+classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, TreeP corps){
 	classeP nouvClasse = NEW(1, classe);
 	nouvClasse->name = nameP;
-	nouvClasse->lmethodes = lmethodesP; 
-	/*nouvClasse->constructeur = constructeurP;*/
-	nouvClasse->attributs = attributsP; 
 	nouvClasse->parametres = parametresP;
-    nouvClasse->super = getClasseMere(superP); /*A poursuivre*/
-	/*nouvClasse->next = NIL(classe);*/
+    /*nouvClasse->super = getClasseMere(superP);*/ /*A poursuivre*/
+    /*nouvClasse->attributs = getChild(corps, 0);
+	nouvClasse->lmethodes = getChild(corps, 1);*/ 
+	/*nouvClasse->constructeur = constructeurP;*/ 
+
+	/*nouvClasse->super = superP; TODO ici le traitement à faire est autre : il faut lire le nom de la classe qui est extended et chercher le pointeur vers la classe correspondant */
+	
+	nouvClasse->next = NIL(classe);
     addClasse(nouvClasse);
 	return nouvClasse;
 } 
@@ -233,7 +235,7 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	methodP nouvMethode = NEW(1, method);
 	nouvMethode->redef = redefP;
 	nouvMethode->name = nameP;
-	/*nouvMethode->param = paramP; TODO construire à partir de l'arbre */
+	nouvMethode->param = paramP;
     /* TODO
 	if (type == NIL(char)){
 		nouvMethode->typeRetourP = "Void";
@@ -355,7 +357,7 @@ void affichageClasses(){
     listClass = classes;
     printf("\n ---Liste des classes--- \n");
     while(listClass != NIL(classe)){
-        printf("Nom de classe : %s ",listClass->name);
+        printf("Nom de classe : %s \n",listClass->name);
         if(listClass->super != NULL){
             printf("Classe mere : %s\n",listClass->super->name);
         }
