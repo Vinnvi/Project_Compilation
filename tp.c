@@ -197,6 +197,12 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
   return(tree);
 }
 
+
+/* ############################################ */
+/* ####Fonctions ajoutées###################### */
+/* ############################################ */
+
+
 void lancerCompilation(TreeP def, TreeP arbre){
     /*TODO
     */
@@ -206,13 +212,14 @@ void lancerCompilation(TreeP def, TreeP arbre){
 }
 
 /* les P à la fin des paramètres c'est P comme "Paramètre" et pas Pointeur. (my bad) */
-classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, /*TreeP ou Method?*/TreeP constructeurP, VarDeclP attributsP, methodP lmethodesP){
+classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, TreeP corps){
 	classeP nouvClasse = NEW(1, classe);
 	nouvClasse->name = nameP;
-	nouvClasse->lmethodes = lmethodesP; 
-	/*nouvClasse->constructeur = constructeurP;*/
-	nouvClasse->attributs = attributsP; 
 	nouvClasse->parametres = parametresP;
+    nouvClasse->attributs = getChild(corps, 0);
+	nouvClasse->lmethodes = getChild(corps, 1); 
+	/*nouvClasse->constructeur = constructeurP;*/ 
+
 	/*nouvClasse->super = superP; TODO ici le traitement à faire est autre : il faut lire le nom de la classe qui est extended et chercher le pointeur vers la classe correspondant */
 	
 	nouvClasse->next = NIL(classe);
@@ -223,7 +230,7 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	methodP nouvMethode = NEW(1, method);
 	nouvMethode->redef = redefP;
 	nouvMethode->name = nameP;
-	/*nouvMethode->param = paramP; TODO construire à partir de l'arbre */
+	nouvMethode->param = paramP;
     /* TODO
 	if (type == NIL(char)){
 		nouvMethode->typeRetourP = "Void";

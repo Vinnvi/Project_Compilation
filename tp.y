@@ -16,7 +16,7 @@
 /* Pointeur vers union ObjetOuClasse */ 
 %type<CouOP> ObjetouClasse
 /* Pointeur vers Tree */
-%type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc BlocNonVide DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Valeur Instanciation Extends ExtendsOpt ListArgumentsOpt ListArguments
+%type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc BlocNonVide DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Valeur Instanciation Extends ExtendsOpt ListArgumentsOpt ListArguments CorpsClasse
 /* Pointeur vers VarDecl */
 %type<pV> Parametre ParametreDef Champ ListChamp ListChampOpt  ListParametresDef ListParametreOpt ListParametres
 
@@ -110,7 +110,10 @@ Operation : Operation RelOp Operation           {$$ = makeTree(yylval.C, 2, $1, 
 Instanciation: NEW ClassId '(' ListArgumentsOpt ')' {$$ = makeTree(ENEW, 2, $2, $4);}
 ;
 
-Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS '{'ListChampOpt ListMethodeOpt'}' { $$ = makeClass($2, $4, $6, $7, $10, $11); } 
+Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS CorpsClasse { $$ = makeClass($2, $4, $6, $7, $9); } 
+;
+
+CorpsClasse : '{'ListChampOpt ListMethodeOpt'}'     {$$ = makeTree(ECORPS, 2, $2, $3);}
 ;
 
 ListMethodeOpt : ListMethode    {$$ = $1;}
