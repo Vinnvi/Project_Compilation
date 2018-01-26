@@ -292,8 +292,7 @@ void affichageArbre(TreeP tree,int niveauArbre){
     }
     else{  
         printf("%s(%hi):%d\n", recupEtiquette(tree->op),tree->op, niveauArbre);
-    } 
-
+    }
 }
 
 
@@ -386,6 +385,9 @@ void affichageClasses(){
             params = params->next;
         }
         printf("\n");
+
+        
+
         listClass = listClass->next;
     }
 }
@@ -396,6 +398,29 @@ void affichageObjets(){
     printf("\n ---Liste des objets--- \n");
     while(listObjet != NIL(object)){
         printf("%s\n",listObjet->name);
+
+        printf("| liste des methodes : \n");
+        methodP meths = NEW(1,method);
+        meths = listObjet->lmethodes;
+        while(meths != NIL(method)){
+            printf(" %s", meths->name);
+
+            printf("\t| liste des parametres : ");
+            VarDeclP params = NEW(1,VarDecl);
+            params = meths->param;
+            while(params != NIL(VarDecl)){
+              printf(" %s", params->name);
+              params = params->next;
+            }
+            
+            /*TODO :printf("| type de retour : %s", meths->typeRetour->name);*/
+            /*TODO :printf(" | Methode Mere : %s", meths->methodeMere->name);*/
+            printf(" | Redef : %s",meths->redef ? "True" : "False");
+            printf("\n");œ
+            meths = meths->next;
+        }
+        printf("\n\n");
+
         listObjet = listObjet->next;
     }
     

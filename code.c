@@ -49,7 +49,7 @@ void generDefClassObj(TreeP defClassObj)
 {
     if(defClassObj == NIL(Tree)) return;
     else{ /* TODO */
-        printf("aie");
+        printf("aie\n");
     }
 }
 void generObjetOuClasse(TreeP objetOuClasse)
@@ -89,6 +89,7 @@ void generBloc(TreeP bloc)
 }
 void generListInst(TreeP listInst)
 {
+    printf("***listInst*** %d\n", listInst->nbChildren);
     if(listInst == NIL(Tree)) /* Cas Liste vide */
     {
         printf("Liste Instructions null"); return;
