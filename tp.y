@@ -37,6 +37,7 @@
 
 extern int yylex();
 extern void yyerror(char *);
+
 %}
 
 %%
@@ -120,7 +121,7 @@ ListMethodeOpt : ListMethode    {$$ = $1;}
 |                               {$$ = NIL(method);}
 ;
 
-ListMethode : Methode ListMethode   {$$ = $1; /*$1->next = $2;*/}
+ListMethode : Methode ListMethode   {$$ = $1;}
 | Methode                           {$$ = $1;}
 ;
 
