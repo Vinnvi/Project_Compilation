@@ -343,6 +343,10 @@ char* recupEtiquette(short op){
         case 42 : return "EPROG";
         case 43 : return "LSEL";
         case 44 : return "EIDCLASS";
+        case 45 : return "ECORPS";
+        case 46 : return "LOBJET";
+        case 47 : return "EDEFOBJ";
+        case 48 : return "EDEFCLASS";
         default : return "ERREUR";
     }   
     

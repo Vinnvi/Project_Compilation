@@ -75,6 +75,10 @@ typedef unsigned char bool;
 #define LSEL 43
 #define EIDCLASS 44
 #define ECORPS 45
+#define LOBJET 46
+#define EDEFOBJ 47
+#define EDEFCLASS 48
+
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0

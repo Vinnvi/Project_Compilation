@@ -13,10 +13,8 @@
 %type<ClasseP> Classe
 /* Pointeur vers objet (objectP) */
 %type<ObjetP> Objet
-/* Pointeur vers union ObjetOuClasse (CouOP)*/ 
-%type<CouOP> ObjetouClasse
 /* Pointeur vers Tree (TreeP) */
-%type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc BlocNonVide DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Valeur Instanciation Extends ExtendsOpt ListArgumentsOpt ListArguments CorpsClasse
+%type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc BlocNonVide DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Valeur Instanciation Extends ExtendsOpt ListArgumentsOpt ListArguments CorpsClasse ObjetouClasse
 /* Pointeur vers VarDecl */
 %type<pV> Parametre ParametreDef Champ ListChamp ListChampOpt  ListParametresDef ListParametreOpt ListParametres
 
@@ -48,11 +46,11 @@ DefClasseObjetOpt : DefClasseObjet   {$$ = $1;}
 ;
 
 DefClasseObjet : ObjetouClasse DefClasseObjet   {$$ = makeTree(LCLASS, 2, $1, $2);}
-| ObjetouClasse                                 {$$ = makeTree(LCLASS, 1, $1);}
+| ObjetouClasse                                 {$$ = makeTree(LOBJET, 1, $1);}
 ;
 
-ObjetouClasse : Objet   {$$ = (CouOP)$1;}
-| Classe                {$$ = (CouOP)$1;}
+ObjetouClasse : Objet   {$$ = makeTree(EDEFOBJ, 1, $1);}
+| Classe                {$$ = makeTree(EDEFCLASS, 1, $1);}
 ;
 
 Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}' {$$ = makeObjet($2,$5,$6); }
