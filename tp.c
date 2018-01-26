@@ -211,9 +211,9 @@ void lancerCompilation(TreeP defClasses, TreeP root){
 	/*affichageArbre(root,0);*/
     
     /* definition des classes prefinies*/
-    cInteger = makeClass("Integer",NULL,NULL,NULL,NULL);
-    cVoid = makeClass("Void",NULL,NULL,NULL,NULL);
-    cString = makeClass("String",NULL,NULL,NULL,NULL);
+    cInteger = makeClass("Integer",NULL,NULL,NULL,NIL(Tree));
+    cVoid = makeClass("Void",NULL,NULL,NULL,NIL(Tree));
+    cString = makeClass("String",NULL,NULL,NULL,NIL(Tree));
     affichageClasses();
     affichageObjets();
     affichageMethodes();
@@ -223,11 +223,9 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
 	classeP nouvClasse = NEW(1, classe);
 	nouvClasse->name = nameP;
 	nouvClasse->parametres = parametresP;
-    nouvClasse->lmethodes = methodesTemp;
-    methodesTemp = NIL(method);
-    /*printf("%hi - %hi",getChild(corps, 0)->op,getChild(corps, 1)->op);*/
+    if(corps == NIL(Tree)) nouvClasse->lmethodes = NIL(method);
+    else /*nouvClasse->lmethodes = getChild(corps,1)->u.lmeth;*/ /*corps -> ListMethodeopt (1)*/ /*TODO TODO TODO TODO*/
     /*nouvClasse->attributs = getChild(corps, 0); */
-	/*nouvClasse->lmethodes = getChild(corps, 1)->u.lmeth;*/
 	nouvClasse->constructeur = constructeurP; 
     nouvClasse->super = getClasseMere(superP);
 	nouvClasse->next = NIL(classe);
@@ -243,15 +241,7 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	nouvMethode->redef = redefP;
 	nouvMethode->name = nameP;
 	nouvMethode->param = paramP;
-    /* TODO
-	if (type == NIL(char)){
-		nouvMethode->typeRetourP = "Void";
-	}
-	else { nouvMethode->typeRetourP = type; }
-    */
 	nouvMethode->body = bodyP;
-	nouvMethode->next = NIL(method);
-    addMethode(nouvMethode);
     addMethodeTemp(nouvMethode);
 	return nouvMethode;
 }
@@ -271,8 +261,7 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     nouvObjet->name = name;
     nouvObjet->lmethodes = lmethodes;
     methodesTemp = NIL(method);
-    nouvObjet->attributs = attributs;    
-    nouvObjet->next = NIL(object);
+    nouvObjet->attributs = attributs;   
     
     addObjet(nouvObjet);
     return nouvObjet;
@@ -406,18 +395,19 @@ void affichageObjets(){
     listObjet = objets;
     printf("\n ---Liste des objets--- \n");
     while(listObjet != NIL(object)){
-        printf("%s",listObjet->name);
+        printf("%s,",listObjet->name);
+        printf("| liste des attributs : ");
         VarDeclP v = NEW(1,VarDecl);
         v = listObjet->attributs;
         while(v != NIL(VarDecl)){
-            printf("%s - ", v->name);
+            printf("%s,", v->name);
             v = v->next;
         }
         printf("| liste des methodes : ");
         methodP methodes = NEW(1,method);
         methodes = listObjet->lmethodes;
         while(methodes != NIL(method)){
-            printf(" %s", methodes->name);
+            printf(" %s,", methodes->name);
             methodes = methodes->next;
         }
         printf("\n");

@@ -1611,13 +1611,13 @@ yyreduce:
 
   case 44:
 #line 123 "tp.y" /* yacc.c:1646  */
-    {(yyval.MethP) = (yyvsp[-1].MethP); /*$1->next = $2;*/}
+    {(yyval.MethP) = (yyvsp[-1].MethP); (yyvsp[-1].MethP)->next = (yyvsp[0].MethP);}
 #line 1616 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 45:
 #line 124 "tp.y" /* yacc.c:1646  */
-    {(yyval.MethP) = (yyvsp[0].MethP);}
+    {(yyval.MethP) = (yyvsp[0].MethP); (yyvsp[0].MethP)->next = NIL(method);}
 #line 1622 "tp_y.c" /* yacc.c:1646  */
     break;
 
