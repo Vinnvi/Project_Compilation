@@ -42,15 +42,15 @@ void STOREG(int x) { fprintf(out, "STOREG %d\n", x); stack.size--; }
 void lancerGeneration(TreeP programme, FILE* chOut) {
     out = chOut;
     fprintf(out, "START\n");
-    if(getChild(programme,0) != NIL(Tree)) { generDefClassObj(getChild(programme,0)); } 
-    generBloc(getChild(programme,1)); 
+    if(getChild(programme,0) != NIL(Tree)) { generDefClassObjOpt(getChild(programme,0)); } 
+    generBlocOpt(getChild(programme,1)); 
 }
-void generDefClassObj(TreeP defClassObj)
-{
+void generDefClassObjOpt(TreeP defClassObj){
     if(defClassObj == NIL(Tree)) return;
-    else{ /* TODO */
+}
+void generDefClassObj(TreeP defClassObj){
+/* TODO */
         printf("aie");
-    }
 }
 void generObjetOuClasse(TreeP objetOuClasse)
 {
@@ -63,23 +63,41 @@ void generClass(classeP class)
     if(class == NULL) return;
     generClassId(class->name);
     generListParam(class->parametres);
-    /* TODO generExtends(class->super); */
-    generBloc(class->constructeur);
+    /* TODO generExtendsOpt(class->super); */
+    generBlocOpt(class->constructeur);
     /* TODO generCorpsClass(class->body); */
     /* TODO Il faut revoir extends et corps */
 }
+void generListParamOpt(VarDeclP listParamOpt)
+{
+    if(listParamOpt == NIL(VarDecl)) return;
+    generListParam(listParamOpt);
+}
 void generListParam(VarDeclP listParam)
 {
+    
 }
 void generCorpsClass(TreeP corpsClasse)
 {
+    generListChpOpt(getChild(corpsClasse,0));
+    generListMethOpt(getChild(corpsClasse,1));
+}
+void generBlocOpt(TreeP blocOpt)
+{
+    if(blocOpt == NIL(Tree)) return;            /* Cas Bloc vide */
+    generBloc(blocOpt);
 }
 void generBloc(TreeP bloc)
 {
-    if(bloc == NIL(Tree)) /* Cas Bloc vide */
-    {
-        printf("bloc null"); return;
+    if(getChild(bloc,1) == NIL(Tree))           /* Bloc est une liste d'Instructions */
+        generListInstOpt(getChild(bloc,0));    
+    else{                                       /* Bloc est une liste de champs IS Liste Instructions */
+        generListChp((VarDeclP)getChild(bloc,0));
+        generListInst(getChild(bloc,1));
     }
+}
+void generBlocNonVide(TreeP bloc)
+{
     if(getChild(bloc,1) == NIL(Tree))           /* Bloc est une liste d'Instructions */
         generListInst(getChild(bloc,0));    
     else{                                       /* Bloc est une liste de champs IS Liste Instructions */
@@ -87,21 +105,15 @@ void generBloc(TreeP bloc)
         generListInst(getChild(bloc,1));
     }
 }
+void generListInstOpt(TreeP listInstOpt)
+{
+    if(listInstOpt == NIL(Tree)) return;        /* Cas Liste vide */
+}
 void generListInst(TreeP listInst)
 {
-    if(listInst == NIL(Tree)) /* Cas Liste vide */
-    {
-        printf("Liste Instructions null"); return;
-    }
-    generInst(getChild(listInst,0));        /* Cas Inst */
-    if(listInst->op == LINST)                  /* Cas Liste Inst */
+    generInst(getChild(listInst,0));            /* Cas Inst */
+    if(listInst->op == LINST)                   /* Cas Liste Inst */
         generListInst(getChild(listInst,1));
-    /*
-    if(getChild(listInst,1) != NIL(Tree)) generListInst(getChild(listInst,1));*/
-
-        
-    
-
 }
 void generInst(TreeP inst)
 {
@@ -118,8 +130,7 @@ void generInst(TreeP inst)
             generOperation(getChild(inst,0));
             generIfElse(getChild(inst,1)); 
             generIfElse(getChild(inst,2));
-        default :
-            ;/*generExpression(getChild(inst,0));*/
+        default : generExpression(getChild(inst,0));
     }
 }
 void generArgOuCible(TreeP argOuCible)
@@ -178,31 +189,69 @@ void generIfElse(TreeP ifElse)
 void generExpression(TreeP expr)
 {
 }
+void generListChpOpt(VarDeclP listChpOpt)
+{
+    if(listChpOpt == NIL(VarDecl)) return;
+    generListChp(listChpOpt);
+}
 void generListChp(VarDeclP listChp)
 {
 }
+void generListMethOpt(methodP listMethOpt)
+{
+    if(listMethOpt == NIL(method)) return;
+    generListMeth(listMethOpt);
+}
 void generListMeth(methodP listMeth)
 {
-    if(listMeth == NIL(method)) return;
     
+    /* TODO comment savoir nb methodes */
 }
+void generMeth(methodP meth)
+{
+    /* TODO comment savoir which one */
+}
+
 void generClassId(char* classId)
 {
     /* TODO */
 }
 void generOverride(bool override)
 {
-    
+    /* TODO */
+}
+void generExtendsOpt(TreeP extends)
+{
+    if(extends == NIL(Tree)) return;
+    else generExtends(extends);
 }
 void generExtends(TreeP extends)
 {
+    /* TODO */
 }
 void generObject(objectP obj)
 {
     if(obj == NULL) return;
     generClassId(obj->name);
-    generListChp(obj->attributs);
-    generListMeth(obj->lmethodes);
+    generListChpOpt(obj->attributs);
+    generListMethOpt(obj->lmethodes);
+}
+void generListArgOpt(TreeP listArgOpt)
+{
+    if(listArgOpt == NIL(Tree)) return;
+    generListArg(listArgOpt);
+}
+void generListArg(TreeP listArg)
+{
+    /* TODO Commment trouver? 
+    generExpr(getChild(listArg,0))
+    if...
+        generListArg(getChild(listArg,1))*/
+}
+void generInstanciation(TreeP instanciation)
+{
+    generClassId(getChild(instanciation,0));
+    generListArgOpt(getChild(instanciation,1));
 }
 
 
