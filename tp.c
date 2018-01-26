@@ -218,12 +218,11 @@ void lancerCompilation(TreeP defClasses, TreeP root){
 
 /* Initialise les classes de bases */
 void initClasses(){
-    
-    /*makeClass("Integer",NULL,NULL,NULL,NULL);*/
+  
   cInteger = NEW(1, classe);
   cInteger->name = "Integer";
   addClasse(cInteger);
-    makeClass("Void",NULL,NULL,NULL,NULL);
+  makeClass("Void",NULL,NULL,NULL,NULL);
     makeClass("String",NULL,NULL,NULL,NULL);
 }
 
