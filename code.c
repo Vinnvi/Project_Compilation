@@ -83,7 +83,7 @@ void generBloc(TreeP bloc)
     if(getChild(bloc,1) == NIL(Tree))           /* Bloc est une liste d'Instructions */
         generListInst(getChild(bloc,0));    
     else{                                       /* Bloc est une liste de champs IS Liste Instructions */
-        generListChp(getChild(bloc,0));
+        generListChp((VarDeclP)getChild(bloc,0));
         generListInst(getChild(bloc,1));
     }
 }
@@ -178,11 +178,13 @@ void generIfElse(TreeP ifElse)
 void generExpression(TreeP expr)
 {
 }
-void generListChp(TreeP listChp)
+void generListChp(VarDeclP listChp)
 {
 }
-void generListMeth(TreeP listMeth)
+void generListMeth(methodP listMeth)
 {
+    if(listMeth == NIL(method)) return;
+    
 }
 void generClassId(char* classId)
 {
@@ -198,9 +200,9 @@ void generExtends(TreeP extends)
 void generObject(objectP obj)
 {
     if(obj == NULL) return;
-    generClassId(getChild(obj,0));
-    generListChp(getChild(obj,1));
-    generListMeth(getChild(obj,2));
+    generClassId(obj->name);
+    generListChp(obj->attributs);
+    generListMeth(obj->lmethodes);
 }
 
 
