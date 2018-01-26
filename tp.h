@@ -241,7 +241,7 @@ VarDeclP idToDecl(char* id);
 classeP idToClass(char* id);
 objectP idToObj(char* id);
 methodP idToMeth(char* id, methodP lmethodes);
-
+void addMethodeTemp(methodP m);
 
 
 
