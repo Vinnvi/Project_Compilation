@@ -1473,7 +1473,7 @@ yyreduce:
 
   case 21:
 #line 82 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeLeafStr(ERETURN, NIL(char));}
+    {(yyval.pT) = makeLeafStr(ERETURN, "return");}
 #line 1478 "tp_y.c" /* yacc.c:1646  */
     break;
 

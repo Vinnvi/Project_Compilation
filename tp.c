@@ -32,6 +32,7 @@ FILE *out; /* fichier de sortie pour le code engendre */
 classeP classes = NIL(classe); /* liste des classes*/
 objectP objets = NIL(object); /*liste des objets */
 methodP methodes = NIL(method); /*liste des objets */
+pileVar pileVariables; /* pile des variables pour la vérification contextuelles*/
 
 /* classes predefinies int str et void */
 classeP cInteger,cString, cVoid;
@@ -452,8 +453,67 @@ classeP getPointeurClasse(char* s){
     return NULL;
 }
 
+VarDeclP idToDecl(char* id){
+  int compte = 0;
+  if (!pileVariables.sommet){
+    printf("Pas de variables");
+    return NIL(VarDecl);
+  }
+  ptrVar elemActuel = pileVariables.sommet;
+    
+  while (compte < pileVariables.taille){
+		if( strcmp(elemActuel->var->name, id) == 0) return elemActuel->var;
+		elemActuel = elemActuel->next;
+		compte += 1;
+	}
+	printf("Variable introuvable");
+	return NIL(VarDecl);
+}
 
+classeP idToClass(char* id){
+  if (!classes){
+    printf("Pas de classes");
+    return NIL(classe);
+  }
+  classeP classActuelle = classes;
+    
+  while (classActuelle){
+    if( strcmp(classActuelle->name, id) == 0) return classActuelle;
+    classActuelle = classActuelle->next;
+  }
+  printf("Classe introuvable");
+  return NIL(classe);
+}
 
+objectP idToObj(char* id){
+  if (!objets){
+    printf("Pas d'objets'");
+    return NIL(object);
+  }
+  objectP objetActuel = objets;
+    
+  while (objetActuel){
+    if( strcmp(objetActuel->name, id) == 0) return objetActuel;
+    objetActuel = objetActuel->next;
+  }
+  printf("Classe introuvable");
+  return NIL(object);
+}
+
+methodP idToMeth(char* id, methodP lmethodes){
+  if (!lmethodes){
+    printf("Pas de methodes");
+    return NIL(method);
+  }
+  methodP methActuelle = lmethodes;
+    
+  while (methActuelle){
+    if( strcmp(methActuelle->name, id) == 0) return methActuelle;
+    methActuelle = methActuelle->next;
+  }
+  printf("Methode introuvable");
+  return NIL(method);
+}
 
 
 
