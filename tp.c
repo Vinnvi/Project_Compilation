@@ -216,17 +216,15 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     affichageMethodes();
 }
 
-classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, TreeP corps){
+classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps){
 	classeP nouvClasse = NEW(1, classe);
 	nouvClasse->name = nameP;
 	nouvClasse->parametres = parametresP;
-    /*nouvClasse->super = getClasseMere(superP);*/ /*A poursuivre*/
+    affichageArbre(corps,0);
     /*nouvClasse->attributs = getChild(corps, 0);
 	nouvClasse->lmethodes = getChild(corps, 1);*/ 
-	/*nouvClasse->constructeur = constructeurP;*/ 
+	nouvClasse->constructeur = constructeurP; 
     nouvClasse->super = getClasseMere(superP);
-	/*nouvClasse->super = superP; TODO ici le traitement à faire est autre : il faut lire le nom de la classe qui est extended et chercher le pointeur vers la classe correspondant */
-	
 	nouvClasse->next = NIL(classe);
     addClasse(nouvClasse);
 	return nouvClasse;
@@ -245,8 +243,9 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
     */
     
 	nouvMethode->body = bodyP;
-    addMethode(nouvMethode);
+    
 	nouvMethode->next = NIL(method);
+    addMethode(nouvMethode);
 	return nouvMethode;
 }
 
@@ -367,12 +366,17 @@ void affichageClasses(){
     while(listClass != NIL(classe)){
         printf("Nom de classe : %s ",listClass->name);
         if(listClass->super != NULL){
-            printf("| Classe mere : %s\n",listClass->super->name);
+            printf("| Classe mere : %s ",listClass->super->name);
             
         }
-        else{
-            printf("\n");
+        printf("| liste des parametres : ");
+        VarDeclP params = NEW(1,VarDecl);
+        params = listClass->parametres;
+        while(params != NIL(VarDecl)){
+            printf(" %s", params->name);
+            params = params->next;
         }
+        printf("\n");
         listClass = listClass->next;
     }
 }

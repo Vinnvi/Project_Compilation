@@ -120,7 +120,7 @@ ListMethodeOpt : ListMethode    {$$ = $1;}
 |                               {$$ = NIL(method);}
 ;
 
-ListMethode : Methode ListMethode   {$$ = $1; $1->next = $2;} /* TODO creer une liste fermee */
+ListMethode : Methode ListMethode   {$$ = $1; /*$1->next = $2;*/}
 | Methode                           {$$ = $1;}
 ;
 
