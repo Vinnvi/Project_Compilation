@@ -7,15 +7,15 @@
 %token<ClasseP> THIS
 %type<B> OverrideOpt VarOpt
 %type<S> NomClasseOpt
-/* Pointeur vers méthode */
+/* Pointeur vers méthode (methodP) */
 %type<MethP>  Methode ListMethodeOpt ListMethode
-/* Pointeur vers classe */  
+/* Pointeur vers classe (classP) */  
 %type<ClasseP> Classe
-/* Pointeur vers objet */
+/* Pointeur vers objet (objectP) */
 %type<ObjetP> Objet
-/* Pointeur vers union ObjetOuClasse */ 
+/* Pointeur vers union ObjetOuClasse (CouOP)*/ 
 %type<CouOP> ObjetouClasse
-/* Pointeur vers Tree */
+/* Pointeur vers Tree (TreeP) */
 %type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc BlocNonVide DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Valeur Instanciation Extends ExtendsOpt ListArgumentsOpt ListArguments CorpsClasse
 /* Pointeur vers VarDecl */
 %type<pV> Parametre ParametreDef Champ ListChamp ListChampOpt  ListParametresDef ListParametreOpt ListParametres

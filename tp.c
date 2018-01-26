@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "tp.h"
+#include "code.h"
 #include "tp_y.h"
 
 extern int yyparse();
@@ -215,13 +216,16 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     affichageClasses();
     affichageObjets();
     affichageMethodes();
+
+    FILE *fileToWrite;
+    fileToWrite = fopen("test.txt", "w+");
+    lancerGeneration(defClasses,fileToWrite);
 }
 
 classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps){
 	classeP nouvClasse = NEW(1, classe);
 	nouvClasse->name = nameP;
 	nouvClasse->parametres = parametresP;
-    affichageArbre(corps,0);
     /*nouvClasse->attributs = getChild(corps, 0);
 	nouvClasse->lmethodes = getChild(corps, 1);*/ 
 	nouvClasse->constructeur = constructeurP; 
