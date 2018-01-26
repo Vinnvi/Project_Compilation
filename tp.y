@@ -79,7 +79,7 @@ ListInstructions: Instruction ListInstructions      {$$ = makeTree(LINST, 2, $1,
 ;
 
 Instruction : Expression ';'                        {$$ = $1;}
-| RETURN ';'                                        {$$ = makeLeafStr(ERETURN, NIL(char));}
+| RETURN ';'                                        {$$ = makeLeafStr(ERETURN, "return");}
 | ArgumentOuCible AFF Expression ';'                {$$ = makeTree(EAFF, 2, $1, $3);}
 | IF Operation THEN InstIfElse ELSE InstIfElse      {$$ = makeTree(ITE, 3, $2, $4, $6);}
 ;

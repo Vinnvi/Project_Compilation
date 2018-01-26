@@ -96,6 +96,10 @@ typedef struct _Programme prog,*ProgP;
 typedef struct _Tree Tree,*TreeP;
 typedef union _ClasseOuObjet CouO, *CouOP;
 
+/* Pile pour l'analyse de portée */
+typedef struct _elmtVar elmtVar, *ptrVar;
+typedef struct _pileVar pileVar, *ptrPileVar;
+
 /* Adapt as needed. Currently it is simply a list of names ! */
 typedef struct _varDecl {
   char *name;
@@ -176,6 +180,16 @@ struct _Object{
 	struct _Object *next;
 };
 
+struct _pileVar{
+    ptrVar sommet;
+    int taille;
+};
+
+struct _elmtVar{
+    VarDeclP var;
+    ptrVar next;
+};
+
 union _ClasseOuObjet{
 	classe c;
     object o;
@@ -207,9 +221,7 @@ TreeP makeLeafInt(short op, int val);
 TreeP makeLeafStr(short op, char *str);
 
 
-
-
-classeP makeClass(char* nameP,  VarDeclP parametresP, /*devra changer*/TreeP superP, TreeP constructeurP, TreeP corps);
+classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps);
 VarDeclP makeVar(bool aVar,char *name, char *type, TreeP expr);
 objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes);
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP);
@@ -224,7 +236,10 @@ void addObjet(objectP o);
 void affichageObjets();
 classeP getClasseMere(TreeP tree);
 classeP getPointeurClasse(char* s);
-
+VarDeclP idToDecl(char* id);
+classeP idToClass(char* id);
+objectP idToObj(char* id);
+methodP idToMeth(char* id, methodP lmethodes);
 
 
 
