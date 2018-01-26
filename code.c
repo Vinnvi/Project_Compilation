@@ -250,7 +250,7 @@ void generListArg(TreeP listArg)
 }
 void generInstanciation(TreeP instanciation)
 {
-    generClassId(getChild(instanciation,0));
+    generClassId(getChild(instanciation,0)->u.str);
     generListArgOpt(getChild(instanciation,1));
 }
 

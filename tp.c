@@ -231,7 +231,6 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     if(corps == NIL(Tree)) nouvClasse->lmethodes = NIL(method);
     else /*nouvClasse->lmethodes = getChild(corps,1)->u.lmeth;*/ /*corps -> ListMethodeopt (1)*/ /*TODO TODO TODO TODO*/
     /*nouvClasse->attributs = getChild(corps, 0); */
->>>>>>> 637f4b03ac829905824c1819f8230547e7fa31c9
 	nouvClasse->constructeur = constructeurP; 
     nouvClasse->super = getClasseMere(superP);
 	nouvClasse->next = NIL(classe);
