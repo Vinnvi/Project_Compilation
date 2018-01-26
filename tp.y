@@ -118,8 +118,8 @@ ListMethodeOpt : ListMethode    {$$ = $1;}
 |                               {$$ = NIL(method);}
 ;
 
-ListMethode : Methode ListMethode   {$$ = $1; /*$1->next = $2;*/}
-| Methode                           {$$ = $1;}
+ListMethode : Methode ListMethode   {$$ = $1; $1->next = $2;}
+| Methode                           {$$ = $1; $1->next = NIL(method);}
 ;
 
 Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression  { $$ = makeMethod($1, $3, $5, $8, $10); }
