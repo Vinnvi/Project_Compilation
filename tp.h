@@ -24,7 +24,7 @@ typedef unsigned char bool;
  * Il y a surement des choses a recuperer en plus de ce que vous avez
  * produit pour le tp.
  */
- 
+
 #define NE	1
 #define EQ	2
 #define LT	3
@@ -35,7 +35,7 @@ typedef unsigned char bool;
 #define EADD 	7
 #define ESUB 	8
 #define EMUL 	9
-#define EQUOT 	10	
+#define EQUOT 	10
 #define EREST 	11
 #define EAND 	12
 #define EAFF	13
@@ -108,7 +108,7 @@ typedef struct _pileVar pileVar, *ptrPileVar;
 typedef struct _varDecl {
   char *name;
   struct _varDecl *next;
-  struct _Classe *type; 
+  struct _Classe *type;
   TreeP expr;
   bool aVar;
 
@@ -219,6 +219,34 @@ struct _bloc{
    TreeP lInstruction;
 };
 
+/* Structures de gestion des variables (port�e, masquage) */
+/**
+Emcapsule une variable et son adresse dans le programme
+*/
+typedef struct _Symbole {
+  /* VariableP var; */
+  short addr;
+  struct _Symbole* next;
+} Symbole, *symboleList, *SymboleP;
+
+/*
+Couches de portée des différentes variables
+*/
+typedef struct _Level {
+    int offset;
+    SymboleP symboles;
+    struct _Level* next;
+} Level, *LevelP;
+
+/**
+Contient l'ensemble des symboles du programme
+on a une pile de bulles, et on pile et d�pile � mesure que l'on entre et quitte des blocks
+*/
+typedef struct _Stack {
+    int size;
+    LevelP top_level;
+} Stack, *stackP;
+
 TreeP makeTree(short op, int nbChildren, ...);
 TreeP makeLeafLVar(short op, VarDeclP lvar);
 TreeP makeLeafInt(short op, int val);
@@ -248,7 +276,3 @@ methodP idToMeth(char* id, methodP lmethodes);
 TreeP getChild(TreeP tree, int rank);
 void addMethodeTemp(methodP m);
 void addVarTemp(VarDeclP v);
-
-
-
-

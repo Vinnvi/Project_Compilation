@@ -6,82 +6,119 @@
 
 extern char* strdup(const char *);
 
-/*
-Stack stack = {0, NULL};*/
+Stack stack = {0, NULL};
 FILE* out;
 int i;
+static int numLabel = 0;
 
 /*##### On définit les instructions utilises par la machine generatrice de code ##### */
 /*Instructions de Label */
-/*
 void NOP() { fprintf(out, "NOP\n"); }
+char* makeLabel(char* nameLabel) {
+  static char buf[30];
+  sprintf(buf, "%s%d", nameLabel, numLabel++);
+  return strdup(buf);
+}
 void LABEL(char* c) { fprintf(out, "%s : \t", c); }
 void NEWLABEL(char* c) { LABEL(c); NOP(); }
 void NEWMETHLABEL(char* nomMeth, char* typeRetour) { fprintf(out, "%s_%s: ", typeRetour, nomMeth); NOP(); }
-*/
 /* Instructions sur la pile */
-/*
 void PUSHI(int i) { fprintf(out, "PUSHI %d\n", i); stack.size++; }
 void PUSHS(char *c) { fprintf(out, "PUSHS %s\n", c); stack.size++; }
-void WRITES() { fprintf(out, "WRITES\n"); stack.size --; }
 void PUSHG(int a) { fprintf(out, "PUSHG %d\n", a); stack.size++; }
-void PUSHG_addr(char* c) { 
-    int a = getAddr(c); 
+void PUSHL(int a) { fprintf(out, "PUSHL %d\n", a); stack.size++; }/*
+void PUSHG_addr(char* c) {
+    int a = getAddr(c);
     if (a < 0) { fprintf(out, "PUSHG addr(%s)(%d)\n", c, a); stack.size++; }
     else PUSHG(a); }
-void PUSHL(int a) { fprintf(out, "PUSHL %d\n", a); stack.size++; }
 void PUSHL_addr(char* c) {
 	int a = getAddr(c);
 	if (a < 0) { fprintf(out, "PUSHL addr(%s)(%d)\n", c, a); stack.size++; }
-    else PUSHL(a); }
+    else PUSHL(a); }*/
+void WRITES() { fprintf(out, "WRITES\n"); stack.size --; }
 void STOREL(int x) { fprintf(out, "STOREL %d\n", x); stack.size--; }
 void STOREG(int x) { fprintf(out, "STOREG %d\n", x); stack.size--; }
-*/
-/*Lancement de la génération de code*/
+/*
+void STOREG_addr(char* c) {
+	int a = getAddr(c);
+	if (a < 0) { fprintf(out, "STOREG addr(%s)(%d)\n", c, a); stack.size--; }
+  else STOREG(a); }*/
+void STORE(int x) { fprintf(out, "STORE %d\n", x); stack.size -= 2; }
+void PUSHN(int x) { fprintf(out, "PUSHN %d\n", x); stack.size += x; }
+void POPN(int x) { fprintf(out, "POPN %d\n", x); stack.size -= x; }
+void DUPN(int x) { fprintf(out, "DUPN %d\n", x); stack.size+= x; }
+void SWAP() { fprintf(out, "SWAP\n"); }
+void JUMP(char* label) { fprintf(out, "JUMP %s\n", label); }
+void JZ(char* label) { fprintf(out, "JZ %s\n", label); }
+void LOAD(int x) { fprintf(out, "LOAD %d\n", x); }
+void ALLOC(int x) { fprintf(out, "ALLOC %d\n", x); stack.size++; }
+void WRITEI() { fprintf(out, "WRITEI\n"); stack.size--; }
+void PUSHA(char* a) { fprintf(out, "PUSHA %s\n", a); stack.size++; }
+void CALL() { fprintf(out, "CALL\n"); }
+/* Instructions d'Opérations */
+void O_ADD() { fprintf(out, "ADD\n"); stack.size--; }
+void O_MUL() { fprintf(out, "MUL\n"); stack.size--; }
+void O_SUB() { fprintf(out, "SUB\n"); stack.size--;}
+void O_DIV() { fprintf(out, "DIV\n"); stack.size--; }
+void O_REST() { fprintf(out, "REST\n"); stack.size--;}
+void O_EQUAL() { fprintf(out, "EQUAL\n"); stack.size--; }
+void O_CONCAT() { fprintf(out, "CONCAT\n"); stack.size--; }
+void O_NOT() { fprintf(out, "NOT\n"); }
+void O_INFEQ() { fprintf(out, "INFEQ\n"); stack.size--; }
+void O_SUPEQ() { fprintf(out, "SUPEQ\n"); stack.size--; }
+void O_INF() { fprintf(out, "INF\n"); stack.size--; }
+void O_SUP() { fprintf(out, "SUP\n"); stack.size--; }
 
+/**
+renvoie l'adresse de la variable si elle est pr�sente dans la table des symboles
+*/
+/*
+int getAddr(char* name) {
+    LevelP level = stack.top_level;
+    while(level) {
+        SymboleP sy = level->symboles;
+        while (sy) {
+            if (!strcmp(name,sy->name)) return sy->addr;
+            sy = sy->next;
+        }
+        level = level->next;
+    }
+    fprintf(out, "couldn't find %s in :", name);
+    return -1;
+}*/
+
+/*Lancement de la génération de code*/
 void lancerGeneration(TreeP programme, FILE* chOut) {
     out = chOut;
     fprintf(out, "START\n");
-    if(getChild(programme,0) != NIL(Tree)) { generDefClassObjOpt(getChild(programme,0)); } 
-    generBlocOpt(getChild(programme,1)); 
+    generDefClassObjOpt(getChild(programme,0));
+    generBloc(getChild(programme,1));
 }
 void generDefClassObjOpt(TreeP defClassObj){
     if(defClassObj == NIL(Tree)) return;
+    generDefClassObj(getChild(defClassObj,0));
 }
 void generDefClassObj(TreeP defClassObj){
 /* TODO */
+    printf("aie2");
+    generObjetOuClasse(getChild(defClassObj,0));
+    printf("nom %hi",defClassObj->op);
+    /* TODO test LCLASS ne fonctionne pas */
+    if(defClassObj->op == LCLASS) generDefClassObj(getChild(defClassObj,1));
         printf("aie");
 }
 void generObjetOuClasse(TreeP objetOuClasse)
 {
-    TreeP treeObjClass = getChild(objetOuClasse,0);
-    if(getChild(treeObjClass,1) == NIL(Tree)) return;
-    else generListInst(getChild(treeObjClass,0));
+    if(objetOuClasse->op == EDEFOBJ) generObject(objetOuClasse->u.lobj);
+    if(objetOuClasse->op == EDEFCLASS) generClass(objetOuClasse->u.lclass);
 }
-void generClass(classeP class)
+void generObject(objectP obj)
 {
-    if(class == NULL) return;
-    generClassId(class->name);
-    generListParam(class->parametres);
-    /* TODO generExtendsOpt(class->super); */
-    generBlocOpt(class->constructeur);
-    /* TODO generCorpsClass(class->body); */
-    /* TODO Il faut revoir extends et corps */
+    generClassId(obj->name);
+    generListChpOpt(obj->attributs);
+    generListMethOpt(obj->lmethodes);
 }
-void generListParamOpt(VarDeclP listParamOpt)
-{
-    if(listParamOpt == NIL(VarDecl)) return;
-    generListParam(listParamOpt);
-}
-void generListParam(VarDeclP listParam)
-{
-    
-}
-void generCorpsClass(TreeP corpsClasse)
-{
-    generListChpOpt(getChild(corpsClasse,0));
-    generListMethOpt(getChild(corpsClasse,1));
-}
+
 void generBlocOpt(TreeP blocOpt)
 {
     if(blocOpt == NIL(Tree)) return;            /* Cas Bloc vide */
@@ -90,7 +127,7 @@ void generBlocOpt(TreeP blocOpt)
 void generBloc(TreeP bloc)
 {
     if(getChild(bloc,1) == NIL(Tree))           /* Bloc est une liste d'Instructions */
-        generListInstOpt(getChild(bloc,0));    
+        generListInstOpt(getChild(bloc,0));
     else{                                       /* Bloc est une liste de champs IS Liste Instructions */
         generListChp((VarDeclP)getChild(bloc,0));
         generListInst(getChild(bloc,1));
@@ -99,12 +136,13 @@ void generBloc(TreeP bloc)
 void generBlocNonVide(TreeP bloc)
 {
     if(getChild(bloc,1) == NIL(Tree))           /* Bloc est une liste d'Instructions */
-        generListInst(getChild(bloc,0));    
+        generListInst(getChild(bloc,0));
     else{                                       /* Bloc est une liste de champs IS Liste Instructions */
         generListChp((VarDeclP)getChild(bloc,0));
         generListInst(getChild(bloc,1));
     }
 }
+
 void generListInstOpt(TreeP listInstOpt)
 {
     if(listInstOpt == NIL(Tree)) return;        /* Cas Liste vide */
@@ -117,68 +155,28 @@ void generListInst(TreeP listInst)
 }
 void generInst(TreeP inst)
 {
-    if( inst == NIL(Tree) ) /* Cas Instruction vide */
-    {
-        printf("Instruction null"); return;
-    }
+    printf("Ici if else");
     switch(inst->op){
-        case ERETURN : 
+        case ERETURN :
+            fprintf(out, "RETURN\n");
             return; /* TODO */
-        case EAFF : 
+        case EAFF :
             generArgOuCible(getChild(inst,0));
-        case ITE : 
+        case ITE :
+            ; /* Besoin de laisser un statement a cause des anciens usages */
+            char* labelTHEN = makeLabel("THEN");
+            char* labelELSE = makeLabel("ELSE");
+            char* labelIFELSE = makeLabel("ENDIFELSE");
             generOperation(getChild(inst,0));
-            generIfElse(getChild(inst,1)); 
+            JZ(labelELSE);
+            NEWLABEL(labelTHEN);
+            generIfElse(getChild(inst,1));
+            JUMP(labelIFELSE);
+            NEWLABEL(labelELSE);
             generIfElse(getChild(inst,2));
-        default : generExpression(getChild(inst,0));
+            NEWLABEL("SORTIE IF/ELSE");
+        default : generExpr(getChild(inst,0));
     }
-}
-void generArgOuCible(TreeP argOuCible)
-{
-    if(argOuCible->op == CSTE)                  /* Cas Cste */
-        ; /*TODO*/
-    else{
-        TreeP treeArg = getChild(argOuCible,0);
-        /* TODO */
-        
-    }
-}
-void generOperation(TreeP operation)
-{
-    switch(operation->op){
-        case EADD : 
-            generOperation(getChild(operation,0));
-            /* TODO */
-            generOperation(getChild(operation,1));
-            /* TODO si add tout seul? */
-        case ESUB : 
-            generOperation(getChild(operation,0));
-            /* TODO */
-            generOperation(getChild(operation,1));
-            /* TODO si sub tout seul? */
-        case EMUL : 
-            generOperation(getChild(operation,0));
-            /* TODO */
-            generOperation(getChild(operation,1));
-        case EQUOT : 
-            generOperation(getChild(operation,0));
-            /* TODO */
-            generOperation(getChild(operation,1));
-        case EREST : 
-            generOperation(getChild(operation,0));
-            /* TODO */
-            generOperation(getChild(operation,1));
-        case EAND : 
-            generOperation(getChild(operation,0));
-            /* TODO */
-            generOperation(getChild(operation,1));
-        default :
-            generValeur(getChild(operation,0));
-    }
-}
-void generValeur(TreeP valeur)
-{
-    generArgOuCible(getChild(valeur,0));
 }
 void generIfElse(TreeP ifElse)
 {
@@ -186,17 +184,74 @@ void generIfElse(TreeP ifElse)
     if(treeIfElse->op == EBLOC) generBloc(treeIfElse);
     else generInst(treeIfElse);
 }
-void generExpression(TreeP expr)
+void generExpr(TreeP expr)
 {
+  /* TODO Comment savoir lequel ? */
 }
-void generListChpOpt(VarDeclP listChpOpt)
+void generValeur(TreeP valeur)
 {
-    if(listChpOpt == NIL(VarDecl)) return;
-    generListChp(listChpOpt);
+    generArgOuCible(getChild(valeur,0));
 }
-void generListChp(VarDeclP listChp)
+void generOperation(TreeP operation)
 {
+    switch(operation->op){
+        case EADD :
+            generOperation(getChild(operation,0));
+            /* TODO */
+            generOperation(getChild(operation,1));
+            O_ADD();
+            /* TODO si add tout seul? */
+        case ESUB :
+            generOperation(getChild(operation,0));
+            /* TODO */
+            generOperation(getChild(operation,1));
+            O_SUB();
+            /* TODO si sub tout seul? */
+        case EMUL :
+            generOperation(getChild(operation,0));
+            /* TODO */
+            generOperation(getChild(operation,1));
+            O_MUL();
+        case EQUOT :
+            generOperation(getChild(operation,0));
+            /* TODO */
+            generOperation(getChild(operation,1));
+            O_DIV();
+        case EREST :
+            generOperation(getChild(operation,0));
+            /* TODO */
+            generOperation(getChild(operation,1));
+            O_REST();
+        case EAND :
+            generOperation(getChild(operation,0));
+            /* TODO */
+            generOperation(getChild(operation,1));
+            O_CONCAT();
+        default :
+            generValeur(getChild(operation,0));
+    }
 }
+void generInstanciation(TreeP instanciation)
+{
+    generClassId(getChild(instanciation,0)->u.str);
+    generListArgOpt(getChild(instanciation,1));
+}
+void generClass(classeP class)
+{
+    if(class == NULL) return;
+    generClassId(class->name);
+    generListParam(class->parametres);
+    /* TODO generExtendsOpt(class->super); */
+    generBlocOpt(class->constructeur);
+    /* TODO generCorpsClass(class->body); */
+    /* TODO Il faut revoir extends et corps */
+}
+void generCorpsClass(TreeP corpsClasse)
+{
+    generListChpOpt(corpsClasse->u.lvar);
+    generListMethOpt(corpsClasse->u.lmeth);
+}
+
 void generListMethOpt(methodP listMethOpt)
 {
     if(listMethOpt == NIL(method)) return;
@@ -204,22 +259,34 @@ void generListMethOpt(methodP listMethOpt)
 }
 void generListMeth(methodP listMeth)
 {
-    
+
     /* TODO comment savoir nb methodes */
 }
 void generMeth(methodP meth)
 {
     /* TODO comment savoir which one */
 }
+void generListParamOpt(VarDeclP listParamOpt)
+{
+    if(listParamOpt == NIL(VarDecl)) return;
+    generListParam(listParamOpt);
+}
+void generListParam(VarDeclP listParam)
+{
 
-void generClassId(char* classId)
-{
-    /* TODO */
 }
-void generOverride(bool override)
+void generParam(VarDeclP param)
 {
-    /* TODO */
+  /* TODO */
 }
+
+void generDeclExprOpt(TreeP declExprOpt)
+{
+  /* TODO AFF*/
+  if(declExprOpt == NIL(Tree)) return;
+  /* TODO error generExpr(getChild(declExprOpt,0)); */
+}
+
 void generExtendsOpt(TreeP extends)
 {
     if(extends == NIL(Tree)) return;
@@ -229,13 +296,7 @@ void generExtends(TreeP extends)
 {
     /* TODO */
 }
-void generObject(objectP obj)
-{
-    if(obj == NULL) return;
-    generClassId(obj->name);
-    generListChpOpt(obj->attributs);
-    generListMethOpt(obj->lmethodes);
-}
+
 void generListArgOpt(TreeP listArgOpt)
 {
     if(listArgOpt == NIL(Tree)) return;
@@ -243,15 +304,74 @@ void generListArgOpt(TreeP listArgOpt)
 }
 void generListArg(TreeP listArg)
 {
-    /* TODO Commment trouver? 
+    /* TODO Commment trouver?
     generExpr(getChild(listArg,0))
     if...
         generListArg(getChild(listArg,1))*/
 }
-void generInstanciation(TreeP instanciation)
+void generArgOuCible(TreeP argOuCible)
 {
-    generClassId(getChild(instanciation,0)->u.str);
-    generListArgOpt(getChild(instanciation,1));
+    if(argOuCible->op == CSTE)                  /* Cas Cste */
+        PUSHI(argOuCible->u.val); /*TODO*/
+    else{
+        /* TreeP treeArg = getChild(argOuCible,0); */
+        /* TODO */
+
+    }
 }
-
-
+void generThisSelect(TreeP thisSelect)
+{
+    /* TODO */
+}
+void generListSelection(TreeP listSelection)
+{
+    generSelWithClassID(getChild(listSelection,0));
+    generSelection(getChild(listSelection,1));
+}
+void generSelWithClassID(TreeP selWithClassID)
+{
+    /* TODO */
+}
+void generSelection(TreeP selection)
+{
+  switch(selection->op){
+      case EID :
+          return; /* TODO */
+      case CSTR :
+          return; /* TODO */
+      case CAST :
+          /* generClassId(getChild(selection,0)); */
+          generExpr(getChild(selection,1));
+      default : /* TODO */ return;
+  }
+}
+void generMessage(TreeP message)
+{
+    /* TODO Id */
+    generListArgOpt(getChild(message,1));
+}
+void generListChpOpt(VarDeclP listChpOpt)
+{
+    if(listChpOpt == NIL(VarDecl)) return;
+    generListChp(listChpOpt);
+}
+void generListChp(VarDeclP listChp)
+{
+  generChp(listChp);
+  if(listChp->next != NULL) generListChp(listChp->next);
+}
+void generChp(VarDeclP chp)
+{
+  /* TODO PUSH new chp */
+  /*TODO chp->name */
+  /* generClassId(chp->type); */ /* TODO pas sur */
+  generDeclExprOpt(chp->expr);
+}
+void generClassId(char* classId)
+{
+    /* TODO */
+}
+void generOverride(bool override)
+{
+    /* TODO */
+}
