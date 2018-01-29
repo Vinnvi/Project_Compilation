@@ -209,25 +209,34 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
 }
 
 
+/* Fonction principale */
 void lancerCompilation(TreeP defClasses, TreeP root){
 	/*affichageArbre(root,0);*/
     
     /* definition des classes prefinies*/
-    cInteger = makeClass("Integer",NULL,NULL,NULL,NIL(Tree));
-    cVoid = makeClass("Void",NULL,NULL,NULL,NIL(Tree));
-    cString = makeClass("String",NULL,NULL,NULL,NIL(Tree));
     affichageClasses();
     affichageObjets();
     affichageMethodes();
+
 }
 
+/* Initialise les classes de bases */
+void initClasses(){
+  
+  cInteger = NEW(1, classe);
+  cInteger->name = "Integer";
+  addClasse(cInteger);
+  makeClass("Void",NULL,NULL,NULL,NULL);
+    makeClass("String",NULL,NULL,NULL,NULL);
+}
+
+/* Créateur de structure classe */
 classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps){
 	classeP nouvClasse = NEW(1, classe);
 	nouvClasse->name = nameP;
 	nouvClasse->parametres = parametresP;
     methodesTemp= NIL(method);
     int i =0;
-    printf("%d",indexTab);
     while(i<indexTab){
             tableau[i]->next = methodesTemp;
             methodesTemp = tableau[i];
@@ -238,38 +247,53 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     nouvClasse->lmethodes = methodesTemp;
     methodesTemp = NIL(method);
 
-
-
-    /*nouvClasse->lmethodes = getChild(corps,1)->u.lmeth;*/ /*corps -> ListMethodeopt (1)*/ /*TODO TODO TODO TODO*/
-    /*nouvClasse->attributs = getChild(corps, 0); */
 	nouvClasse->constructeur = constructeurP; 
     nouvClasse->super = getClasseMere(superP);
 	nouvClasse->next = NIL(classe);
+    if (!classes) initClasses();
     addClasse(nouvClasse);
-
+    associationClasse(nouvClasse);
 	return nouvClasse;
 } 
 
-methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP/*TODO*/, TreeP bodyP) {
+/* Créateur de structure methode */
+methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP) {
 	methodP nouvMethode = NEW(1, method);
 	nouvMethode->redef = redefP;
 	nouvMethode->name = nameP;
 	nouvMethode->param = paramP;
 	nouvMethode->body = bodyP;
+  
+	/*if (idToClass(typeRetourP) == NIL(classe)){
+		nouvMethode->typeRetour = idToClass("Void");
+	}
+	else { nouvMethode->typeRetour = idToClass(typeRetourP); }*/
+    nouvMethode->nomTypeRetour = typeRetourP;
+	nouvMethode->body = bodyP;
+    /* TODO gérer les overrides */
+	nouvMethode->next = NIL(method);
     addMethode(nouvMethode);
     addMethodeTemp(nouvMethode);
 	return nouvMethode;
 }
 
-VarDeclP makeVar(bool aVar, char *name, char* type/*TODO*/, TreeP expr){
+/* Créateur de structure VarDecl */
+VarDeclP makeVar(bool aVar, char *name, char* type, TreeP expr){
     VarDeclP nouvVar = NEW(1, VarDecl);
     nouvVar->name = name;
+    /*if (!nouvVar->type){
+      printf("\n/!\\ Variable sans type /!\\\n");
+      abort();
+    }*/
+    nouvVar->nomType = type;
     nouvVar->expr = expr;
     nouvVar->aVar = aVar;
     nouvVar->next = NIL(VarDecl);
+    
     return nouvVar;
 }
 
+/* Créateur de structure object */
 objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     objectP nouvObjet = NEW(1, object);
     nouvObjet->name = name;
@@ -288,6 +312,7 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     addObjet(nouvObjet);
     return nouvObjet;
 }
+
 
 void affichageArbre(TreeP tree,int niveauArbre){
     
@@ -309,7 +334,238 @@ void affichageArbre(TreeP tree,int niveauArbre){
 
 }
 
+/* Pas encore implémentable */
+void associationClasse(classeP cl){
+    methodP methActuelle = cl->lmethodes;
+    while(methActuelle){
+        methActuelle->appartenance = cl;
+        printf("%s\n", methActuelle->name);
+        methActuelle->typeRetour = idToClass(methActuelle->nomTypeRetour);
+        methActuelle = methActuelle->next;
+    }
 
+    VarDeclP attributActuel = cl->attributs;
+    while(attributActuel){
+        attributActuel->appartenance.classe = cl;
+        attributActuel->type = idToClass(attributActuel->nomType);
+        attributActuel = attributActuel->next;
+    }
+}
+
+/* Ajoute une classe dans la variable globale des classes */
+void addClasse(classeP c){
+    c->next = classes;
+    classes = c;
+}
+
+/* Ajoute un objet dans la variable globale des objets */
+void addObjet(objectP o){
+    o->next = objets;
+    objets = o;
+}
+
+/* Ajoute une methodes dans la variable globale des methodes */
+void addMethode(methodP m){
+    m->next = methodes;
+    methodes = m;
+    tableau[indexTab] = m;
+    indexTab++;
+}
+
+void addMethodeTemp(methodP m){
+    m->next = methodesTemp;
+    methodesTemp = m;
+}
+
+/* Fonction de test */
+void affichageClasses(){
+    classeP listClass = NEW(1, classe);
+    listClass = classes;
+    printf("\n ---Liste des classes--- \n");
+    while(listClass != NIL(classe)){
+        printf("Nom de classe : %s ",listClass->name);
+        if(listClass->super != NULL){
+            printf("| Classe mere : %s ",listClass->super->name);
+            
+        }
+        printf("| liste des parametres : ");
+        VarDeclP params = NEW(1,VarDecl);
+        params = listClass->parametres;
+        while(params != NIL(VarDecl)){
+            printf(" %s", params->name);
+            params = params->next;
+        }
+        printf("| liste des methodes : ");
+        methodP methodes = NEW(1,method);
+        methodes = listClass->lmethodes;
+        while(methodes != NIL(method)){
+            printf(" %s (%s, %s)", methodes->name, methodes->typeRetour->name, methodes->appartenance->name);
+            methodes = methodes->next;
+        }
+        printf("\n");
+        listClass = listClass->next;
+    }
+}
+
+/* Fonction de test */
+void affichageObjets(){
+    objectP listObjet = NEW(1, object);
+    listObjet = objets;
+    printf("\n ---Liste des objets--- \n");
+    while(listObjet != NIL(object)){
+        printf("%s,",listObjet->name);
+        printf("| liste des attributs : ");
+        VarDeclP v = NEW(1,VarDecl);
+        v = listObjet->attributs;
+        while(v != NIL(VarDecl)){
+            printf("%s,", v->name);
+            v = v->next;
+        }
+        printf("| liste des methodes : ");
+        methodP methodes = NEW(1,method);
+        methodes = listObjet->lmethodes;
+        while(methodes != NIL(method)){
+            printf(" %s,", methodes->name);
+            methodes = methodes->next;
+        }
+        printf("\n");
+        listObjet = listObjet->next;
+        
+    }
+    
+}
+
+/* Fonction de test */
+void affichageMethodes(){
+    methodP listMethodes = NEW(1, method);
+    listMethodes = methodes;
+    printf("\n ---Liste des methodes--- \n");
+    while(listMethodes != NIL(method)){
+        printf("%s; | classe associée : %s | typeRetour : %s\n",listMethodes->name, listMethodes->appartenance->name, listMethodes->typeRetour->name);
+        listMethodes = listMethodes->next;
+    }
+    
+}
+
+
+/* A partir du Tree P de la classe, avoir le pointeur de la classe mere*/
+classeP getClasseMere(TreeP tree){
+    char* res = NULL;    
+    int i,indice = 0;
+    
+    if(tree == NIL(Tree)){
+        res = NULL;
+    }       
+    else{
+        TreeP arbre [5];
+        arbre[0] = tree;
+        while(1){
+            if(strcmp(recupEtiquette(arbre[indice]->op),"EIDCLASS") == 0 ){
+                res = arbre[indice]->u.str;
+                break;
+            }
+            else{
+                for (i=0;i<arbre[indice]->nbChildren;i++){
+                    arbre[indice+(i+1)] = arbre[indice]->u.children[i];
+                }
+                indice++;
+            }  
+        }
+    }
+
+    classeP c = getPointeurClasse(res);
+    return c;
+
+    
+}
+
+/* Doublon idToClass :,( */
+classeP getPointeurClasse(char* s){
+    classeP listClass = NEW(1, classe);
+    listClass = classes;
+    if(s == NULL){
+        return NULL;
+    }
+    while(listClass != NIL(classe)){
+        if(strcmp(listClass->name,s)==0){
+            return listClass;
+        }
+        else{
+            listClass = listClass->next;
+        }
+    }
+    return NULL;
+}
+
+/* Prend une chaine de caractère et retourne un ptr vers la structure VarDecl ayant ce nom */
+VarDeclP idToDecl(char* id){
+  int compte = 0;
+  if (!pileVariables.sommet){
+    printf("Pas de variables");
+    return NIL(VarDecl);
+  }
+  ptrVar elemActuel = pileVariables.sommet;
+    
+  while (compte < pileVariables.taille){
+		if( strcmp(elemActuel->var->name, id) == 0) return elemActuel->var;
+		elemActuel = elemActuel->next;
+		compte += 1;
+	}
+	printf("Variable introuvable");
+	return NIL(VarDecl);
+}
+
+/* Prend une chaine de caractère et retourne un ptr vers la structure classe ayant ce nom */
+classeP idToClass(char* id){
+  if (!classes){
+    printf("Pas de classes");
+    return NIL(classe);
+  }
+  if (!id) return idToClass("Void");
+
+  classeP classActuelle = classes;
+  while (classActuelle){
+    if( strcmp(classActuelle->name, id) == 0) return classActuelle;
+    classActuelle = classActuelle->next;
+  }
+  printf("Classe introuvable");
+  return NIL(classe);
+}
+
+/* Prend une chaine de caractère et retourne un ptr la structure object ayant ce nom */
+objectP idToObj(char* id){
+  if (!objets){
+    printf("Pas d'objets'");
+    return NIL(object);
+  }
+  objectP objetActuel = objets;
+    
+  while (objetActuel){
+    if( strcmp(objetActuel->name, id) == 0) return objetActuel;
+    objetActuel = objetActuel->next;
+  }
+  printf("Classe introuvable");
+  return NIL(object);
+}
+
+/* Prend une chaine de caractère et retourne un ptr la structure methode ayant ce nom */
+methodP idToMeth(char* id, methodP lmethodes){
+  if (!lmethodes){
+    printf("Pas de methodes");
+    return NIL(method);
+  }
+  methodP methActuelle = lmethodes;
+    
+  while (methActuelle){
+    if( strcmp(methActuelle->name, id) == 0) return methActuelle;
+    methActuelle = methActuelle->next;
+  }
+  printf("Methode introuvable");
+  return NIL(method);
+}
+
+
+/* Prend en entrée une étiquette et renvoie sa représentation en chaine de car */
 char* recupEtiquette(short op){
     switch(op){
         case 1 : return "NE";
@@ -360,208 +616,6 @@ char* recupEtiquette(short op){
     }   
     
 }
-
-void addClasse(classeP c){
-    c->next = classes;
-    classes = c;
-}
-
-void addObjet(objectP o){
-    o->next = objets;
-    objets = o;
-}
-
-void addMethode(methodP m){
-    m->next = methodes;
-    methodes = m;
-    tableau[indexTab] = m;
-    indexTab++;
-}
-
-void addMethodeTemp(methodP m){
-    m->next = methodesTemp;
-    methodesTemp = m;
-}
-
-void affichageClasses(){
-    classeP listClass = NEW(1, classe);
-    listClass = classes;
-    printf("\n ---Liste des classes--- \n");
-    while(listClass != NIL(classe)){
-        printf("Nom de classe : %s ",listClass->name);
-        if(listClass->super != NULL){
-            printf("| Classe mere : %s ",listClass->super->name);
-            
-        }
-        printf("| liste des parametres : ");
-        VarDeclP params = NEW(1,VarDecl);
-        params = listClass->parametres;
-        while(params != NIL(VarDecl)){
-            printf(" %s", params->name);
-            params = params->next;
-        }
-        printf("| liste des methodes : ");
-        methodP methodes = NEW(1,method);
-        methodes = listClass->lmethodes;
-        while(methodes != NIL(method)){
-            printf(" %s", methodes->name);
-            methodes = methodes->next;
-        }
-        printf("\n");
-        listClass = listClass->next;
-    }
-}
-
-void affichageObjets(){
-    objectP listObjet = NEW(1, object);
-    listObjet = objets;
-    printf("\n ---Liste des objets--- \n");
-    while(listObjet != NIL(object)){
-        printf("%s,",listObjet->name);
-        printf("| liste des attributs : ");
-        VarDeclP v = NEW(1,VarDecl);
-        v = listObjet->attributs;
-        while(v != NIL(VarDecl)){
-            printf("%s,", v->name);
-            v = v->next;
-        }
-        printf("| liste des methodes : ");
-        methodP methodes = NEW(1,method);
-        methodes = listObjet->lmethodes;
-        while(methodes != NIL(method)){
-            printf(" %s,", methodes->name);
-            methodes = methodes->next;
-        }
-        printf("\n");
-        listObjet = listObjet->next;
-        
-    }
-    
-}
-
-void affichageMethodes(){
-    methodP listMethodes = NEW(1, method);
-    listMethodes = methodes;
-    printf("\n ---Liste des methodes--- \n");
-    while(listMethodes != NIL(method)){
-        printf("%s\n",listMethodes->name);
-        listMethodes = listMethodes->next;
-    }
-    
-}
-
-
-/* A partir du Tree P de la classe, avoir le pointeur de la classe mere*/
-classeP getClasseMere(TreeP tree){
-    char* res = NULL;    
-    int i,indice = 0;
-    
-    if(tree == NIL(Tree)){
-        res = NULL;
-    }       
-    else{
-        TreeP arbre [5];
-        arbre[0] = tree;
-        while(1){
-            if(strcmp(recupEtiquette(arbre[indice]->op),"EIDCLASS") == 0 ){
-                res = arbre[indice]->u.str;
-                break;
-            }
-            else{
-                for (i=0;i<arbre[indice]->nbChildren;i++){
-                    arbre[indice+(i+1)] = arbre[indice]->u.children[i];
-                }
-                indice++;
-            }  
-        }
-    }
-
-    classeP c = getPointeurClasse(res);
-    return c;
-
-    
-}
-
-classeP getPointeurClasse(char* s){
-    classeP listClass = NEW(1, classe);
-    listClass = classes;
-    if(s == NULL){
-        return NULL;
-    }
-    while(listClass != NIL(classe)){
-        if(strcmp(listClass->name,s)==0){
-            return listClass;
-        }
-        else{
-            listClass = listClass->next;
-        }
-    }
-    return NULL;
-}
-
-VarDeclP idToDecl(char* id){
-  int compte = 0;
-  if (!pileVariables.sommet){
-    printf("Pas de variables");
-    return NIL(VarDecl);
-  }
-  ptrVar elemActuel = pileVariables.sommet;
-    
-  while (compte < pileVariables.taille){
-		if( strcmp(elemActuel->var->name, id) == 0) return elemActuel->var;
-		elemActuel = elemActuel->next;
-		compte += 1;
-	}
-	printf("Variable introuvable");
-	return NIL(VarDecl);
-}
-
-classeP idToClass(char* id){
-  if (!classes){
-    printf("Pas de classes");
-    return NIL(classe);
-  }
-  classeP classActuelle = classes;
-    
-  while (classActuelle){
-    if( strcmp(classActuelle->name, id) == 0) return classActuelle;
-    classActuelle = classActuelle->next;
-  }
-  printf("Classe introuvable");
-  return NIL(classe);
-}
-
-objectP idToObj(char* id){
-  if (!objets){
-    printf("Pas d'objets'");
-    return NIL(object);
-  }
-  objectP objetActuel = objets;
-    
-  while (objetActuel){
-    if( strcmp(objetActuel->name, id) == 0) return objetActuel;
-    objetActuel = objetActuel->next;
-  }
-  printf("Classe introuvable");
-  return NIL(object);
-}
-
-methodP idToMeth(char* id, methodP lmethodes){
-  if (!lmethodes){
-    printf("Pas de methodes");
-    return NIL(method);
-  }
-  methodP methActuelle = lmethodes;
-    
-  while (methActuelle){
-    if( strcmp(methActuelle->name, id) == 0) return methActuelle;
-    methActuelle = methActuelle->next;
-  }
-  printf("Methode introuvable");
-  return NIL(method);
-}
-
-
 
 
 
