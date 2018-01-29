@@ -348,62 +348,6 @@ void associationClasse(classeP cl){
         methActuelle->typeRetour = idToClass(methActuelle->nomTypeRetour);
         methActuelle = methActuelle->next;
     }
-
-char* recupEtiquette(short op){
-    switch(op){
-        case 1 : return "NE";
-        case 2 : return "EQ";
-        case 3 : return "LT";
-        case 4 : return "LE";
-        case 5 : return "GT";
-        case 6 : return "GE";
-        case 7 : return "EADD";
-        case 8 : return "ESUB";
-        case 9 : return "EMUL";
-        case 10 : return "EQUOT";
-        case 11 : return "EREST";
-        case 12 : return "EAND";
-        case 13 : return "EAFF";
-        case 14 : return "EDOT";
-        case 15 : return "EEXTND";
-        case 16 : return "ETHIS";
-        case 17 : return "ERETURN";
-        case 18 : return "CSTE";
-        case 19 : return "CSTR";
-        case 20 : return "EID";
-        case 21 : return "ECLASS";
-        case 22 : return "CAST";
-        case 23 : return "ITE";
-        case 24 : return "LCHAMP";
-        case 25 : return "LARG";
-        case 26 : return "LPARAM";
-        case 27 : return "LMETH";
-        case 28 : return "LINST";
-        case 29 : return "LCLASS";
-        case 30 : return "MSG";
-        case 31 : return "EBLOC";
-        case 32 : return "ENEW";
-        case 33 : return "over";
-        case 34 : return "CHMP";
-        case 35 : return "EEXPR";
-        case 36 : return "ESEL";
-        case 37 : return "EARG";
-        case 38 : return "EVAR";
-        case 39 : return "EPAR";
-        case 40 : return "EMETHOD";
-        case 41 : return "EOBJ";
-        case 42 : return "EPROG";
-        case 43 : return "LSEL";
-        case 44 : return "EIDCLASS";
-        case 45 : return "ECORPS";
-        case 46 : return "LOBJET";
-        case 47 : return "EDEFOBJ";
-        case 48 : return "EDEFCLASS";
-        case 49 : return "ETHISSELECT";
-        case 50 : return "LISTDOT";
-        default : return "ERREUR";
-    }   
-    
     VarDeclP attributActuel = cl->attributs;
     while(attributActuel){
         attributActuel->appartenance.classe = cl;
@@ -672,6 +616,12 @@ char* recupEtiquette(short op){
         case 42 : return "EPROG";
         case 43 : return "LSEL";
         case 44 : return "EIDCLASS";
+        case 45 : return "ECORPS";
+        case 46 : return "LOBJET";
+        case 47 : return "EDEFOBJ";
+        case 48 : return "EDEFCLASS";
+        case 49 : return "ETHISSELECT";
+        case 50 : return "LISTDOT";
         default : return "ERREUR";
     }   
     

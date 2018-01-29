@@ -155,32 +155,43 @@ void generListInst(TreeP listInst)
 }
 void generInst(TreeP inst)
 {
+    printf("avant switch %hi \n",inst->op);
     switch(inst->op){
         case ERETURN :
             fprintf(out, "RETURN\n");
         case EAFF :
             generArgOuCible(getChild(inst,0));
+            generExpr(getChild(inst,1));
         case ITE :
             ; /* Besoin de laisser un statement a cause des anciens usages */
             char* labelTHEN = makeLabel("THEN");
             char* labelELSE = makeLabel("ELSE");
             char* labelIFELSE = makeLabel("ENDIFELSE");
+            printf("debut %hi \n",inst->op);
             generOperation(getChild(inst,0));
             JZ(labelELSE);
             NEWLABEL(labelTHEN);
+            printf("premier %hi \n",inst->op);
+            TreeP t = getChild(inst,1);
+            printf("quit %hi \n",t->op);
             generIfElse(getChild(inst,1));
             JUMP(labelIFELSE);
             NEWLABEL(labelELSE);
+            TreeP t2 = getChild(inst,1);
+            printf("second %hi \n",t2->op);
             generIfElse(getChild(inst,2));
             NEWLABEL("SORTIE IF/ELSE");
         default : generExpr(inst);
     }
 }
 void generIfElse(TreeP ifElse)
-{
-    /*
-    if(ifElse->op == EBLOC) generBloc(getChild(ifElse,0));
-    else generInst(ifElse); */
+{   
+    switch(ifElse->op){
+        case EBLOC :
+            generBloc(getChild(ifElse,0));
+        default :
+            generInst(ifElse); 
+    }
 }
 void generExpr(TreeP expr)
 {

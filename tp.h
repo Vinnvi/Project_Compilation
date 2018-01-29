@@ -110,9 +110,7 @@ typedef struct _varDecl {
   char *name;
   struct _varDecl *next;
   struct _Classe *type;
-  struct _Classe *type; 
   char* nomType;
->>>>>>> a2b167295b6cef4731f2296d9ba581793034901b
   TreeP expr;
   bool aVar;
 
