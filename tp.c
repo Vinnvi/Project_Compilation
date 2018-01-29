@@ -222,6 +222,7 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     FILE *fileToWrite;
     fileToWrite = fopen("test.txt", "w+");
     lancerGeneration(defClasses,fileToWrite);
+    generBloc(root);
 }
 
 classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps){
@@ -343,6 +344,8 @@ char* recupEtiquette(short op){
         case 46 : return "LOBJET";
         case 47 : return "EDEFOBJ";
         case 48 : return "EDEFCLASS";
+        case 49 : return "ETHISSELECT";
+        case 50 : return "LISTDOT";
         default : return "ERREUR";
     }   
     

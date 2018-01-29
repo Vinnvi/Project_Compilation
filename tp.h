@@ -78,7 +78,8 @@ typedef unsigned char bool;
 #define LOBJET 46
 #define EDEFOBJ 47
 #define EDEFCLASS 48
-
+#define ETHISSELECT 49
+#define LISTDOT 50
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0

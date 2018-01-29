@@ -45,6 +45,8 @@ void generMeth(methodP meth);
 void generListParamOpt(VarDeclP listParamOpt);
 void generListParam(VarDeclP listParam);
 void generParam(VarDeclP param);
+void generListParamDef(VarDeclP listParamDef);
+void generParamDef(VarDeclP paramDef);
 void generDeclExprOpt(TreeP declExprOpt);
 void generExtendsOpt(TreeP extends);
 void generExtends(TreeP extends);

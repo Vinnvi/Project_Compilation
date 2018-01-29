@@ -1497,7 +1497,7 @@ yyreduce:
 
   case 25:
 #line 86 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.pT) = makeTree(EBLOC, 1, (yyvsp[0].pT));}
 #line 1502 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1773,13 +1773,13 @@ yyreduce:
 
   case 71:
 #line 173 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.pT) = makeTree(EDOT,1,(yyvsp[0].pT));}
 #line 1778 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 72:
 #line 174 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.pT) = makeTree(ETHISSELECT,1,(yyvsp[0].pT));}
 #line 1784 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1797,7 +1797,7 @@ yyreduce:
 
   case 75:
 #line 179 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EDOT, 2, (yyvsp[-2].ClasseP), (yyvsp[0].pT)); }
+    { (yyval.pT) = makeTree(LISTDOT, 2, (yyvsp[-2].ClasseP), (yyvsp[0].pT)); }
 #line 1802 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1821,7 +1821,7 @@ yyreduce:
 
   case 79:
 #line 187 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.pT) = makeTree(LSEL,1,(yyvsp[0].pT));}
 #line 1826 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1857,7 +1857,7 @@ yyreduce:
 
   case 85:
 #line 195 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[-1].pT);}
+    {(yyval.pT) = makeTree(EEXPR, 1, (yyvsp[-1].pT));}
 #line 1862 "tp_y.c" /* yacc.c:1646  */
     break;
 

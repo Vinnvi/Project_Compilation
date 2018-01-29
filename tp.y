@@ -83,7 +83,7 @@ Instruction : Expression ';'                        {$$ = $1;}
 ;
 
 InstIfElse : Instruction    {$$ = $1;}
-| Bloc                      {$$ = $1;}
+| Bloc                      {$$ = makeTree(EBLOC, 1, $1);}
 ;
 
 Expression: Instanciation   {$$ = $1;}
@@ -170,13 +170,13 @@ ListArgumentsOpt : ListArguments    {$$ = $1;}
 ListArguments: Expression ',' ListArguments     {$$ = makeTree(LARG, 2, $1, $3);}
 | Expression                                    {$$ = $1;}
 ;
-ArgumentOuCible: ListSelection  {$$ = $1;}
-| ThisSelect                    {$$ = $1;}
+ArgumentOuCible: ListSelection  {$$ = makeTree(EDOT,1,$1);}
+| ThisSelect                    {$$ = makeTree(ETHISSELECT,1,$1);}
 | Cste                          {$$ = makeLeafInt(CSTE, $1);}
 | Selection                     {$$ = $1;}
 ;
 
-ThisSelect : THIS DOT ListSelection             { $$ = makeTree(EDOT, 2, $1, $3); }
+ThisSelect : THIS DOT ListSelection             { $$ = makeTree(LISTDOT, 2, $1, $3); }
 | THIS DOT Selection                            { $$ = makeTree(EDOT, 2, $1, $3); }                            
 | THIS                                          { $$ = makeLeafStr(ETHIS, "this"); }
 ;
@@ -184,7 +184,7 @@ ThisSelect : THIS DOT ListSelection             { $$ = makeTree(EDOT, 2, $1, $3)
 ListSelection : SelWithClassID DOT Selection    {$$ = makeTree(EDOT, 2, $1, $3);}
 ;
 
-SelWithClassID : ListSelection      {$$ = $1;}
+SelWithClassID : ListSelection      {$$ = makeTree(LSEL,1,$1);}
 | Selection                         {$$ = $1;}
 | ClassId                           {$$ = makeLeafStr(CLASS, $1);}
 ;
@@ -192,7 +192,7 @@ SelWithClassID : ListSelection      {$$ = $1;}
 Selection : Id                  {$$ = makeLeafStr(EID, $1);}
 | Message                       {$$ = $1;}
 | Cstr                          {$$ = makeLeafStr(CSTR, $1);}
-| '('Expression')'              {$$ = $2;}
+| '('Expression')'              {$$ = makeTree(EEXPR, 1, $2);}
 | '(' ClassId Expression ')'    {$$ = makeTree(CAST, 2, $2, $3);}
 ;
 
