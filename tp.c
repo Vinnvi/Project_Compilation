@@ -254,7 +254,6 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP/
 	methodP nouvMethode = NEW(1, method);
 	nouvMethode->redef = redefP;
 	nouvMethode->name = nameP;
-    printf("methode : %s\n",nouvMethode->name);
 	nouvMethode->param = paramP;
 	nouvMethode->body = bodyP;
     addMethode(nouvMethode);
@@ -381,21 +380,7 @@ void addMethode(methodP m){
 
 void addMethodeTemp(methodP m){
     m->next = methodesTemp;
-
     methodesTemp = m;
-
-    /*methodP methodes = NEW(1,method);
-    printf("Methodes :");
-    methodes = methodesTemp;
-    
-    while(methodes != NIL(method)){
-       printf(" %s,", methodes->name);
-       methodes = methodes->next;
-    }
-    if(methodes == NIL(method)){
-        printf("the next %s,", methodes->next->name);
-    }
-    printf("\n");*/
 }
 
 void affichageClasses(){
