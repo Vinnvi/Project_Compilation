@@ -110,8 +110,17 @@ typedef struct _varDecl {
   char *name;
   struct _varDecl *next;
   struct _Classe *type;
+  struct _Classe *type; 
+  char* nomType;
+>>>>>>> a2b167295b6cef4731f2296d9ba581793034901b
   TreeP expr;
   bool aVar;
+
+  union {
+    methodP methode;
+    classeP classe;
+    objectP objet;
+  } appartenance; 
 
 } VarDecl, *VarDeclP;
 
@@ -158,7 +167,7 @@ struct _Classe{
 	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
      TreeP constructeur;
      VarDeclP attributs; /*Attributs de la classe*/
-     VarDeclP parametres; /* liste des parametres de la classe */
+     VarDeclP parametres; /* liste des parametres du constructeur de la classe*/
 	 classeP super; /*classe mere*/
 	 struct _Classe *next; /*Pour chainer les classes*/
 };
@@ -168,11 +177,13 @@ struct _Classe{
 /* Structure d'une méthode */
 struct _Method{
 	char* name; /* identificateur */
-    VarDeclP param; /*liste des parametres*/
-    TreeP body; /*Corps de la methode*/
+  VarDeclP param; /*liste des parametres*/
+  TreeP body; /*Corps de la methode*/
 	struct _Classe *typeRetour; /* type retour methode */
+  char* nomTypeRetour;
+  struct _Classe *appartenance; /* type retour methode */
 	struct _Method *methodeMere; /*Override*/
-    bool redef;
+  bool redef;
 	struct _Method *next;
 };
 
@@ -185,6 +196,8 @@ struct _Object{
 	struct _Object *next;
 };
 
+/* ################################ */
+/* Structures de pile pour l'analyse de portée */
 struct _pileVar{
     ptrVar sommet;
     int taille;
@@ -195,11 +208,15 @@ struct _elmtVar{
     ptrVar next;
 };
 
+/* ################################ */
+
+/* Peut-être inutile */
 union _ClasseOuObjet{
 	classe c;
     object o;
 };
 
+/* Inutile */
 struct _Instruction{
     union{
         TreeP exp;
@@ -210,12 +227,14 @@ struct _Instruction{
     struct _Instruction *next;
 };
 
+/* Inutile */
 struct _ifThenElse{
     TreeP *expressionIf;
     struct _Instruction *instructionThen;
     struct _Instruction *instructionElse;
 };
 
+/* Inutile */
 struct _bloc{
    TreeP lInstruction;
 };
@@ -277,3 +296,6 @@ methodP idToMeth(char* id, methodP lmethodes);
 TreeP getChild(TreeP tree, int rank);
 void addMethodeTemp(methodP m);
 void addVarTemp(VarDeclP v);
+void associationClasse(classeP cl);
+void initClasses();
+
