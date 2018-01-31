@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
    */
 
 
-   
+
 
   if (out != NIL(FILE) && out != stdout) fclose(out);
   return res ? SYNTAX_ERROR : errorCode;
@@ -213,7 +213,7 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
 /* Fonction principale */
 void lancerCompilation(TreeP defClasses, TreeP root){
 	/*affichageArbre(root,0);*/
-    
+
     /* definition des classes prefinies*/
     affichageClasses();
     affichageObjets();
@@ -227,7 +227,7 @@ void lancerCompilation(TreeP defClasses, TreeP root){
 
 /* Initialise les classes de bases */
 void initClasses(){
-  
+
   cInteger = NEW(1, classe);
   cInteger->name = "Integer";
   addClasse(cInteger);
@@ -252,14 +252,14 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     nouvClasse->lmethodes = methodesTemp;
     methodesTemp = NIL(method);
 
-	nouvClasse->constructeur = constructeurP; 
+	nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
 	nouvClasse->next = NIL(classe);
     if (!classes) initClasses();
     addClasse(nouvClasse);
     associationClasse(nouvClasse);
 	return nouvClasse;
-} 
+}
 
 /* Créateur de structure methode */
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP) {
@@ -268,7 +268,7 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	nouvMethode->name = nameP;
 	nouvMethode->param = paramP;
 	nouvMethode->body = bodyP;
-  
+
 	/*if (idToClass(typeRetourP) == NIL(classe)){
 		nouvMethode->typeRetour = idToClass("Void");
 	}
@@ -294,7 +294,7 @@ VarDeclP makeVar(bool aVar, char *name, char* type, TreeP expr){
     nouvVar->expr = expr;
     nouvVar->aVar = aVar;
     nouvVar->next = NIL(VarDecl);
-    
+
     return nouvVar;
 }
 
@@ -303,9 +303,9 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     objectP nouvObjet = NEW(1, object);
     nouvObjet->name = name;
     nouvObjet->lmethodes = lmethodes;
-    nouvObjet->attributs = attributs;   
+    nouvObjet->attributs = attributs;
     methodesTemp = NIL(method);
-    
+
     /*vidage tableau*/
     int i =0;
     while(i<indexTab-1){
@@ -320,18 +320,18 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
 
 
 void affichageArbre(TreeP tree,int niveauArbre){
-    
+
     int i,j = 0;
     if(tree == NIL(Tree)){
         printf("NIL\n");
-    }       
+    }
     else if(tree->nbChildren > 0 ){
         printf("%s(%hi):%d:(nbchildren=%d)\n", recupEtiquette(tree->op),tree->op,niveauArbre,tree->nbChildren);
         for (i=0;i<tree->nbChildren;i++) {
             for (j=0;j<niveauArbre;j++)
                 printf("__");
             affichageArbre(tree->u.children[i],niveauArbre+1);
-        }          
+        }
     }
     else{
         printf("%s(%hi):%d\n", recupEtiquette(tree->op),tree->op, niveauArbre);
@@ -390,7 +390,7 @@ void affichageClasses(){
         printf("Nom de classe : %s ",listClass->name);
         if(listClass->super != NULL){
             printf("| Classe mere : %s ",listClass->super->name);
-            
+
         }
         printf("| liste des parametres : ");
         VarDeclP params = NEW(1,VarDecl);
@@ -434,9 +434,9 @@ void affichageObjets(){
         }
         printf("\n");
         listObjet = listObjet->next;
-        
+
     }
-    
+
 }
 
 /* Fonction de test */
@@ -448,18 +448,18 @@ void affichageMethodes(){
         printf("%s; | classe associée : %s | typeRetour : %s\n",listMethodes->name, listMethodes->appartenance->name, listMethodes->typeRetour->name);
         listMethodes = listMethodes->next;
     }
-    
+
 }
 
 
 /* A partir du Tree P de la classe, avoir le pointeur de la classe mere*/
 classeP getClasseMere(TreeP tree){
-    char* res = NULL;    
+    char* res = NULL;
     int i,indice = 0;
-    
+
     if(tree == NIL(Tree)){
         res = NULL;
-    }       
+    }
     else{
         TreeP arbre [5];
         arbre[0] = tree;
@@ -473,14 +473,14 @@ classeP getClasseMere(TreeP tree){
                     arbre[indice+(i+1)] = arbre[indice]->u.children[i];
                 }
                 indice++;
-            }  
+            }
         }
     }
 
     classeP c = getPointeurClasse(res);
     return c;
 
-    
+
 }
 
 /* Doublon idToClass :,( */
@@ -509,7 +509,7 @@ VarDeclP idToDecl(char* id){
     return NIL(VarDecl);
   }
   ptrVar elemActuel = pileVariables.sommet;
-    
+
   while (compte < pileVariables.taille){
 		if( strcmp(elemActuel->var->name, id) == 0) return elemActuel->var;
 		elemActuel = elemActuel->next;
@@ -543,7 +543,7 @@ objectP idToObj(char* id){
     return NIL(object);
   }
   objectP objetActuel = objets;
-    
+
   while (objetActuel){
     if( strcmp(objetActuel->name, id) == 0) return objetActuel;
     objetActuel = objetActuel->next;
@@ -559,7 +559,7 @@ methodP idToMeth(char* id, methodP lmethodes){
     return NIL(method);
   }
   methodP methActuelle = lmethodes;
-    
+
   while (methActuelle){
     if( strcmp(methActuelle->name, id) == 0) return methActuelle;
     methActuelle = methActuelle->next;
@@ -622,15 +622,10 @@ char* recupEtiquette(short op){
         case 48 : return "EDEFCLASS";
         case 49 : return "ETHISSELECT";
         case 50 : return "LISTDOT";
+        case 51 : return "EINST";
+        case 52 : return "EADDSOLO";
+        case 53 : return "ESUBSOLO";
         default : return "ERREUR";
-    }   
-    
+    }
+
 }
-
-
-
-
-
-
-
-

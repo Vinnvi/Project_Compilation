@@ -34,7 +34,6 @@ void generListInst(TreeP listInst);
 void generInst(TreeP inst);
 void generIfElse(TreeP ifElse);
 void generExpr(TreeP expr);
-void generValeur(TreeP valeur);
 void generOperation(TreeP operation);
 void generInstanciation(TreeP instanciation);
 void generClass(classeP class);

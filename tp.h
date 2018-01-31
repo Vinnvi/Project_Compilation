@@ -80,6 +80,9 @@ typedef unsigned char bool;
 #define EDEFCLASS 48
 #define ETHISSELECT 49
 #define LISTDOT 50
+#define EINST 51
+#define EADDSOLO 52
+#define ESUBSOLO 53
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -118,7 +121,7 @@ typedef struct _varDecl {
     methodP methode;
     classeP classe;
     objectP objet;
-  } appartenance; 
+  } appartenance;
 
 } VarDecl, *VarDeclP;
 
@@ -296,4 +299,3 @@ void addMethodeTemp(methodP m);
 void addVarTemp(VarDeclP v);
 void associationClasse(classeP cl);
 void initClasses();
-
