@@ -6,6 +6,7 @@
 #include <string.h>
 #include "tp.h"
 #include "tp_y.h"
+#include "verif.h"
 
 extern int yyparse();
 extern int yylineno;
@@ -32,7 +33,7 @@ FILE *out; /* fichier de sortie pour le code engendre */
 classeP classes = NIL(classe); /* liste des classes*/
 objectP objets = NIL(object); /*liste des objets */
 methodP methodes = NIL(method); /*liste des objets */
-pileVar pileVariables; /* pile des variables pour la vérification contextuelles*/
+extern pileVar pileVariables; /* pile des variables pour la vérification contextuelles*/
 methodP methodesTemp = NIL(method);
 
 int indexTab = 0;
@@ -514,7 +515,7 @@ VarDeclP idToDecl(char* id){
     printf("Pas de variables");
     return NIL(VarDecl);
   }
-  ptrVar elemActuel = pileVariables.sommet;
+  elmtVarP elemActuel = pileVariables.sommet;
     
   while (compte < pileVariables.taille){
 		if( strcmp(elemActuel->var->name, id) == 0) return elemActuel->var;

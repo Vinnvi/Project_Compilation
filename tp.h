@@ -96,10 +96,6 @@ typedef struct _Programme prog,*ProgP;
 typedef struct _Tree Tree,*TreeP;
 typedef union _ClasseOuObjet CouO, *CouOP;
 
-/* Pile pour l'analyse de portée */
-typedef struct _elmtVar elmtVar, *ptrVar;
-typedef struct _pileVar pileVar, *ptrPileVar;
-
 /* Adapt as needed. Currently it is simply a list of names ! */
 typedef struct _varDecl {
   char *name;
@@ -190,18 +186,6 @@ struct _Object{
 	methodP lmethodes; /* pointeur sur la liste des methodes de l'objet */
 	VarDeclP attributs; /* pointeur sur la liste des attributs de l'objet */
 	struct _Object *next;
-};
-
-/* ################################ */
-/* Structures de pile pour l'analyse de portée */
-struct _pileVar{
-    ptrVar sommet;
-    int taille;
-};
-
-struct _elmtVar{
-    VarDeclP var;
-    ptrVar next;
 };
 
 /* ################################ */
