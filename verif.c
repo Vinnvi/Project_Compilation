@@ -41,16 +41,18 @@ bool verifParam(methodP meth, VarDeclP params)
 {
 	if(params != NIL(VarDecl) && meth->param != NIL(VarDecl))
     {
-    	while(meth->param->next != NIL(VarDecl) && params->next != NIL(VarDecl))
+    	VarDeclP methParam = meth->param;
+    	VarDeclP param = params;
+    	while(methParam->next != NIL(VarDecl) && param->next != NIL(VarDecl))
     	{
-    		if(strcmp(meth->param->nomType, params->nomType))
+    		if(strcmp(methParam->nomType, param->nomType))
     		{
     			return 0;
     		}
-    		meth->param = meth->param->next;
-    		params = params->next;
+    		methParam = methParam->next;
+    		param = param->next;
     	}
-    	if((meth->param->next != NIL(VarDecl) || params->next != NIL(VarDecl)) && meth->param->next != params->next)
+    	if((methParam->next != NIL(VarDecl) || param->next != NIL(VarDecl)) && methParam->next != param->next)
     	{
     		return 0;
     	}
