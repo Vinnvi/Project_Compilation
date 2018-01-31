@@ -268,6 +268,6 @@ void associationObjet(objectP obj);
 void initClasses();
 
 bool verifParam(methodP meth, VarDeclP params);
-bool verifRetour(methodP meth, char* type);
+bool verifRetour(methodP meth, classeP typeTest);
 
 

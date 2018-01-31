@@ -45,8 +45,14 @@ bool verifParam(methodP meth, VarDeclP params)
     	VarDeclP param = params;
     	while(methParam->next != NIL(VarDecl) && param->next != NIL(VarDecl))
     	{
-    		if(strcmp(methParam->nomType, param->nomType))
+    		if(strcmp(methParam->type->name, param->type->name))
     		{
+    			while(param->type->super != NIL(classe))
+    			{
+    				if(!strcmp(methParam->type->name, param->type->super->name))
+    					return 1;
+    				param->type = param->type->super;
+    			}
     			return 0;
     		}
     		methParam = methParam->next;
@@ -60,10 +66,29 @@ bool verifParam(methodP meth, VarDeclP params)
     return 1;
 }
 
-bool verifRetour(methodP meth, char* type)
+bool verifRetour(methodP meth, classeP typeTest)
 {
-	if(strcmp(meth->nomTypeRetour,type))
-		return 1;
-	else
-		return 0;
+	if(typeTest != NIL(classe) && meth->typeRetour != NIL(classe))
+    {
+    	classeP methRetour = meth->typeRetour;
+    	classeP test = typeTest;
+    	
+    	if(strcmp(methRetour->name, test->name))
+    	{
+    		while(test->super != NIL(classe))
+    			{
+    				if(!strcmp(methRetour->name, test->super->name))
+    					return 1;
+    				test = test->super;
+    			}
+    		return 0;
+    	}
+    	methRetour = methRetour->next;
+    	test = test->next;
+    }
+    if((typeTest != NIL(classe) || meth->typeRetour != NIL(classe)) && meth->typeRetour != typeTest)
+    {
+    	return 0;
+    }
+    return 1;
 }
