@@ -19,7 +19,7 @@ bool verifSurcharges2(classeP maClasse,classeP maClasse2){
     /* Si c'est la meme classe */
     if(maClasse == maClasse2){
         methodP methodes = maClasse->lmethodes;
-        while(methodes == NIL(methode) )        
+        while(methodes == NIL(methode) ){
             methodP methodes2 = methodes;
             while(methodes2->next != NIL(methode) ){ /*Tant que on peut comparer des methodes */
                 methodes2 = methodes2->next;
@@ -28,6 +28,8 @@ bool verifSurcharges2(classeP maClasse,classeP maClasse2){
             methodes = methodes->next;   
         }
     }
-
     return true;
 }
+
+    
+
