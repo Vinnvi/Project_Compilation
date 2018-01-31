@@ -182,7 +182,10 @@ struct _Method{
   TreeP body; /*Corps de la methode*/
 	struct _Classe *typeRetour; /* type retour methode */
   char* nomTypeRetour;
-  struct _Classe *appartenance; /* type retour methode */
+  union {
+    classeP classe;
+    objectP objet;
+  } appartenance; 
 	struct _Method *methodeMere; /*Override*/
   bool redef;
 	struct _Method *next;
@@ -298,4 +301,5 @@ TreeP getChild(TreeP tree, int rank);
 void addMethodeTemp(methodP m);
 void addVarTemp(VarDeclP v);
 void associationClasse(classeP cl);
+void associationObjet(objectP obj);
 void initClasses();

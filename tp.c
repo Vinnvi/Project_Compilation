@@ -268,17 +268,13 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	nouvMethode->name = nameP;
 	nouvMethode->param = paramP;
 	nouvMethode->body = bodyP;
-
-	/*if (idToClass(typeRetourP) == NIL(classe)){
-		nouvMethode->typeRetour = idToClass("Void");
-	}
-	else { nouvMethode->typeRetour = idToClass(typeRetourP); }*/
-    nouvMethode->nomTypeRetour = typeRetourP;
+  if (!classes) initClasses();
+  nouvMethode->typeRetour = idToClass(typeRetourP);
 	nouvMethode->body = bodyP;
     /* TODO gérer les overrides */
 	nouvMethode->next = NIL(method);
-    addMethode(nouvMethode);
-    addMethodeTemp(nouvMethode);
+  addMethode(nouvMethode);
+  addMethodeTemp(nouvMethode);
 	return nouvMethode;
 }
 
@@ -315,6 +311,7 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
     indexTab = 0;
 
     addObjet(nouvObjet);
+    associationObjet(nouvObjet);
     return nouvObjet;
 }
 
@@ -339,18 +336,31 @@ void affichageArbre(TreeP tree,int niveauArbre){
 
 }
 
-/* Pas encore implémentable */
 void associationClasse(classeP cl){
     methodP methActuelle = cl->lmethodes;
     while(methActuelle){
-        methActuelle->appartenance = cl;
-        printf("%s\n", methActuelle->name);
+        methActuelle->appartenance.classe = cl;
         methActuelle->typeRetour = idToClass(methActuelle->nomTypeRetour);
         methActuelle = methActuelle->next;
     }
     VarDeclP attributActuel = cl->attributs;
     while(attributActuel){
         attributActuel->appartenance.classe = cl;
+        attributActuel->type = idToClass(attributActuel->nomType);
+        attributActuel = attributActuel->next;
+    }
+}
+
+void associationObjet(objectP obj){
+    methodP methActuelle = obj->lmethodes;
+    while(methActuelle){
+        methActuelle->appartenance.objet = obj;
+        methActuelle = methActuelle->next;
+    }
+
+    VarDeclP attributActuel = obj->attributs;
+    while(attributActuel){
+        attributActuel->appartenance.objet = obj;
         attributActuel->type = idToClass(attributActuel->nomType);
         attributActuel = attributActuel->next;
     }
@@ -403,7 +413,7 @@ void affichageClasses(){
         methodP methodes = NEW(1,method);
         methodes = listClass->lmethodes;
         while(methodes != NIL(method)){
-            printf(" %s (%s, %s)", methodes->name, methodes->typeRetour->name, methodes->appartenance->name);
+            printf(" %s (%s, %s)", methodes->name, methodes->typeRetour->name, methodes->appartenance.classe->name);
             methodes = methodes->next;
         }
         printf("\n");
@@ -429,7 +439,7 @@ void affichageObjets(){
         methodP methodes = NEW(1,method);
         methodes = listObjet->lmethodes;
         while(methodes != NIL(method)){
-            printf(" %s,", methodes->name);
+            printf(" %s (%s, %s)", methodes->name, methodes->typeRetour->name, methodes->appartenance.objet->name);
             methodes = methodes->next;
         }
         printf("\n");
@@ -445,7 +455,7 @@ void affichageMethodes(){
     listMethodes = methodes;
     printf("\n ---Liste des methodes--- \n");
     while(listMethodes != NIL(method)){
-        printf("%s; | classe associée : %s | typeRetour : %s\n",listMethodes->name, listMethodes->appartenance->name, listMethodes->typeRetour->name);
+        printf("%s; | classe associée : %s | typeRetour : %s\n",listMethodes->name, listMethodes->appartenance.classe->name, listMethodes->typeRetour->name);
         listMethodes = listMethodes->next;
     }
 
@@ -515,15 +525,14 @@ VarDeclP idToDecl(char* id){
 		elemActuel = elemActuel->next;
 		compte += 1;
 	}
-	printf("Variable introuvable");
+	printf("Variable introuvable : %s", id);
 	return NIL(VarDecl);
 }
 
 /* Prend une chaine de caractère et retourne un ptr vers la structure classe ayant ce nom */
 classeP idToClass(char* id){
   if (!classes){
-    printf("Pas de classes");
-    return NIL(classe);
+    initClasses();
   }
   if (!id) return idToClass("Void");
 
@@ -532,7 +541,7 @@ classeP idToClass(char* id){
     if( strcmp(classActuelle->name, id) == 0) return classActuelle;
     classActuelle = classActuelle->next;
   }
-  printf("Classe introuvable");
+  printf("Classe introuvable : %s", id);
   return NIL(classe);
 }
 
@@ -548,7 +557,7 @@ objectP idToObj(char* id){
     if( strcmp(objetActuel->name, id) == 0) return objetActuel;
     objetActuel = objetActuel->next;
   }
-  printf("Classe introuvable");
+  printf("Objet introuvable : %s", id);
   return NIL(object);
 }
 
@@ -564,7 +573,7 @@ methodP idToMeth(char* id, methodP lmethodes){
     if( strcmp(methActuelle->name, id) == 0) return methActuelle;
     methActuelle = methActuelle->next;
   }
-  printf("Methode introuvable");
+  printf("Methode introuvable : %s", id);
   return NIL(method);
 }
 
