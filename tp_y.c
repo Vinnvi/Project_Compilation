@@ -1798,13 +1798,13 @@ yyreduce:
 
   case 75:
 #line 182 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EDOT, 2, (yyvsp[-2].ClasseP), (yyvsp[0].pT)); }
+    { (yyval.pT) = makeTree(EDOTHIS, 2, (yyvsp[-2].ClasseP), (yyvsp[0].pT)); }
 #line 1803 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 76:
 #line 183 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EDOT, 2, (yyvsp[-2].ClasseP), (yyvsp[0].pT)); }
+    { (yyval.pT) = makeTree(EDOTHIS, 2, (yyvsp[-2].ClasseP), (yyvsp[0].pT)); }
 #line 1809 "tp_y.c" /* yacc.c:1646  */
     break;
 

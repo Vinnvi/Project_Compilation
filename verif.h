@@ -21,6 +21,8 @@ void initPile();
 void empiler(VarDeclP decl);
 void depiler();
 
+void analysePortee (TreeP corps, pileVar env);
+void verifId(char* id, pileVar env);
 
 bool verifSurcharges(classeP c);
 bool verifSurcharges2(classeP maClasse,classeP maClasse2);

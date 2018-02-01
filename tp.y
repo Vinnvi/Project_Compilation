@@ -179,8 +179,8 @@ ArgumentOuCible: ListSelection  {$$ = $1;}
 | Selection                     {$$ = $1;}
 ;
 
-ThisSelect : THIS DOT ListSelection             { $$ = makeTree(EDOT, 2, $1, $3); }
-| THIS DOT Selection                            { $$ = makeTree(EDOT, 2, $1, $3); }                            
+ThisSelect : THIS DOT ListSelection             { $$ = makeTree(EDOTHIS, 2, $1, $3); }
+| THIS DOT Selection                            { $$ = makeTree(EDOTHIS, 2, $1, $3); }                            
 | THIS                                          { $$ = makeLeafStr(ETHIS, "this"); }
 ;
 

@@ -75,6 +75,7 @@ typedef unsigned char bool;
 #define LSEL 43
 #define EIDCLASS 44
 #define ECORPS 45
+#define EDOTHIS 45
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -220,9 +221,13 @@ struct _bloc{
 };
 
 TreeP makeTree(short op, int nbChildren, ...);
+TreeP getChild(TreeP tree, int rank) ;
+void setChild(TreeP tree, int rank, TreeP arg);
 TreeP makeLeafLVar(short op, VarDeclP lvar);
 TreeP makeLeafInt(short op, int val);
 TreeP makeLeafStr(short op, char *str);
+
+char* getChildStr(TreeP tree, int rank);
 
 
 classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps);
