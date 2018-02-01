@@ -218,6 +218,12 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     affichageObjets();
     affichageMethodes();
 
+    if(verifSurcharges(classes)){
+        printf("Verification surcharges reussie !\n");
+    }
+    else{
+        printf("блять\n");
+    }
 }
 
 /* Initialise les classes de bases */
@@ -409,7 +415,7 @@ void affichageClasses(){
         methodP methodes = NEW(1,method);
         methodes = listClass->lmethodes;
         while(methodes != NIL(method)){
-            printf(" %s (%s, %s)", methodes->name, methodes->typeRetour->name, methodes->appartenance.classe->name);
+            printf(" %s (%s, %s) - %d", methodes->name, methodes->typeRetour->name, methodes->appartenance.classe->name,methodes->redef);
             methodes = methodes->next;
         }
         printf("\n");

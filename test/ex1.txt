@@ -194,7 +194,7 @@ object Test is {
 /* des exemples ad-hoc qui montrent d'autres aspects ... */
 class A() is {
   var v : Integer := 1;
-  def f() is { "A::f()\"n".print(); }
+  def f(x: Integer) is { "A::f()\"n".print(); }
   def h(x: Integer, y : Integer := 2) : Integer := x + y
 }
 
