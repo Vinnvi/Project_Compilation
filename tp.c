@@ -170,11 +170,19 @@ TreeP makeTree(short op, int nbChildren, ...) {
 
 /* Retourne le rank-ieme fils d'un arbre (de 0 a n-1) */
 TreeP getChild(TreeP tree, int rank) {
-  if (tree->nbChildren < rank -1) {
-    fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
-    abort(); /* plante le programme en cas de rang incorrect */
-  }
-  return tree->u.children[rank];
+    if (tree->nbChildren < rank -1) {
+        fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
+        abort(); /* plante le programme en cas de rang incorrect */
+    }
+    return tree->u.children[rank];
+}
+
+VarDeclP getChildList(TreeP tree, int rank) {
+    if (tree->nbChildren < rank -1) {
+        fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
+        abort(); /* plante le programme en cas de rang incorrect */
+    }
+    return tree->u.lvar;
 }
 
 
@@ -255,6 +263,7 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
 	nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
 	nouvClasse->next = NIL(classe);
+    nouvClasse->body = corps;
     if (!classes) initClasses();
     addClasse(nouvClasse);
     associationClasse(nouvClasse);

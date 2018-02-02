@@ -103,8 +103,8 @@ void generDefClassObj(TreeP defClassObj){
 }
 void generObjetOuClasse(TreeP objetOuClasse)
 {
-    if(objetOuClasse->op == EDEFOBJ) generObject(objetOuClasse->u.lobj);
-    if(objetOuClasse->op == EDEFCLASS) generClass(objetOuClasse->u.lclass);
+    if(objetOuClasse->op == EDEFOBJ) generObject((objectP)getChild(objetOuClasse,0));
+    if(objetOuClasse->op == EDEFCLASS) generClass((classeP)getChild(objetOuClasse,0));
 }
 void generObject(objectP obj)
 {
@@ -120,12 +120,14 @@ void generBlocOpt(TreeP blocOpt)
 }
 void generBloc(TreeP bloc)
 {
+    fprintf(out, "------DEBUT BLOC\n");
     if(getChild(bloc,1) == NIL(Tree))           /* Bloc est une liste d'Instructions */
         generListInstOpt(getChild(bloc,0));
-    else{                                       /* Bloc est une liste de champs IS Liste Instructions */
-        generListChp((VarDeclP)getChild(bloc,0)); /* TODO Possible?*/
+    else{
+        generListChp((VarDeclP)getChild(bloc,0));
         generListInst(getChild(bloc,1));
     }
+    fprintf(out, "------FIN BLOC\n");
 }
 void generBlocNonVide(TreeP bloc)
 {
@@ -144,7 +146,8 @@ void generListInstOpt(TreeP listInstOpt)
 }
 void generListInst(TreeP listInst)
 {
-    if(listInst->op == LINST) {
+    if(listInst->op == LINST)
+    {
         generInst(getChild(listInst,0));                 /* Cas Liste Inst */
         generListInst(getChild(listInst,1));
     }
@@ -152,7 +155,6 @@ void generListInst(TreeP listInst)
 }
 void generInst(TreeP inst)
 {
-    printf("avant switch %hi \n",inst->op);
     switch(inst->op){
         case ERETURN :
             fprintf(out, "RETURN\n");
@@ -162,6 +164,7 @@ void generInst(TreeP inst)
             generExpr(getChild(inst,1));
             break;
         case ITE :
+            printf("second ");
             ; /* Besoin de laisser un statement a cause des anciens usages */
             char* labelTHEN = makeLabel("THEN");
             char* labelELSE = makeLabel("ELSE");
@@ -261,18 +264,21 @@ void generInstanciation(TreeP instanciation)
 }
 void generClass(classeP class)
 {
-    if(class == NULL) return;
+    if(class == NIL(classe)) return;
     generClassId(class->name);
     generListParamOpt(class->parametres);
     /* TODO generExtendsOpt(class->super); */
     generBlocOpt(class->constructeur);
+    /* TODO Error generCorpsClass(class->body); */
     /* TODO generCorpsClass(class->body); */
     /* TODO Il faut revoir extends et corps */
 }
 void generCorpsClass(TreeP corpsClasse)
 {
-    generListChpOpt(corpsClasse->u.lvar);
-    generListMethOpt(corpsClasse->u.lmeth);
+    if(corpsClasse->op == ECORPS){
+        generListChpOpt((VarDeclP)getChild(corpsClasse,0));
+        generListMethOpt((methodP)getChild(corpsClasse,1));
+    }
 }
 
 void generListMethOpt(methodP listMethOpt)
@@ -285,15 +291,22 @@ void generListMeth(methodP listMeth)
     printf("listMeth\n");
     /* TODO comment savoir nb methodes */
 }
-void generMeth(methodP meth)
+void generMeth(methodP meth) /* TODO */
 {
-    /* TODO comment savoir which one */
+    /*TODO generOverride */
+    /* generListParamOpt(getChild(meth,2));*/
+
 }
 void generListParamOpt(VarDeclP listParamOpt)
 {
-    if(listParamOpt == NIL(VarDecl)) return;
-    if(listParamOpt->expr == NULL) generListParam(listParamOpt);
-    else generListParamDef(listParamOpt);
+    if( (listParamOpt != NULL)&&(listParamOpt != NIL(VarDecl)) ){
+        printf("name : %s\n",listParamOpt->name);
+        bool testBool = listParamOpt->aVar;
+        char* testChar = listParamOpt->nomType;
+        TreeP test = listParamOpt->expr;
+        if(listParamOpt->expr == NIL(Tree)) generListParam(listParamOpt);
+        else generListParamDef(listParamOpt);
+    }
 }
 void generListParam(VarDeclP listParam)
 {
@@ -307,16 +320,35 @@ void generListParam(VarDeclP listParam)
 }
 void generParam(VarDeclP param)
 {
-  /* TODO var...*/
 }
 void generListParamDef(VarDeclP listParamDef)
 {
+    /*
+    if(listParamDef->aVar == TRUE){
+        generExpr(listPAramDef->expr);
+        STOREG_addr(listPAramDef->);
+    }
+    else{
+        generExpr(listPAramDef->expr);
+        STOREG_addr(selectorid->u.str);
+    }*/
     generParamDef(listParamDef);
     if(listParamDef->next != NIL(VarDecl)) generListParamDef(listParamDef->next);
 }
+/* Parametre definit avec une valeur comme VAR idNum : Integer := 2+1 */
 void generParamDef(VarDeclP paramDef)
 {
-  /* TODO var...*/
+    generExpr(paramDef->expr);
+    if(strcmp(paramDef->nomType,"Integer") == 0){
+        fprintf(out, "PARAMDEF INTEGER\n");
+        /*STOREG(paramDef->expr.adresse ?);*/
+
+    }
+    else if (strcmp(paramDef->nomType,"String") == 0){
+        fprintf(out, "PARAMDEF STRING\n");
+        /*STOREG(paramDef->expr.adresse ?);*/
+    }
+
 }
 
 void generDeclExprOpt(TreeP declExprOpt)
@@ -334,6 +366,7 @@ void generExtendsOpt(TreeP extends)
 void generExtends(TreeP extends)
 {
     /* TODO */
+    /* generListChpOpt((VarDeclP)extends);*/
 }
 
 void generListArgOpt(TreeP listArgOpt)
@@ -343,24 +376,24 @@ void generListArgOpt(TreeP listArgOpt)
 }
 void generListArg(TreeP listArg)
 {
-    /* TODO Commment trouver?
-    generExpr(getChild(listArg,0))
-    if...
-        generListArg(getChild(listArg,1))*/
+    /*
+    generExpr(getChild(listArg,0));
+    if(listArg->op == LARG) generListArg(getChild(listArg,1)); */
 }
 void generArgOuCible(TreeP argOuCible)/* TODO */
 {
-    /*
     switch(argOuCible->op){
         case EDOT :
-            generListSelection(getChild(argOuCible,0));
+            /* generListSelection(getChild(argOuCible,0)); */
+            break;
         case ETHISSELECT :
             generThisSelect(getChild(argOuCible,0));
+            break;
         case CSTE :
             PUSHI(argOuCible->u.val);
-            return;
-        default : generSelection(argOuCible);
-  }*/
+            break;
+        default : generSelection(argOuCible); break;
+  }
 }
 void generThisSelect(TreeP thisSelect)
 {
@@ -383,12 +416,16 @@ void generListSelection(TreeP listSelection)
 }
 void generSelWithClassID(TreeP selWithClassID)
 {
+    /* BUG qui fait segmentation */
     switch(selWithClassID->op){
         case LSEL :
             generListSelection(getChild(selWithClassID,0));
+            break;
         case CLASS :
-            /* generClassId(getChild(selection,0)); */
-        default : generMessage(selWithClassID);
+            break;/* generClassId(getChild(selection,0)); */
+        case ESEL :
+            generSelection(selWithClassID);
+        default : break;
     }
 }
 void generSelection(TreeP selection)

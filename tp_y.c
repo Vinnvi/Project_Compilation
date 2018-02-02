@@ -1557,13 +1557,13 @@ yyreduce:
 
   case 35:
 #line 101 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(EADD, 1, (yyvsp[0].pT));}
+    {(yyval.pT) = makeTree(EADDSOLO, 1, (yyvsp[0].pT));}
 #line 1562 "tp_y.c" /* yacc.c:1646  */
     break;
 
   case 36:
 #line 102 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(ESUB, 1, (yyvsp[0].pT));}
+    {(yyval.pT) = makeTree(ESUBSOLO, 1, (yyvsp[0].pT));}
 #line 1568 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1821,7 +1821,7 @@ yyreduce:
 
   case 79:
 #line 186 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = (yyvsp[0].pT);}
+    {(yyval.pT) = makeTree(ESEL,1,(yyvsp[0].pT));}
 #line 1826 "tp_y.c" /* yacc.c:1646  */
     break;
 

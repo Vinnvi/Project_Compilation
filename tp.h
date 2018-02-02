@@ -110,12 +110,12 @@ typedef struct _pileVar pileVar, *ptrPileVar;
 
 /* Adapt as needed. Currently it is simply a list of names ! */
 typedef struct _varDecl {
-  char *name;
-  struct _varDecl *next;
-  struct _Classe *type;
-  char* nomType;
-  TreeP expr;
-  bool aVar;
+  char *name;               /* Nom de la variable */
+  struct _varDecl *next;    /* VarDecl suivante si elle existe */
+  struct _Classe *type;     /* Type de la variable */
+  char* nomType;            /* Nom du type de la variable */
+  TreeP expr;               /* Si variable définit par une expr */
+  bool aVar;                /* Si VAR devant ou non */
 
   union {
     methodP methode;
@@ -167,6 +167,7 @@ struct _Classe{
 	 char* name; /* identificateur */
 	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
      TreeP constructeur;
+     TreeP body;
      VarDeclP attributs; /*Attributs de la classe*/
      VarDeclP parametres; /* liste des parametres du constructeur de la classe*/
 	 classeP super; /*classe mere*/
@@ -185,7 +186,7 @@ struct _Method{
   union {
     classeP classe;
     objectP objet;
-  } appartenance; 
+  } appartenance;
 	struct _Method *methodeMere; /*Override*/
   bool redef;
 	struct _Method *next;
@@ -303,3 +304,4 @@ void addVarTemp(VarDeclP v);
 void associationClasse(classeP cl);
 void associationObjet(objectP obj);
 void initClasses();
+VarDeclP getChildList(TreeP tree, int rank);

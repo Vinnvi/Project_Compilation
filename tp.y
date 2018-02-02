@@ -98,8 +98,8 @@ Operation : Operation RelOp Operation           {$$ = makeTree(yylval.C, 2, $1, 
 | Operation QUOT Operation                      {$$ = makeTree(EQUOT, 2, $1, $3);}
 | Operation REST Operation                  	{$$ = makeTree(EREST, 2, $1, $3);}
 | Operation AND Operation 						{$$ = makeTree(EAND, 2, $1, $3);}
-| ADD Operation                                 {$$ = makeTree(EADD, 1, $2);}
-| SUB Operation                                 {$$ = makeTree(ESUB, 1, $2);}
+| ADD Operation                                 {$$ = makeTree(EADDSOLO, 1, $2);}
+| SUB Operation                                 {$$ = makeTree(ESUBSOLO, 1, $2);}
 | ArgumentOuCible                               {$$ = $1;}
 ;
 
@@ -183,7 +183,7 @@ ListSelection : SelWithClassID DOT Selection    {$$ = makeTree(EDOT, 2, $1, $3);
 ;
 
 SelWithClassID : ListSelection      {$$ = makeTree(LSEL,1,$1);}
-| Selection                         {$$ = $1;}
+| Selection                         {$$ = makeTree(ESEL,1,$1);}
 | ClassId                           {$$ = makeLeafStr(CLASS, $1);}
 ;
 
