@@ -251,14 +251,25 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     }
     indexTab = 0;
     nouvClasse->lmethodes = methodesTemp;
+
+
     methodesTemp = NIL(method);
 
-	nouvClasse->constructeur = constructeurP;
+    nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
-	nouvClasse->next = NIL(classe);
+	  nouvClasse->next = NIL(classe);
     if (!classes) initClasses();
     addClasse(nouvClasse);
     associationClasse(nouvClasse);
+
+
+    /* On donne le type de chaque methode*/
+    methodP m = nouvClasse->lmethodes;
+    while(m != NIL(method)){
+      m->typeRetour = idToClass(m->nomTypeRetour);
+      m = m->next;
+
+    }
 	return nouvClasse;
 }
 
@@ -270,7 +281,7 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	nouvMethode->param = paramP;
 	nouvMethode->body = bodyP;
   if (!classes) initClasses();
-  nouvMethode->typeRetour = idToClass(typeRetourP);
+  nouvMethode->nomTypeRetour = typeRetourP;
 	nouvMethode->body = bodyP;
     /* TODO gérer les overrides */
 	nouvMethode->next = NIL(method);
@@ -313,6 +324,13 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
 
     addObjet(nouvObjet);
     associationObjet(nouvObjet);
+    /* On donne le type de chaque methode*/
+    methodP m = nouvObjet->lmethodes;
+    while(m != NIL(method)){
+      m->typeRetour = idToClass(m->nomTypeRetour);
+      m = m->next;
+
+    }
     return nouvObjet;
 }
 

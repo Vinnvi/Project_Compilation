@@ -194,14 +194,14 @@ object Test is {
 /* des exemples ad-hoc qui montrent d'autres aspects ... */
 class A() is {
   var v : Integer := 1;
-  def f(x : Void) : Integer is { "A::f()\"n".print(); }
+  def f(x : Void) is { "A::f()\"n".print(); }
   def h(x: Integer, y : Integer := 2) : Integer := x + y
 }
 
 class A2() extends A() is {
   var v : String := "hello"; /* masque le champ v de la classe A */
 
-  override def f(x : Void) : Integer is { "A2::f()\"n".print(); }
+  override def f(x : Void) is { "A2::f()\"n".print(); }
 
   def g() : Integer is {
       v := "world"; /* par defaut, il s'agit du champ de A2 */

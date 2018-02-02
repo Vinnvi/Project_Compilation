@@ -21,161 +21,158 @@ Grammaire
    11 Bloc: '{' ListInstructionsOpt '}'
    12     | '{' ListChamp IS ListInstructions '}'
 
-   13 BlocNonVide: '{' ListInstructions '}'
-   14            | '{' ListChamp IS ListInstructions '}'
+   13 ListInstructionsOpt: ListInstructions
+   14                    | %empty
 
-   15 ListInstructionsOpt: ListInstructions
-   16                    | %empty
+   15 ListInstructions: Instruction ListInstructions
+   16                 | Instruction
 
-   17 ListInstructions: Instruction ListInstructions
-   18                 | Instruction
+   17 Instruction: Expression ';'
+   18            | RETURN ';'
+   19            | ArgumentOuCible AFF Expression ';'
+   20            | IF Operation THEN InstIfElse ELSE InstIfElse
 
-   19 Instruction: Expression ';'
-   20            | RETURN ';'
-   21            | ArgumentOuCible AFF Expression ';'
-   22            | IF Operation THEN InstIfElse ELSE InstIfElse
+   21 InstIfElse: Instruction
+   22           | Bloc
 
-   23 InstIfElse: Instruction
-   24           | Bloc
+   23 Expression: Instanciation
+   24           | Operation
 
-   25 Expression: Instanciation
-   26           | Operation
+   25 Valeur: ArgumentOuCible
 
-   27 Valeur: ArgumentOuCible
+   26 Operation: Operation RelOp Operation
+   27          | Operation ADD Operation
+   28          | Operation SUB Operation
+   29          | Operation PROD Operation
+   30          | Operation QUOT Operation
+   31          | Operation REST Operation
+   32          | Operation AND Operation
+   33          | ADD Operation
+   34          | SUB Operation
+   35          | Valeur
 
-   28 Operation: Operation RelOp Operation
-   29          | Operation ADD Operation
-   30          | Operation SUB Operation
-   31          | Operation PROD Operation
-   32          | Operation QUOT Operation
-   33          | Operation REST Operation
-   34          | Operation AND Operation
-   35          | ADD Operation
-   36          | SUB Operation
-   37          | Valeur
+   36 Instanciation: NEW ClassId '(' ListArgumentsOpt ')'
 
-   38 Instanciation: NEW ClassId '(' ListArgumentsOpt ')'
+   37 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
 
-   39 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
+   38 CorpsClasse: '{' ListChampOpt ListMethodeOpt '}'
 
-   40 CorpsClasse: '{' ListChampOpt ListMethodeOpt '}'
+   39 ListMethodeOpt: ListMethode
+   40               | %empty
 
-   41 ListMethodeOpt: ListMethode
-   42               | %empty
+   41 ListMethode: Methode ListMethode
+   42            | Methode
 
-   43 ListMethode: Methode ListMethode
-   44            | Methode
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
+   44        | OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS Bloc
 
-   45 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
-   46        | OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS BlocNonVide
+   45 NomClasseOpt: ':' ClassId
+   46             | %empty
 
-   47 NomClasseOpt: ':' ClassId
-   48             | %empty
+   47 ListParametreOpt: ListParametres
+   48                 | ListParametresDef
+   49                 | %empty
 
-   49 ListParametreOpt: ListParametres
-   50                 | ListParametresDef
-   51                 | %empty
+   50 ListParametres: Parametre ',' ListParametres
+   51               | Parametre ',' ListParametresDef
+   52               | Parametre
 
-   52 ListParametres: Parametre ',' ListParametres
-   53               | Parametre ',' ListParametresDef
-   54               | Parametre
+   53 Parametre: VarOpt Id ':' ClassId
 
-   55 Parametre: VarOpt Id ':' ClassId
+   54 ListParametresDef: ParametreDef ',' ListParametresDef
+   55                  | ParametreDef
 
-   56 ListParametresDef: ParametreDef ',' ListParametresDef
-   57                  | ParametreDef
+   56 ParametreDef: VarOpt Id ':' ClassId AFF Expression
 
-   58 ParametreDef: VarOpt Id ':' ClassId AFF Expression
+   57 VarOpt: VAR
+   58       | %empty
 
-   59 VarOpt: VAR
-   60       | %empty
+   59 DeclExpressionOpt: AFF Expression
+   60                  | %empty
 
-   61 DeclExpressionOpt: AFF Expression
-   62                  | %empty
+   61 ExtendsOpt: Extends
+   62           | %empty
 
-   63 ExtendsOpt: Extends
-   64           | %empty
+   63 Extends: EXTENDS ClassId '(' ListArgumentsOpt ')'
 
-   65 Extends: EXTENDS ClassId '(' ListArgumentsOpt ')'
+   64 ListArgumentsOpt: ListArguments
+   65                 | %empty
 
-   66 ListArgumentsOpt: ListArguments
-   67                 | %empty
+   66 ListArguments: Expression ',' ListArguments
+   67              | Expression
 
-   68 ListArguments: Expression ',' ListArguments
-   69              | Expression
+   68 ArgumentOuCible: ListSelection
+   69                | ThisSelect
+   70                | Cste
+   71                | Selection
 
-   70 ArgumentOuCible: ListSelection
-   71                | ThisSelect
-   72                | Cste
-   73                | Selection
+   72 ThisSelect: THIS DOT ListSelection
+   73           | THIS DOT Selection
+   74           | THIS
 
-   74 ThisSelect: THIS DOT ListSelection
-   75           | THIS DOT Selection
-   76           | THIS
+   75 ListSelection: SelWithClassID DOT Selection
 
-   77 ListSelection: SelWithClassID DOT Selection
+   76 SelWithClassID: ListSelection
+   77               | Selection
+   78               | ClassId
 
-   78 SelWithClassID: ListSelection
-   79               | Selection
-   80               | ClassId
+   79 Selection: Id
+   80          | Message
+   81          | Cstr
+   82          | '(' Expression ')'
+   83          | '(' ClassId Expression ')'
 
-   81 Selection: Id
-   82          | Message
-   83          | Cstr
-   84          | '(' Expression ')'
-   85          | '(' ClassId Expression ')'
+   84 Message: Id '(' ListArgumentsOpt ')'
 
-   86 Message: Id '(' ListArgumentsOpt ')'
+   85 ListChampOpt: ListChamp
+   86             | %empty
 
-   87 ListChampOpt: ListChamp
-   88             | %empty
+   87 ListChamp: Champ ListChamp
+   88          | Champ
 
-   89 ListChamp: Champ ListChamp
-   90          | Champ
+   89 Champ: VAR Id ':' ClassId DeclExpressionOpt ';'
 
-   91 Champ: VAR Id ':' ClassId DeclExpressionOpt ';'
-
-   92 OverrideOpt: OVERRIDE
-   93            | %empty
+   90 OverrideOpt: OVERRIDE
+   91            | %empty
 
 
 Terminaux, suivis des règles où ils apparaissent
 
 $end (0) 0
-'(' (40) 38 39 45 46 65 84 85 86
-')' (41) 38 39 45 46 65 84 85 86
-',' (44) 52 53 56 68
-':' (58) 45 47 55 58 91
-';' (59) 19 20 21 91
-'{' (123) 8 11 12 13 14 40
-'}' (125) 8 11 12 13 14 40
+'(' (40) 36 37 43 44 63 82 83 84
+')' (41) 36 37 43 44 63 82 83 84
+',' (44) 50 51 54 66
+':' (58) 43 45 53 56 89
+';' (59) 17 18 19 89
+'{' (123) 8 11 12 38
+'}' (125) 8 11 12 38
 error (256)
-IS (258) 8 12 14 39 46
-CLASS (259) 39
-VAR (260) 59 91
-EXTENDS (261) 65
-DEF (262) 45 46
-OVERRIDE (263) 92
-IF (264) 22
-THEN (265) 22
-ELSE (266) 22
-AFF (267) 21 45 58 61
-RETURN (268) 20
+IS (258) 8 12 37 44
+CLASS (259) 37
+VAR (260) 57 89
+EXTENDS (261) 63
+DEF (262) 43 44
+OVERRIDE (263) 90
+IF (264) 20
+THEN (265) 20
+ELSE (266) 20
+AFF (267) 19 43 56 59
+RETURN (268) 18
 OBJ (269) 8
-ADD (270) 29 35
-SUB (271) 30 36
-PROD (272) 31
-QUOT (273) 32
-REST (274) 33
-NEW (275) 38
-DOT (276) 74 75 77
-AND (277) 34
-Id (278) 45 46 55 58 81 86 91
-ClassId (279) 8 38 39 45 47 55 58 65 80 85 91
-Cstr (280) 83
-Cste (281) 72
-RelOp (282) 28
-THIS (283) 74 75 76
+ADD (270) 27 33
+SUB (271) 28 34
+PROD (272) 29
+QUOT (273) 30
+REST (274) 31
+NEW (275) 36
+DOT (276) 72 73 75
+AND (277) 32
+Id (278) 43 44 53 56 79 84 89
+ClassId (279) 8 36 37 43 45 53 56 63 78 83 89
+Cstr (280) 81
+Cste (281) 70
+RelOp (282) 26
+THIS (283) 72 73 74
 
 
 Non-terminaux, suivis des règles où ils apparaissent
@@ -193,82 +190,80 @@ ObjetouClasse (40)
 Objet (41)
     à gauche: 8, à droite: 6
 BlocOpt (42)
-    à gauche: 9 10, à droite: 39
+    à gauche: 9 10, à droite: 37
 Bloc (43)
-    à gauche: 11 12, à droite: 1 9 24
-BlocNonVide (44)
-    à gauche: 13 14, à droite: 46
-ListInstructionsOpt (45)
-    à gauche: 15 16, à droite: 11
-ListInstructions (46)
-    à gauche: 17 18, à droite: 12 13 14 15 17
-Instruction (47)
-    à gauche: 19 20 21 22, à droite: 17 18 23
-InstIfElse (48)
-    à gauche: 23 24, à droite: 22
-Expression (49)
-    à gauche: 25 26, à droite: 19 21 45 58 61 68 69 84 85
-Valeur (50)
-    à gauche: 27, à droite: 37
-Operation (51)
-    à gauche: 28 29 30 31 32 33 34 35 36 37, à droite: 22 26 28 29
-    30 31 32 33 34 35 36
-Instanciation (52)
-    à gauche: 38, à droite: 25
-Classe (53)
-    à gauche: 39, à droite: 7
-CorpsClasse (54)
-    à gauche: 40, à droite: 39
-ListMethodeOpt (55)
-    à gauche: 41 42, à droite: 8 40
-ListMethode (56)
-    à gauche: 43 44, à droite: 41 43
-Methode (57)
-    à gauche: 45 46, à droite: 43 44
-NomClasseOpt (58)
-    à gauche: 47 48, à droite: 46
-ListParametreOpt (59)
-    à gauche: 49 50 51, à droite: 39 45 46
-ListParametres (60)
-    à gauche: 52 53 54, à droite: 49 52
-Parametre (61)
-    à gauche: 55, à droite: 52 53 54
-ListParametresDef (62)
-    à gauche: 56 57, à droite: 50 53 56
-ParametreDef (63)
-    à gauche: 58, à droite: 56 57
-VarOpt (64)
-    à gauche: 59 60, à droite: 55 58
-DeclExpressionOpt (65)
-    à gauche: 61 62, à droite: 91
-ExtendsOpt (66)
-    à gauche: 63 64, à droite: 39
-Extends (67)
-    à gauche: 65, à droite: 63
-ListArgumentsOpt (68)
-    à gauche: 66 67, à droite: 38 65 86
-ListArguments (69)
-    à gauche: 68 69, à droite: 66 68
-ArgumentOuCible (70)
-    à gauche: 70 71 72 73, à droite: 21 27
-ThisSelect (71)
-    à gauche: 74 75 76, à droite: 71
-ListSelection (72)
-    à gauche: 77, à droite: 70 74 78
-SelWithClassID (73)
-    à gauche: 78 79 80, à droite: 77
-Selection (74)
-    à gauche: 81 82 83 84 85, à droite: 73 75 77 79
-Message (75)
-    à gauche: 86, à droite: 82
-ListChampOpt (76)
-    à gauche: 87 88, à droite: 8 40
-ListChamp (77)
-    à gauche: 89 90, à droite: 12 14 87 89
-Champ (78)
-    à gauche: 91, à droite: 89 90
-OverrideOpt (79)
-    à gauche: 92 93, à droite: 45 46
+    à gauche: 11 12, à droite: 1 9 22 44
+ListInstructionsOpt (44)
+    à gauche: 13 14, à droite: 11
+ListInstructions (45)
+    à gauche: 15 16, à droite: 12 13 15
+Instruction (46)
+    à gauche: 17 18 19 20, à droite: 15 16 21
+InstIfElse (47)
+    à gauche: 21 22, à droite: 20
+Expression (48)
+    à gauche: 23 24, à droite: 17 19 43 56 59 66 67 82 83
+Valeur (49)
+    à gauche: 25, à droite: 35
+Operation (50)
+    à gauche: 26 27 28 29 30 31 32 33 34 35, à droite: 20 24 26 27
+    28 29 30 31 32 33 34
+Instanciation (51)
+    à gauche: 36, à droite: 23
+Classe (52)
+    à gauche: 37, à droite: 7
+CorpsClasse (53)
+    à gauche: 38, à droite: 37
+ListMethodeOpt (54)
+    à gauche: 39 40, à droite: 8 38
+ListMethode (55)
+    à gauche: 41 42, à droite: 39 41
+Methode (56)
+    à gauche: 43 44, à droite: 41 42
+NomClasseOpt (57)
+    à gauche: 45 46, à droite: 44
+ListParametreOpt (58)
+    à gauche: 47 48 49, à droite: 37 43 44
+ListParametres (59)
+    à gauche: 50 51 52, à droite: 47 50
+Parametre (60)
+    à gauche: 53, à droite: 50 51 52
+ListParametresDef (61)
+    à gauche: 54 55, à droite: 48 51 54
+ParametreDef (62)
+    à gauche: 56, à droite: 54 55
+VarOpt (63)
+    à gauche: 57 58, à droite: 53 56
+DeclExpressionOpt (64)
+    à gauche: 59 60, à droite: 89
+ExtendsOpt (65)
+    à gauche: 61 62, à droite: 37
+Extends (66)
+    à gauche: 63, à droite: 61
+ListArgumentsOpt (67)
+    à gauche: 64 65, à droite: 36 63 84
+ListArguments (68)
+    à gauche: 66 67, à droite: 64 66
+ArgumentOuCible (69)
+    à gauche: 68 69 70 71, à droite: 19 25
+ThisSelect (70)
+    à gauche: 72 73 74, à droite: 69
+ListSelection (71)
+    à gauche: 75, à droite: 68 72 76
+SelWithClassID (72)
+    à gauche: 76 77 78, à droite: 75
+Selection (73)
+    à gauche: 79 80 81 82 83, à droite: 71 73 75 77
+Message (74)
+    à gauche: 84, à droite: 80
+ListChampOpt (75)
+    à gauche: 85 86, à droite: 8 38
+ListChamp (76)
+    à gauche: 87 88, à droite: 12 85 87
+Champ (77)
+    à gauche: 89, à droite: 87 88
+OverrideOpt (78)
+    à gauche: 90 91, à droite: 43 44
 
 
 État 0
@@ -290,7 +285,7 @@ OverrideOpt (79)
 
 État 1
 
-   39 Classe: CLASS . ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
+   37 Classe: CLASS . ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
 
     ClassId  décalage et aller à l'état 9
 
@@ -357,7 +352,7 @@ OverrideOpt (79)
 
 État 9
 
-   39 Classe: CLASS ClassId . '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
+   37 Classe: CLASS ClassId . '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
 
     '('  décalage et aller à l'état 15
 
@@ -394,7 +389,7 @@ OverrideOpt (79)
     THIS     décalage et aller à l'état 27
     '('      décalage et aller à l'état 28
 
-    $défaut  réduction par utilisation de la règle 16 (ListInstructionsOpt)
+    $défaut  réduction par utilisation de la règle 14 (ListInstructionsOpt)
 
     ListInstructionsOpt  aller à l'état 29
     ListInstructions     aller à l'état 30
@@ -429,12 +424,12 @@ OverrideOpt (79)
 
 État 15
 
-   39 Classe: CLASS ClassId '(' . ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
+   37 Classe: CLASS ClassId '(' . ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
 
     VAR  décalage et aller à l'état 44
 
-    Id        réduction par utilisation de la règle 60 (VarOpt)
-    $défaut  réduction par utilisation de la règle 51 (ListParametreOpt)
+    Id        réduction par utilisation de la règle 58 (VarOpt)
+    $défaut  réduction par utilisation de la règle 49 (ListParametreOpt)
 
     ListParametreOpt   aller à l'état 45
     ListParametres     aller à l'état 46
@@ -453,14 +448,14 @@ OverrideOpt (79)
 
 État 17
 
-   91 Champ: VAR . Id ':' ClassId DeclExpressionOpt ';'
+   89 Champ: VAR . Id ':' ClassId DeclExpressionOpt ';'
 
     Id  décalage et aller à l'état 52
 
 
 État 18
 
-   22 Instruction: IF . Operation THEN InstIfElse ELSE InstIfElse
+   20 Instruction: IF . Operation THEN InstIfElse ELSE InstIfElse
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -483,14 +478,14 @@ OverrideOpt (79)
 
 État 19
 
-   20 Instruction: RETURN . ';'
+   18 Instruction: RETURN . ';'
 
     ';'  décalage et aller à l'état 55
 
 
 État 20
 
-   35 Operation: ADD . Operation
+   33 Operation: ADD . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -513,7 +508,7 @@ OverrideOpt (79)
 
 État 21
 
-   36 Operation: SUB . Operation
+   34 Operation: SUB . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -536,57 +531,57 @@ OverrideOpt (79)
 
 État 22
 
-   38 Instanciation: NEW . ClassId '(' ListArgumentsOpt ')'
+   36 Instanciation: NEW . ClassId '(' ListArgumentsOpt ')'
 
     ClassId  décalage et aller à l'état 58
 
 
 État 23
 
-   81 Selection: Id .
-   86 Message: Id . '(' ListArgumentsOpt ')'
+   79 Selection: Id .
+   84 Message: Id . '(' ListArgumentsOpt ')'
 
     '('  décalage et aller à l'état 59
 
-    $défaut  réduction par utilisation de la règle 81 (Selection)
+    $défaut  réduction par utilisation de la règle 79 (Selection)
 
 
 État 24
 
-   80 SelWithClassID: ClassId .
+   78 SelWithClassID: ClassId .
 
-    $défaut  réduction par utilisation de la règle 80 (SelWithClassID)
+    $défaut  réduction par utilisation de la règle 78 (SelWithClassID)
 
 
 État 25
 
-   83 Selection: Cstr .
+   81 Selection: Cstr .
 
-    $défaut  réduction par utilisation de la règle 83 (Selection)
+    $défaut  réduction par utilisation de la règle 81 (Selection)
 
 
 État 26
 
-   72 ArgumentOuCible: Cste .
+   70 ArgumentOuCible: Cste .
 
-    $défaut  réduction par utilisation de la règle 72 (ArgumentOuCible)
+    $défaut  réduction par utilisation de la règle 70 (ArgumentOuCible)
 
 
 État 27
 
-   74 ThisSelect: THIS . DOT ListSelection
-   75           | THIS . DOT Selection
-   76           | THIS .
+   72 ThisSelect: THIS . DOT ListSelection
+   73           | THIS . DOT Selection
+   74           | THIS .
 
     DOT  décalage et aller à l'état 60
 
-    $défaut  réduction par utilisation de la règle 76 (ThisSelect)
+    $défaut  réduction par utilisation de la règle 74 (ThisSelect)
 
 
 État 28
 
-   84 Selection: '(' . Expression ')'
-   85          | '(' . ClassId Expression ')'
+   82 Selection: '(' . Expression ')'
+   83          | '(' . ClassId Expression ')'
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -619,15 +614,15 @@ OverrideOpt (79)
 
 État 30
 
-   15 ListInstructionsOpt: ListInstructions .
+   13 ListInstructionsOpt: ListInstructions .
 
-    $défaut  réduction par utilisation de la règle 15 (ListInstructionsOpt)
+    $défaut  réduction par utilisation de la règle 13 (ListInstructionsOpt)
 
 
 État 31
 
-   17 ListInstructions: Instruction . ListInstructions
-   18                 | Instruction .
+   15 ListInstructions: Instruction . ListInstructions
+   16                 | Instruction .
 
     IF       décalage et aller à l'état 18
     RETURN   décalage et aller à l'état 19
@@ -641,7 +636,7 @@ OverrideOpt (79)
     THIS     décalage et aller à l'état 27
     '('      décalage et aller à l'état 28
 
-    $défaut  réduction par utilisation de la règle 18 (ListInstructions)
+    $défaut  réduction par utilisation de la règle 16 (ListInstructions)
 
     ListInstructions  aller à l'état 64
     Instruction       aller à l'état 31
@@ -659,28 +654,28 @@ OverrideOpt (79)
 
 État 32
 
-   19 Instruction: Expression . ';'
+   17 Instruction: Expression . ';'
 
     ';'  décalage et aller à l'état 65
 
 
 État 33
 
-   37 Operation: Valeur .
+   35 Operation: Valeur .
 
-    $défaut  réduction par utilisation de la règle 37 (Operation)
+    $défaut  réduction par utilisation de la règle 35 (Operation)
 
 
 État 34
 
-   26 Expression: Operation .
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
+   24 Expression: Operation .
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
 
     ADD    décalage et aller à l'état 66
     SUB    décalage et aller à l'état 67
@@ -690,63 +685,63 @@ OverrideOpt (79)
     AND    décalage et aller à l'état 71
     RelOp  décalage et aller à l'état 72
 
-    $défaut  réduction par utilisation de la règle 26 (Expression)
+    $défaut  réduction par utilisation de la règle 24 (Expression)
 
 
 État 35
 
-   25 Expression: Instanciation .
+   23 Expression: Instanciation .
 
-    $défaut  réduction par utilisation de la règle 25 (Expression)
+    $défaut  réduction par utilisation de la règle 23 (Expression)
 
 
 État 36
 
-   21 Instruction: ArgumentOuCible . AFF Expression ';'
-   27 Valeur: ArgumentOuCible .
+   19 Instruction: ArgumentOuCible . AFF Expression ';'
+   25 Valeur: ArgumentOuCible .
 
     AFF  décalage et aller à l'état 73
 
-    $défaut  réduction par utilisation de la règle 27 (Valeur)
+    $défaut  réduction par utilisation de la règle 25 (Valeur)
 
 
 État 37
 
-   71 ArgumentOuCible: ThisSelect .
+   69 ArgumentOuCible: ThisSelect .
 
-    $défaut  réduction par utilisation de la règle 71 (ArgumentOuCible)
+    $défaut  réduction par utilisation de la règle 69 (ArgumentOuCible)
 
 
 État 38
 
-   70 ArgumentOuCible: ListSelection .
-   78 SelWithClassID: ListSelection .
+   68 ArgumentOuCible: ListSelection .
+   76 SelWithClassID: ListSelection .
 
-    DOT       réduction par utilisation de la règle 78 (SelWithClassID)
-    $défaut  réduction par utilisation de la règle 70 (ArgumentOuCible)
+    DOT       réduction par utilisation de la règle 76 (SelWithClassID)
+    $défaut  réduction par utilisation de la règle 68 (ArgumentOuCible)
 
 
 État 39
 
-   77 ListSelection: SelWithClassID . DOT Selection
+   75 ListSelection: SelWithClassID . DOT Selection
 
     DOT  décalage et aller à l'état 74
 
 
 État 40
 
-   73 ArgumentOuCible: Selection .
-   79 SelWithClassID: Selection .
+   71 ArgumentOuCible: Selection .
+   77 SelWithClassID: Selection .
 
-    DOT       réduction par utilisation de la règle 79 (SelWithClassID)
-    $défaut  réduction par utilisation de la règle 73 (ArgumentOuCible)
+    DOT       réduction par utilisation de la règle 77 (SelWithClassID)
+    $défaut  réduction par utilisation de la règle 71 (ArgumentOuCible)
 
 
 État 41
 
-   82 Selection: Message .
+   80 Selection: Message .
 
-    $défaut  réduction par utilisation de la règle 82 (Selection)
+    $défaut  réduction par utilisation de la règle 80 (Selection)
 
 
 État 42
@@ -758,12 +753,12 @@ OverrideOpt (79)
 
 État 43
 
-   89 ListChamp: Champ . ListChamp
-   90          | Champ .
+   87 ListChamp: Champ . ListChamp
+   88          | Champ .
 
     VAR  décalage et aller à l'état 17
 
-    $défaut  réduction par utilisation de la règle 90 (ListChamp)
+    $défaut  réduction par utilisation de la règle 88 (ListChamp)
 
     ListChamp  aller à l'état 76
     Champ      aller à l'état 43
@@ -771,57 +766,57 @@ OverrideOpt (79)
 
 État 44
 
-   59 VarOpt: VAR .
+   57 VarOpt: VAR .
 
-    $défaut  réduction par utilisation de la règle 59 (VarOpt)
+    $défaut  réduction par utilisation de la règle 57 (VarOpt)
 
 
 État 45
 
-   39 Classe: CLASS ClassId '(' ListParametreOpt . ')' ExtendsOpt BlocOpt IS CorpsClasse
+   37 Classe: CLASS ClassId '(' ListParametreOpt . ')' ExtendsOpt BlocOpt IS CorpsClasse
 
     ')'  décalage et aller à l'état 77
 
 
 État 46
 
-   49 ListParametreOpt: ListParametres .
+   47 ListParametreOpt: ListParametres .
 
-    $défaut  réduction par utilisation de la règle 49 (ListParametreOpt)
+    $défaut  réduction par utilisation de la règle 47 (ListParametreOpt)
 
 
 État 47
 
-   52 ListParametres: Parametre . ',' ListParametres
-   53               | Parametre . ',' ListParametresDef
-   54               | Parametre .
+   50 ListParametres: Parametre . ',' ListParametres
+   51               | Parametre . ',' ListParametresDef
+   52               | Parametre .
 
     ','  décalage et aller à l'état 78
 
-    $défaut  réduction par utilisation de la règle 54 (ListParametres)
+    $défaut  réduction par utilisation de la règle 52 (ListParametres)
 
 
 État 48
 
-   50 ListParametreOpt: ListParametresDef .
+   48 ListParametreOpt: ListParametresDef .
 
-    $défaut  réduction par utilisation de la règle 50 (ListParametreOpt)
+    $défaut  réduction par utilisation de la règle 48 (ListParametreOpt)
 
 
 État 49
 
-   56 ListParametresDef: ParametreDef . ',' ListParametresDef
-   57                  | ParametreDef .
+   54 ListParametresDef: ParametreDef . ',' ListParametresDef
+   55                  | ParametreDef .
 
     ','  décalage et aller à l'état 79
 
-    $défaut  réduction par utilisation de la règle 57 (ListParametresDef)
+    $défaut  réduction par utilisation de la règle 55 (ListParametresDef)
 
 
 État 50
 
-   55 Parametre: VarOpt . Id ':' ClassId
-   58 ParametreDef: VarOpt . Id ':' ClassId AFF Expression
+   53 Parametre: VarOpt . Id ':' ClassId
+   56 ParametreDef: VarOpt . Id ':' ClassId AFF Expression
 
     Id  décalage et aller à l'état 80
 
@@ -832,7 +827,7 @@ OverrideOpt (79)
 
     VAR  décalage et aller à l'état 17
 
-    $défaut  réduction par utilisation de la règle 88 (ListChampOpt)
+    $défaut  réduction par utilisation de la règle 86 (ListChampOpt)
 
     ListChampOpt  aller à l'état 81
     ListChamp     aller à l'état 82
@@ -841,21 +836,21 @@ OverrideOpt (79)
 
 État 52
 
-   91 Champ: VAR Id . ':' ClassId DeclExpressionOpt ';'
+   89 Champ: VAR Id . ':' ClassId DeclExpressionOpt ';'
 
     ':'  décalage et aller à l'état 83
 
 
 État 53
 
-   22 Instruction: IF Operation . THEN InstIfElse ELSE InstIfElse
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
+   20 Instruction: IF Operation . THEN InstIfElse ELSE InstIfElse
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
 
     THEN   décalage et aller à l'état 84
     ADD    décalage et aller à l'état 66
@@ -869,64 +864,64 @@ OverrideOpt (79)
 
 État 54
 
-   27 Valeur: ArgumentOuCible .
+   25 Valeur: ArgumentOuCible .
 
-    $défaut  réduction par utilisation de la règle 27 (Valeur)
+    $défaut  réduction par utilisation de la règle 25 (Valeur)
 
 
 État 55
 
-   20 Instruction: RETURN ';' .
+   18 Instruction: RETURN ';' .
 
-    $défaut  réduction par utilisation de la règle 20 (Instruction)
+    $défaut  réduction par utilisation de la règle 18 (Instruction)
 
 
 État 56
 
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
-   35          | ADD Operation .
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
+   33          | ADD Operation .
 
     PROD  décalage et aller à l'état 68
     QUOT  décalage et aller à l'état 69
     REST  décalage et aller à l'état 70
 
-    $défaut  réduction par utilisation de la règle 35 (Operation)
+    $défaut  réduction par utilisation de la règle 33 (Operation)
 
 
 État 57
 
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
-   36          | SUB Operation .
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
+   34          | SUB Operation .
 
     PROD  décalage et aller à l'état 68
     QUOT  décalage et aller à l'état 69
     REST  décalage et aller à l'état 70
 
-    $défaut  réduction par utilisation de la règle 36 (Operation)
+    $défaut  réduction par utilisation de la règle 34 (Operation)
 
 
 État 58
 
-   38 Instanciation: NEW ClassId . '(' ListArgumentsOpt ')'
+   36 Instanciation: NEW ClassId . '(' ListArgumentsOpt ')'
 
     '('  décalage et aller à l'état 85
 
 
 État 59
 
-   86 Message: Id '(' . ListArgumentsOpt ')'
+   84 Message: Id '(' . ListArgumentsOpt ')'
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -938,7 +933,7 @@ OverrideOpt (79)
     THIS     décalage et aller à l'état 27
     '('      décalage et aller à l'état 28
 
-    $défaut  réduction par utilisation de la règle 67 (ListArgumentsOpt)
+    $défaut  réduction par utilisation de la règle 65 (ListArgumentsOpt)
 
     Expression        aller à l'état 86
     Valeur            aller à l'état 33
@@ -956,8 +951,8 @@ OverrideOpt (79)
 
 État 60
 
-   74 ThisSelect: THIS DOT . ListSelection
-   75           | THIS DOT . Selection
+   72 ThisSelect: THIS DOT . ListSelection
+   73           | THIS DOT . Selection
 
     Id       décalage et aller à l'état 23
     ClassId  décalage et aller à l'état 24
@@ -972,8 +967,8 @@ OverrideOpt (79)
 
 État 61
 
-   80 SelWithClassID: ClassId .
-   85 Selection: '(' ClassId . Expression ')'
+   78 SelWithClassID: ClassId .
+   83 Selection: '(' ClassId . Expression ')'
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -985,7 +980,7 @@ OverrideOpt (79)
     THIS     décalage et aller à l'état 27
     '('      décalage et aller à l'état 28
 
-    $défaut  réduction par utilisation de la règle 80 (SelWithClassID)
+    $défaut  réduction par utilisation de la règle 78 (SelWithClassID)
 
     Expression       aller à l'état 91
     Valeur           aller à l'état 33
@@ -1001,7 +996,7 @@ OverrideOpt (79)
 
 État 62
 
-   84 Selection: '(' Expression . ')'
+   82 Selection: '(' Expression . ')'
 
     ')'  décalage et aller à l'état 92
 
@@ -1015,21 +1010,21 @@ OverrideOpt (79)
 
 État 64
 
-   17 ListInstructions: Instruction ListInstructions .
+   15 ListInstructions: Instruction ListInstructions .
 
-    $défaut  réduction par utilisation de la règle 17 (ListInstructions)
+    $défaut  réduction par utilisation de la règle 15 (ListInstructions)
 
 
 État 65
 
-   19 Instruction: Expression ';' .
+   17 Instruction: Expression ';' .
 
-    $défaut  réduction par utilisation de la règle 19 (Instruction)
+    $défaut  réduction par utilisation de la règle 17 (Instruction)
 
 
 État 66
 
-   29 Operation: Operation ADD . Operation
+   27 Operation: Operation ADD . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1052,7 +1047,7 @@ OverrideOpt (79)
 
 État 67
 
-   30 Operation: Operation SUB . Operation
+   28 Operation: Operation SUB . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1075,7 +1070,7 @@ OverrideOpt (79)
 
 État 68
 
-   31 Operation: Operation PROD . Operation
+   29 Operation: Operation PROD . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1098,7 +1093,7 @@ OverrideOpt (79)
 
 État 69
 
-   32 Operation: Operation QUOT . Operation
+   30 Operation: Operation QUOT . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1121,7 +1116,7 @@ OverrideOpt (79)
 
 État 70
 
-   33 Operation: Operation REST . Operation
+   31 Operation: Operation REST . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1144,7 +1139,7 @@ OverrideOpt (79)
 
 État 71
 
-   34 Operation: Operation AND . Operation
+   32 Operation: Operation AND . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1167,7 +1162,7 @@ OverrideOpt (79)
 
 État 72
 
-   28 Operation: Operation RelOp . Operation
+   26 Operation: Operation RelOp . Operation
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1190,7 +1185,7 @@ OverrideOpt (79)
 
 État 73
 
-   21 Instruction: ArgumentOuCible AFF . Expression ';'
+   19 Instruction: ArgumentOuCible AFF . Expression ';'
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1216,7 +1211,7 @@ OverrideOpt (79)
 
 État 74
 
-   77 ListSelection: SelWithClassID DOT . Selection
+   75 ListSelection: SelWithClassID DOT . Selection
 
     Id    décalage et aller à l'état 23
     Cstr  décalage et aller à l'état 25
@@ -1258,18 +1253,18 @@ OverrideOpt (79)
 
 État 76
 
-   89 ListChamp: Champ ListChamp .
+   87 ListChamp: Champ ListChamp .
 
-    $défaut  réduction par utilisation de la règle 89 (ListChamp)
+    $défaut  réduction par utilisation de la règle 87 (ListChamp)
 
 
 État 77
 
-   39 Classe: CLASS ClassId '(' ListParametreOpt ')' . ExtendsOpt BlocOpt IS CorpsClasse
+   37 Classe: CLASS ClassId '(' ListParametreOpt ')' . ExtendsOpt BlocOpt IS CorpsClasse
 
     EXTENDS  décalage et aller à l'état 103
 
-    $défaut  réduction par utilisation de la règle 64 (ExtendsOpt)
+    $défaut  réduction par utilisation de la règle 62 (ExtendsOpt)
 
     ExtendsOpt  aller à l'état 104
     Extends     aller à l'état 105
@@ -1277,12 +1272,12 @@ OverrideOpt (79)
 
 État 78
 
-   52 ListParametres: Parametre ',' . ListParametres
-   53               | Parametre ',' . ListParametresDef
+   50 ListParametres: Parametre ',' . ListParametres
+   51               | Parametre ',' . ListParametresDef
 
     VAR  décalage et aller à l'état 44
 
-    $défaut  réduction par utilisation de la règle 60 (VarOpt)
+    $défaut  réduction par utilisation de la règle 58 (VarOpt)
 
     ListParametres     aller à l'état 106
     Parametre          aller à l'état 47
@@ -1293,11 +1288,11 @@ OverrideOpt (79)
 
 État 79
 
-   56 ListParametresDef: ParametreDef ',' . ListParametresDef
+   54 ListParametresDef: ParametreDef ',' . ListParametresDef
 
     VAR  décalage et aller à l'état 44
 
-    $défaut  réduction par utilisation de la règle 60 (VarOpt)
+    $défaut  réduction par utilisation de la règle 58 (VarOpt)
 
     ListParametresDef  aller à l'état 108
     ParametreDef       aller à l'état 49
@@ -1306,8 +1301,8 @@ OverrideOpt (79)
 
 État 80
 
-   55 Parametre: VarOpt Id . ':' ClassId
-   58 ParametreDef: VarOpt Id . ':' ClassId AFF Expression
+   53 Parametre: VarOpt Id . ':' ClassId
+   56 ParametreDef: VarOpt Id . ':' ClassId AFF Expression
 
     ':'  décalage et aller à l'état 110
 
@@ -1318,8 +1313,8 @@ OverrideOpt (79)
 
     OVERRIDE  décalage et aller à l'état 111
 
-    DEF       réduction par utilisation de la règle 93 (OverrideOpt)
-    $défaut  réduction par utilisation de la règle 42 (ListMethodeOpt)
+    DEF       réduction par utilisation de la règle 91 (OverrideOpt)
+    $défaut  réduction par utilisation de la règle 40 (ListMethodeOpt)
 
     ListMethodeOpt  aller à l'état 112
     ListMethode     aller à l'état 113
@@ -1329,21 +1324,21 @@ OverrideOpt (79)
 
 État 82
 
-   87 ListChampOpt: ListChamp .
+   85 ListChampOpt: ListChamp .
 
-    $défaut  réduction par utilisation de la règle 87 (ListChampOpt)
+    $défaut  réduction par utilisation de la règle 85 (ListChampOpt)
 
 
 État 83
 
-   91 Champ: VAR Id ':' . ClassId DeclExpressionOpt ';'
+   89 Champ: VAR Id ':' . ClassId DeclExpressionOpt ';'
 
     ClassId  décalage et aller à l'état 116
 
 
 État 84
 
-   22 Instruction: IF Operation THEN . InstIfElse ELSE InstIfElse
+   20 Instruction: IF Operation THEN . InstIfElse ELSE InstIfElse
 
     IF       décalage et aller à l'état 18
     RETURN   décalage et aller à l'état 19
@@ -1375,7 +1370,7 @@ OverrideOpt (79)
 
 État 85
 
-   38 Instanciation: NEW ClassId '(' . ListArgumentsOpt ')'
+   36 Instanciation: NEW ClassId '(' . ListArgumentsOpt ')'
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1387,7 +1382,7 @@ OverrideOpt (79)
     THIS     décalage et aller à l'état 27
     '('      décalage et aller à l'état 28
 
-    $défaut  réduction par utilisation de la règle 67 (ListArgumentsOpt)
+    $défaut  réduction par utilisation de la règle 65 (ListArgumentsOpt)
 
     Expression        aller à l'état 86
     Valeur            aller à l'état 33
@@ -1405,169 +1400,169 @@ OverrideOpt (79)
 
 État 86
 
-   68 ListArguments: Expression . ',' ListArguments
-   69              | Expression .
+   66 ListArguments: Expression . ',' ListArguments
+   67              | Expression .
 
     ','  décalage et aller à l'état 121
 
-    $défaut  réduction par utilisation de la règle 69 (ListArguments)
+    $défaut  réduction par utilisation de la règle 67 (ListArguments)
 
 
 État 87
 
-   86 Message: Id '(' ListArgumentsOpt . ')'
+   84 Message: Id '(' ListArgumentsOpt . ')'
 
     ')'  décalage et aller à l'état 122
 
 
 État 88
 
-   66 ListArgumentsOpt: ListArguments .
+   64 ListArgumentsOpt: ListArguments .
 
-    $défaut  réduction par utilisation de la règle 66 (ListArgumentsOpt)
+    $défaut  réduction par utilisation de la règle 64 (ListArgumentsOpt)
 
 
 État 89
 
-   74 ThisSelect: THIS DOT ListSelection .
-   78 SelWithClassID: ListSelection .
+   72 ThisSelect: THIS DOT ListSelection .
+   76 SelWithClassID: ListSelection .
 
-    DOT       réduction par utilisation de la règle 78 (SelWithClassID)
-    $défaut  réduction par utilisation de la règle 74 (ThisSelect)
+    DOT       réduction par utilisation de la règle 76 (SelWithClassID)
+    $défaut  réduction par utilisation de la règle 72 (ThisSelect)
 
 
 État 90
 
-   75 ThisSelect: THIS DOT Selection .
-   79 SelWithClassID: Selection .
+   73 ThisSelect: THIS DOT Selection .
+   77 SelWithClassID: Selection .
 
-    DOT       réduction par utilisation de la règle 79 (SelWithClassID)
-    $défaut  réduction par utilisation de la règle 75 (ThisSelect)
+    DOT       réduction par utilisation de la règle 77 (SelWithClassID)
+    $défaut  réduction par utilisation de la règle 73 (ThisSelect)
 
 
 État 91
 
-   85 Selection: '(' ClassId Expression . ')'
+   83 Selection: '(' ClassId Expression . ')'
 
     ')'  décalage et aller à l'état 123
 
 
 État 92
 
-   84 Selection: '(' Expression ')' .
+   82 Selection: '(' Expression ')' .
 
-    $défaut  réduction par utilisation de la règle 84 (Selection)
+    $défaut  réduction par utilisation de la règle 82 (Selection)
 
 
 État 93
 
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   29          | Operation ADD Operation .
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   27          | Operation ADD Operation .
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
 
     PROD  décalage et aller à l'état 68
     QUOT  décalage et aller à l'état 69
     REST  décalage et aller à l'état 70
 
-    $défaut  réduction par utilisation de la règle 29 (Operation)
+    $défaut  réduction par utilisation de la règle 27 (Operation)
 
 
 État 94
 
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   30          | Operation SUB Operation .
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   28          | Operation SUB Operation .
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
 
     PROD  décalage et aller à l'état 68
     QUOT  décalage et aller à l'état 69
     REST  décalage et aller à l'état 70
 
-    $défaut  réduction par utilisation de la règle 30 (Operation)
+    $défaut  réduction par utilisation de la règle 28 (Operation)
 
 
 État 95
 
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   31          | Operation PROD Operation .
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   29          | Operation PROD Operation .
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
 
-    $défaut  réduction par utilisation de la règle 31 (Operation)
+    $défaut  réduction par utilisation de la règle 29 (Operation)
 
 
 État 96
 
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   32          | Operation QUOT Operation .
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   30          | Operation QUOT Operation .
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
 
-    $défaut  réduction par utilisation de la règle 32 (Operation)
+    $défaut  réduction par utilisation de la règle 30 (Operation)
 
 
 État 97
 
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   33          | Operation REST Operation .
-   34          | Operation . AND Operation
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   31          | Operation REST Operation .
+   32          | Operation . AND Operation
 
     PROD  décalage et aller à l'état 68
     QUOT  décalage et aller à l'état 69
 
-    $défaut  réduction par utilisation de la règle 33 (Operation)
+    $défaut  réduction par utilisation de la règle 31 (Operation)
 
 
 État 98
 
-   28 Operation: Operation . RelOp Operation
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
-   34          | Operation AND Operation .
+   26 Operation: Operation . RelOp Operation
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
+   32          | Operation AND Operation .
 
     PROD  décalage et aller à l'état 68
     QUOT  décalage et aller à l'état 69
     REST  décalage et aller à l'état 70
 
-    $défaut  réduction par utilisation de la règle 34 (Operation)
+    $défaut  réduction par utilisation de la règle 32 (Operation)
 
 
 État 99
 
-   28 Operation: Operation . RelOp Operation
-   28          | Operation RelOp Operation .
-   29          | Operation . ADD Operation
-   30          | Operation . SUB Operation
-   31          | Operation . PROD Operation
-   32          | Operation . QUOT Operation
-   33          | Operation . REST Operation
-   34          | Operation . AND Operation
+   26 Operation: Operation . RelOp Operation
+   26          | Operation RelOp Operation .
+   27          | Operation . ADD Operation
+   28          | Operation . SUB Operation
+   29          | Operation . PROD Operation
+   30          | Operation . QUOT Operation
+   31          | Operation . REST Operation
+   32          | Operation . AND Operation
 
     ADD   décalage et aller à l'état 66
     SUB   décalage et aller à l'état 67
@@ -1576,21 +1571,21 @@ OverrideOpt (79)
     REST  décalage et aller à l'état 70
     AND   décalage et aller à l'état 71
 
-    $défaut  réduction par utilisation de la règle 28 (Operation)
+    $défaut  réduction par utilisation de la règle 26 (Operation)
 
 
 État 100
 
-   21 Instruction: ArgumentOuCible AFF Expression . ';'
+   19 Instruction: ArgumentOuCible AFF Expression . ';'
 
     ';'  décalage et aller à l'état 124
 
 
 État 101
 
-   77 ListSelection: SelWithClassID DOT Selection .
+   75 ListSelection: SelWithClassID DOT Selection .
 
-    $défaut  réduction par utilisation de la règle 77 (ListSelection)
+    $défaut  réduction par utilisation de la règle 75 (ListSelection)
 
 
 État 102
@@ -1602,14 +1597,14 @@ OverrideOpt (79)
 
 État 103
 
-   65 Extends: EXTENDS . ClassId '(' ListArgumentsOpt ')'
+   63 Extends: EXTENDS . ClassId '(' ListArgumentsOpt ')'
 
     ClassId  décalage et aller à l'état 126
 
 
 État 104
 
-   39 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt . BlocOpt IS CorpsClasse
+   37 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt . BlocOpt IS CorpsClasse
 
     '{'  décalage et aller à l'état 12
 
@@ -1621,52 +1616,52 @@ OverrideOpt (79)
 
 État 105
 
-   63 ExtendsOpt: Extends .
+   61 ExtendsOpt: Extends .
 
-    $défaut  réduction par utilisation de la règle 63 (ExtendsOpt)
+    $défaut  réduction par utilisation de la règle 61 (ExtendsOpt)
 
 
 État 106
 
-   52 ListParametres: Parametre ',' ListParametres .
+   50 ListParametres: Parametre ',' ListParametres .
 
-    $défaut  réduction par utilisation de la règle 52 (ListParametres)
+    $défaut  réduction par utilisation de la règle 50 (ListParametres)
 
 
 État 107
 
-   53 ListParametres: Parametre ',' ListParametresDef .
+   51 ListParametres: Parametre ',' ListParametresDef .
 
-    $défaut  réduction par utilisation de la règle 53 (ListParametres)
+    $défaut  réduction par utilisation de la règle 51 (ListParametres)
 
 
 État 108
 
-   56 ListParametresDef: ParametreDef ',' ListParametresDef .
+   54 ListParametresDef: ParametreDef ',' ListParametresDef .
 
-    $défaut  réduction par utilisation de la règle 56 (ListParametresDef)
+    $défaut  réduction par utilisation de la règle 54 (ListParametresDef)
 
 
 État 109
 
-   58 ParametreDef: VarOpt . Id ':' ClassId AFF Expression
+   56 ParametreDef: VarOpt . Id ':' ClassId AFF Expression
 
     Id  décalage et aller à l'état 129
 
 
 État 110
 
-   55 Parametre: VarOpt Id ':' . ClassId
-   58 ParametreDef: VarOpt Id ':' . ClassId AFF Expression
+   53 Parametre: VarOpt Id ':' . ClassId
+   56 ParametreDef: VarOpt Id ':' . ClassId AFF Expression
 
     ClassId  décalage et aller à l'état 130
 
 
 État 111
 
-   92 OverrideOpt: OVERRIDE .
+   90 OverrideOpt: OVERRIDE .
 
-    $défaut  réduction par utilisation de la règle 92 (OverrideOpt)
+    $défaut  réduction par utilisation de la règle 90 (OverrideOpt)
 
 
 État 112
@@ -1678,20 +1673,20 @@ OverrideOpt (79)
 
 État 113
 
-   41 ListMethodeOpt: ListMethode .
+   39 ListMethodeOpt: ListMethode .
 
-    $défaut  réduction par utilisation de la règle 41 (ListMethodeOpt)
+    $défaut  réduction par utilisation de la règle 39 (ListMethodeOpt)
 
 
 État 114
 
-   43 ListMethode: Methode . ListMethode
-   44            | Methode .
+   41 ListMethode: Methode . ListMethode
+   42            | Methode .
 
     OVERRIDE  décalage et aller à l'état 111
 
-    DEF       réduction par utilisation de la règle 93 (OverrideOpt)
-    $défaut  réduction par utilisation de la règle 44 (ListMethode)
+    DEF       réduction par utilisation de la règle 91 (OverrideOpt)
+    $défaut  réduction par utilisation de la règle 42 (ListMethode)
 
     ListMethode  aller à l'état 132
     Methode      aller à l'état 114
@@ -1700,54 +1695,54 @@ OverrideOpt (79)
 
 État 115
 
-   45 Methode: OverrideOpt . DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
-   46        | OverrideOpt . DEF Id '(' ListParametreOpt ')' NomClasseOpt IS BlocNonVide
+   43 Methode: OverrideOpt . DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
+   44        | OverrideOpt . DEF Id '(' ListParametreOpt ')' NomClasseOpt IS Bloc
 
     DEF  décalage et aller à l'état 133
 
 
 État 116
 
-   91 Champ: VAR Id ':' ClassId . DeclExpressionOpt ';'
+   89 Champ: VAR Id ':' ClassId . DeclExpressionOpt ';'
 
     AFF  décalage et aller à l'état 134
 
-    $défaut  réduction par utilisation de la règle 62 (DeclExpressionOpt)
+    $défaut  réduction par utilisation de la règle 60 (DeclExpressionOpt)
 
     DeclExpressionOpt  aller à l'état 135
 
 
 État 117
 
-   24 InstIfElse: Bloc .
+   22 InstIfElse: Bloc .
 
-    $défaut  réduction par utilisation de la règle 24 (InstIfElse)
+    $défaut  réduction par utilisation de la règle 22 (InstIfElse)
 
 
 État 118
 
-   23 InstIfElse: Instruction .
+   21 InstIfElse: Instruction .
 
-    $défaut  réduction par utilisation de la règle 23 (InstIfElse)
+    $défaut  réduction par utilisation de la règle 21 (InstIfElse)
 
 
 État 119
 
-   22 Instruction: IF Operation THEN InstIfElse . ELSE InstIfElse
+   20 Instruction: IF Operation THEN InstIfElse . ELSE InstIfElse
 
     ELSE  décalage et aller à l'état 136
 
 
 État 120
 
-   38 Instanciation: NEW ClassId '(' ListArgumentsOpt . ')'
+   36 Instanciation: NEW ClassId '(' ListArgumentsOpt . ')'
 
     ')'  décalage et aller à l'état 137
 
 
 État 121
 
-   68 ListArguments: Expression ',' . ListArguments
+   66 ListArguments: Expression ',' . ListArguments
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1774,23 +1769,23 @@ OverrideOpt (79)
 
 État 122
 
-   86 Message: Id '(' ListArgumentsOpt ')' .
+   84 Message: Id '(' ListArgumentsOpt ')' .
 
-    $défaut  réduction par utilisation de la règle 86 (Message)
+    $défaut  réduction par utilisation de la règle 84 (Message)
 
 
 État 123
 
-   85 Selection: '(' ClassId Expression ')' .
+   83 Selection: '(' ClassId Expression ')' .
 
-    $défaut  réduction par utilisation de la règle 85 (Selection)
+    $défaut  réduction par utilisation de la règle 83 (Selection)
 
 
 État 124
 
-   21 Instruction: ArgumentOuCible AFF Expression ';' .
+   19 Instruction: ArgumentOuCible AFF Expression ';' .
 
-    $défaut  réduction par utilisation de la règle 21 (Instruction)
+    $défaut  réduction par utilisation de la règle 19 (Instruction)
 
 
 État 125
@@ -1802,14 +1797,14 @@ OverrideOpt (79)
 
 État 126
 
-   65 Extends: EXTENDS ClassId . '(' ListArgumentsOpt ')'
+   63 Extends: EXTENDS ClassId . '(' ListArgumentsOpt ')'
 
     '('  décalage et aller à l'état 139
 
 
 État 127
 
-   39 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt . IS CorpsClasse
+   37 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt . IS CorpsClasse
 
     IS  décalage et aller à l'état 140
 
@@ -1823,19 +1818,19 @@ OverrideOpt (79)
 
 État 129
 
-   58 ParametreDef: VarOpt Id . ':' ClassId AFF Expression
+   56 ParametreDef: VarOpt Id . ':' ClassId AFF Expression
 
     ':'  décalage et aller à l'état 141
 
 
 État 130
 
-   55 Parametre: VarOpt Id ':' ClassId .
-   58 ParametreDef: VarOpt Id ':' ClassId . AFF Expression
+   53 Parametre: VarOpt Id ':' ClassId .
+   56 ParametreDef: VarOpt Id ':' ClassId . AFF Expression
 
     AFF  décalage et aller à l'état 142
 
-    $défaut  réduction par utilisation de la règle 55 (Parametre)
+    $défaut  réduction par utilisation de la règle 53 (Parametre)
 
 
 État 131
@@ -1847,22 +1842,22 @@ OverrideOpt (79)
 
 État 132
 
-   43 ListMethode: Methode ListMethode .
+   41 ListMethode: Methode ListMethode .
 
-    $défaut  réduction par utilisation de la règle 43 (ListMethode)
+    $défaut  réduction par utilisation de la règle 41 (ListMethode)
 
 
 État 133
 
-   45 Methode: OverrideOpt DEF . Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
-   46        | OverrideOpt DEF . Id '(' ListParametreOpt ')' NomClasseOpt IS BlocNonVide
+   43 Methode: OverrideOpt DEF . Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
+   44        | OverrideOpt DEF . Id '(' ListParametreOpt ')' NomClasseOpt IS Bloc
 
     Id  décalage et aller à l'état 143
 
 
 État 134
 
-   61 DeclExpressionOpt: AFF . Expression
+   59 DeclExpressionOpt: AFF . Expression
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1888,14 +1883,14 @@ OverrideOpt (79)
 
 État 135
 
-   91 Champ: VAR Id ':' ClassId DeclExpressionOpt . ';'
+   89 Champ: VAR Id ':' ClassId DeclExpressionOpt . ';'
 
     ';'  décalage et aller à l'état 145
 
 
 État 136
 
-   22 Instruction: IF Operation THEN InstIfElse ELSE . InstIfElse
+   20 Instruction: IF Operation THEN InstIfElse ELSE . InstIfElse
 
     IF       décalage et aller à l'état 18
     RETURN   décalage et aller à l'état 19
@@ -1927,21 +1922,21 @@ OverrideOpt (79)
 
 État 137
 
-   38 Instanciation: NEW ClassId '(' ListArgumentsOpt ')' .
+   36 Instanciation: NEW ClassId '(' ListArgumentsOpt ')' .
 
-    $défaut  réduction par utilisation de la règle 38 (Instanciation)
+    $défaut  réduction par utilisation de la règle 36 (Instanciation)
 
 
 État 138
 
-   68 ListArguments: Expression ',' ListArguments .
+   66 ListArguments: Expression ',' ListArguments .
 
-    $défaut  réduction par utilisation de la règle 68 (ListArguments)
+    $défaut  réduction par utilisation de la règle 66 (ListArguments)
 
 
 État 139
 
-   65 Extends: EXTENDS ClassId '(' . ListArgumentsOpt ')'
+   63 Extends: EXTENDS ClassId '(' . ListArgumentsOpt ')'
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -1953,7 +1948,7 @@ OverrideOpt (79)
     THIS     décalage et aller à l'état 27
     '('      décalage et aller à l'état 28
 
-    $défaut  réduction par utilisation de la règle 67 (ListArgumentsOpt)
+    $défaut  réduction par utilisation de la règle 65 (ListArgumentsOpt)
 
     Expression        aller à l'état 86
     Valeur            aller à l'état 33
@@ -1971,7 +1966,7 @@ OverrideOpt (79)
 
 État 140
 
-   39 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS . CorpsClasse
+   37 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS . CorpsClasse
 
     '{'  décalage et aller à l'état 148
 
@@ -1980,14 +1975,14 @@ OverrideOpt (79)
 
 État 141
 
-   58 ParametreDef: VarOpt Id ':' . ClassId AFF Expression
+   56 ParametreDef: VarOpt Id ':' . ClassId AFF Expression
 
     ClassId  décalage et aller à l'état 150
 
 
 État 142
 
-   58 ParametreDef: VarOpt Id ':' ClassId AFF . Expression
+   56 ParametreDef: VarOpt Id ':' ClassId AFF . Expression
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -2013,47 +2008,47 @@ OverrideOpt (79)
 
 État 143
 
-   45 Methode: OverrideOpt DEF Id . '(' ListParametreOpt ')' ':' ClassId AFF Expression
-   46        | OverrideOpt DEF Id . '(' ListParametreOpt ')' NomClasseOpt IS BlocNonVide
+   43 Methode: OverrideOpt DEF Id . '(' ListParametreOpt ')' ':' ClassId AFF Expression
+   44        | OverrideOpt DEF Id . '(' ListParametreOpt ')' NomClasseOpt IS Bloc
 
     '('  décalage et aller à l'état 152
 
 
 État 144
 
-   61 DeclExpressionOpt: AFF Expression .
+   59 DeclExpressionOpt: AFF Expression .
 
-    $défaut  réduction par utilisation de la règle 61 (DeclExpressionOpt)
+    $défaut  réduction par utilisation de la règle 59 (DeclExpressionOpt)
 
 
 État 145
 
-   91 Champ: VAR Id ':' ClassId DeclExpressionOpt ';' .
+   89 Champ: VAR Id ':' ClassId DeclExpressionOpt ';' .
 
-    $défaut  réduction par utilisation de la règle 91 (Champ)
+    $défaut  réduction par utilisation de la règle 89 (Champ)
 
 
 État 146
 
-   22 Instruction: IF Operation THEN InstIfElse ELSE InstIfElse .
+   20 Instruction: IF Operation THEN InstIfElse ELSE InstIfElse .
 
-    $défaut  réduction par utilisation de la règle 22 (Instruction)
+    $défaut  réduction par utilisation de la règle 20 (Instruction)
 
 
 État 147
 
-   65 Extends: EXTENDS ClassId '(' ListArgumentsOpt . ')'
+   63 Extends: EXTENDS ClassId '(' ListArgumentsOpt . ')'
 
     ')'  décalage et aller à l'état 153
 
 
 État 148
 
-   40 CorpsClasse: '{' . ListChampOpt ListMethodeOpt '}'
+   38 CorpsClasse: '{' . ListChampOpt ListMethodeOpt '}'
 
     VAR  décalage et aller à l'état 17
 
-    $défaut  réduction par utilisation de la règle 88 (ListChampOpt)
+    $défaut  réduction par utilisation de la règle 86 (ListChampOpt)
 
     ListChampOpt  aller à l'état 154
     ListChamp     aller à l'état 82
@@ -2062,34 +2057,34 @@ OverrideOpt (79)
 
 État 149
 
-   39 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse .
+   37 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse .
 
-    $défaut  réduction par utilisation de la règle 39 (Classe)
+    $défaut  réduction par utilisation de la règle 37 (Classe)
 
 
 État 150
 
-   58 ParametreDef: VarOpt Id ':' ClassId . AFF Expression
+   56 ParametreDef: VarOpt Id ':' ClassId . AFF Expression
 
     AFF  décalage et aller à l'état 142
 
 
 État 151
 
-   58 ParametreDef: VarOpt Id ':' ClassId AFF Expression .
+   56 ParametreDef: VarOpt Id ':' ClassId AFF Expression .
 
-    $défaut  réduction par utilisation de la règle 58 (ParametreDef)
+    $défaut  réduction par utilisation de la règle 56 (ParametreDef)
 
 
 État 152
 
-   45 Methode: OverrideOpt DEF Id '(' . ListParametreOpt ')' ':' ClassId AFF Expression
-   46        | OverrideOpt DEF Id '(' . ListParametreOpt ')' NomClasseOpt IS BlocNonVide
+   43 Methode: OverrideOpt DEF Id '(' . ListParametreOpt ')' ':' ClassId AFF Expression
+   44        | OverrideOpt DEF Id '(' . ListParametreOpt ')' NomClasseOpt IS Bloc
 
     VAR  décalage et aller à l'état 44
 
-    Id        réduction par utilisation de la règle 60 (VarOpt)
-    $défaut  réduction par utilisation de la règle 51 (ListParametreOpt)
+    Id        réduction par utilisation de la règle 58 (VarOpt)
+    $défaut  réduction par utilisation de la règle 49 (ListParametreOpt)
 
     ListParametreOpt   aller à l'état 155
     ListParametres     aller à l'état 46
@@ -2101,19 +2096,19 @@ OverrideOpt (79)
 
 État 153
 
-   65 Extends: EXTENDS ClassId '(' ListArgumentsOpt ')' .
+   63 Extends: EXTENDS ClassId '(' ListArgumentsOpt ')' .
 
-    $défaut  réduction par utilisation de la règle 65 (Extends)
+    $défaut  réduction par utilisation de la règle 63 (Extends)
 
 
 État 154
 
-   40 CorpsClasse: '{' ListChampOpt . ListMethodeOpt '}'
+   38 CorpsClasse: '{' ListChampOpt . ListMethodeOpt '}'
 
     OVERRIDE  décalage et aller à l'état 111
 
-    DEF       réduction par utilisation de la règle 93 (OverrideOpt)
-    $défaut  réduction par utilisation de la règle 42 (ListMethodeOpt)
+    DEF       réduction par utilisation de la règle 91 (OverrideOpt)
+    $défaut  réduction par utilisation de la règle 40 (ListMethodeOpt)
 
     ListMethodeOpt  aller à l'état 156
     ListMethode     aller à l'état 113
@@ -2123,75 +2118,75 @@ OverrideOpt (79)
 
 État 155
 
-   45 Methode: OverrideOpt DEF Id '(' ListParametreOpt . ')' ':' ClassId AFF Expression
-   46        | OverrideOpt DEF Id '(' ListParametreOpt . ')' NomClasseOpt IS BlocNonVide
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt . ')' ':' ClassId AFF Expression
+   44        | OverrideOpt DEF Id '(' ListParametreOpt . ')' NomClasseOpt IS Bloc
 
     ')'  décalage et aller à l'état 157
 
 
 État 156
 
-   40 CorpsClasse: '{' ListChampOpt ListMethodeOpt . '}'
+   38 CorpsClasse: '{' ListChampOpt ListMethodeOpt . '}'
 
     '}'  décalage et aller à l'état 158
 
 
 État 157
 
-   45 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' . ':' ClassId AFF Expression
-   46        | OverrideOpt DEF Id '(' ListParametreOpt ')' . NomClasseOpt IS BlocNonVide
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' . ':' ClassId AFF Expression
+   44        | OverrideOpt DEF Id '(' ListParametreOpt ')' . NomClasseOpt IS Bloc
 
     ':'  décalage et aller à l'état 159
 
-    $défaut  réduction par utilisation de la règle 48 (NomClasseOpt)
+    $défaut  réduction par utilisation de la règle 46 (NomClasseOpt)
 
     NomClasseOpt  aller à l'état 160
 
 
 État 158
 
-   40 CorpsClasse: '{' ListChampOpt ListMethodeOpt '}' .
+   38 CorpsClasse: '{' ListChampOpt ListMethodeOpt '}' .
 
-    $défaut  réduction par utilisation de la règle 40 (CorpsClasse)
+    $défaut  réduction par utilisation de la règle 38 (CorpsClasse)
 
 
 État 159
 
-   45 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' . ClassId AFF Expression
-   47 NomClasseOpt: ':' . ClassId
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' . ClassId AFF Expression
+   45 NomClasseOpt: ':' . ClassId
 
     ClassId  décalage et aller à l'état 161
 
 
 État 160
 
-   46 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt . IS BlocNonVide
+   44 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt . IS Bloc
 
     IS  décalage et aller à l'état 162
 
 
 État 161
 
-   45 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId . AFF Expression
-   47 NomClasseOpt: ':' ClassId .
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId . AFF Expression
+   45 NomClasseOpt: ':' ClassId .
 
     AFF  décalage et aller à l'état 163
 
-    $défaut  réduction par utilisation de la règle 47 (NomClasseOpt)
+    $défaut  réduction par utilisation de la règle 45 (NomClasseOpt)
 
 
 État 162
 
-   46 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS . BlocNonVide
+   44 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS . Bloc
 
-    '{'  décalage et aller à l'état 164
+    '{'  décalage et aller à l'état 12
 
-    BlocNonVide  aller à l'état 165
+    Bloc  aller à l'état 164
 
 
 État 163
 
-   45 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF . Expression
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF . Expression
 
     ADD      décalage et aller à l'état 20
     SUB      décalage et aller à l'état 21
@@ -2203,7 +2198,7 @@ OverrideOpt (79)
     THIS     décalage et aller à l'état 27
     '('      décalage et aller à l'état 28
 
-    Expression       aller à l'état 166
+    Expression       aller à l'état 165
     Valeur           aller à l'état 33
     Operation        aller à l'état 34
     Instanciation    aller à l'état 35
@@ -2217,112 +2212,13 @@ OverrideOpt (79)
 
 État 164
 
-   13 BlocNonVide: '{' . ListInstructions '}'
-   14            | '{' . ListChamp IS ListInstructions '}'
+   44 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS Bloc .
 
-    VAR      décalage et aller à l'état 17
-    IF       décalage et aller à l'état 18
-    RETURN   décalage et aller à l'état 19
-    ADD      décalage et aller à l'état 20
-    SUB      décalage et aller à l'état 21
-    NEW      décalage et aller à l'état 22
-    Id       décalage et aller à l'état 23
-    ClassId  décalage et aller à l'état 24
-    Cstr     décalage et aller à l'état 25
-    Cste     décalage et aller à l'état 26
-    THIS     décalage et aller à l'état 27
-    '('      décalage et aller à l'état 28
-
-    ListInstructions  aller à l'état 167
-    Instruction       aller à l'état 31
-    Expression        aller à l'état 32
-    Valeur            aller à l'état 33
-    Operation         aller à l'état 34
-    Instanciation     aller à l'état 35
-    ArgumentOuCible   aller à l'état 36
-    ThisSelect        aller à l'état 37
-    ListSelection     aller à l'état 38
-    SelWithClassID    aller à l'état 39
-    Selection         aller à l'état 40
-    Message           aller à l'état 41
-    ListChamp         aller à l'état 168
-    Champ             aller à l'état 43
+    $défaut  réduction par utilisation de la règle 44 (Methode)
 
 
 État 165
 
-   46 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS BlocNonVide .
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression .
 
-    $défaut  réduction par utilisation de la règle 46 (Methode)
-
-
-État 166
-
-   45 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression .
-
-    $défaut  réduction par utilisation de la règle 45 (Methode)
-
-
-État 167
-
-   13 BlocNonVide: '{' ListInstructions . '}'
-
-    '}'  décalage et aller à l'état 169
-
-
-État 168
-
-   14 BlocNonVide: '{' ListChamp . IS ListInstructions '}'
-
-    IS  décalage et aller à l'état 170
-
-
-État 169
-
-   13 BlocNonVide: '{' ListInstructions '}' .
-
-    $défaut  réduction par utilisation de la règle 13 (BlocNonVide)
-
-
-État 170
-
-   14 BlocNonVide: '{' ListChamp IS . ListInstructions '}'
-
-    IF       décalage et aller à l'état 18
-    RETURN   décalage et aller à l'état 19
-    ADD      décalage et aller à l'état 20
-    SUB      décalage et aller à l'état 21
-    NEW      décalage et aller à l'état 22
-    Id       décalage et aller à l'état 23
-    ClassId  décalage et aller à l'état 24
-    Cstr     décalage et aller à l'état 25
-    Cste     décalage et aller à l'état 26
-    THIS     décalage et aller à l'état 27
-    '('      décalage et aller à l'état 28
-
-    ListInstructions  aller à l'état 171
-    Instruction       aller à l'état 31
-    Expression        aller à l'état 32
-    Valeur            aller à l'état 33
-    Operation         aller à l'état 34
-    Instanciation     aller à l'état 35
-    ArgumentOuCible   aller à l'état 36
-    ThisSelect        aller à l'état 37
-    ListSelection     aller à l'état 38
-    SelWithClassID    aller à l'état 39
-    Selection         aller à l'état 40
-    Message           aller à l'état 41
-
-
-État 171
-
-   14 BlocNonVide: '{' ListChamp IS ListInstructions . '}'
-
-    '}'  décalage et aller à l'état 172
-
-
-État 172
-
-   14 BlocNonVide: '{' ListChamp IS ListInstructions '}' .
-
-    $défaut  réduction par utilisation de la règle 14 (BlocNonVide)
+    $défaut  réduction par utilisation de la règle 43 (Methode)
