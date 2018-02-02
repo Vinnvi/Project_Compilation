@@ -118,3 +118,34 @@ bool verifSurcharges2(classeP maClasse){
     return true;
 
 }
+
+/* Verifier qu'on a pas de boucle dans le schema d'heritage */
+bool heritageSansCircuit(classeP classes){
+
+  while(classes != NIL(classe)){
+      classeP pile = NEW(1,classe);
+      classeP classeActuelle = classes;/* classe dont on veut etudier si a partir d'elle on peut faire une boucle*/
+      classeP classeEnCours = classeActuelle; /* classe qui sert a tester par rapport a la pile */
+      while(classeEnCours != NIL(classe) ){
+          /* on verifie par rapport a la pile*/
+          classeP pileBuff = pile;
+          while(pileBuff != NIL(classe) ){
+            if(classeEnCours == pileBuff )
+              return false;
+            pileBuff = pileBuff->next;
+          }
+
+          /* on continue s'il y a plus haut */
+          if(classeActuelle->super != NIL(classe) ){
+            classeActuelle->next = pile;
+            pile = classeActuelle;
+            classeEnCours = classeActuelle->super;
+          }
+          else{
+            classeEnCours = NIL(classe);
+          }
+      }
+      classes = classes->next;
+  }
+  return true;
+}
