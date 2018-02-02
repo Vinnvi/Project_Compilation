@@ -24,8 +24,8 @@ bool verifSurcharges(classeP c){
 bool verifSurcharges2(classeP maClasse){
     methodP methodes = maClasse->lmethodes;
     while(methodes != NIL(method) ){
-        
-        
+
+
         /* On verifie que 2 methodes de la meme classe n'ont pas un meme nom */
         if(methodes->next != NIL(method) ){
             methodP methodes2 = methodes->next;
@@ -35,8 +35,8 @@ bool verifSurcharges2(classeP maClasse){
             }
         }
         /* ------------------------- */
-            
-        
+
+
         /* On verifie que les overrides fonctionnent (sont bien lies) */
         if(methodes->redef == true){ /*Si on a ecrit Override -> on verifie qu'on est bien lie a une fonction plus haut */
             classeP classeMere = maClasse->super;
@@ -46,25 +46,26 @@ bool verifSurcharges2(classeP maClasse){
             else{
                 methodP methodesMere= classeMere->lmethodes;
                 int ok = 0;
-                while(methodesMere != NIL(method) || ok == 1 ){
-                
+                while(methodesMere != NIL(method) && ok == 0 ){
+
                     if( strcmp(methodesMere->name,methodes->name) == 0){ /* On a trouve la methode de la classe mere */
-                        
+                        if(methodesMere->typeRetour != methodes->typeRetour) /* Retours differents */
+                            return false;
+
                         /* On verifie que les parametres sont bien les bons */
                         VarDeclP paramsMethode = methodes->param;
                         VarDeclP paramsMethodeMere = methodesMere->param;
-                        
-                        while( paramsMethode != NIL(VarDecl) || paramsMethodeMere != NIL(VarDecl)) {
+
+                        while( paramsMethode != NIL(VarDecl) && paramsMethodeMere != NIL(VarDecl)) { /* Tant que au moins une fonction n'est pas vide */
 
                             if( strcmp(paramsMethode->nomType,paramsMethodeMere->nomType)!=0 ){
-                                
                                 return false;
                             }
-                            
+
                             paramsMethode = paramsMethode->next;
                             paramsMethodeMere = paramsMethodeMere->next;
                         }
-                        
+
                         if( (paramsMethode != NIL(VarDecl) &&  paramsMethodeMere == NIL(VarDecl)) || (paramsMethode == NIL(VarDecl) &&  paramsMethodeMere != NIL(VarDecl)) ){ /* on a pas le meme nombre de parametres*/
                             return false;
                         }
@@ -85,7 +86,7 @@ bool verifSurcharges2(classeP maClasse){
             classeP classeM = maClasse->super;
             methodP methodeMere = NEW(1,method);
             methodeMere = classeM->lmethodes;
-            while(methodeMere != NIL(method) ){    
+            while(methodeMere != NIL(method) ){
                 if( strcmp(methodeMere->name,methodes->name) == 0 && methodes->redef == false){ /* 2 classes ont le meme nom */
                     VarDeclP paramsMethode = methodes->param;
                     VarDeclP paramsMethodeMere = methodeMere->param;
@@ -103,17 +104,17 @@ bool verifSurcharges2(classeP maClasse){
                 methodeMere = methodeMere->next;
             }
             /* On verifie que aucune methode n'extends les classes predefinies (Str,int,void) */
-            
+
             if(strcmp(classeM->name,"Void") == 0 || strcmp(classeM->name,"") == 0 || strcmp(classeM->name,"String") == 0 ){
                 return false;
             }
-                
+
             /* ----------------------------- */
         }
         /* ----------------------------- */
         methodes = methodes->next;
-        
-    }  
+
+    }
     return true;
 
 }
