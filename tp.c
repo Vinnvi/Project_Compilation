@@ -31,7 +31,7 @@ FILE *out; /* fichier de sortie pour le code engendre */
 
 classeP classes = NIL(classe); /* liste des classes*/
 objectP objets = NIL(object); /*liste des objets */
-methodP methodes = NIL(method); /*liste des objets */
+methodP methodes = NIL(method); /*liste des méthodes */
 pileVar pileVariables; /* pile des variables pour la vérification contextuelles*/
 methodP methodesTemp = NIL(method);
 
@@ -51,23 +51,23 @@ int main(int argc, char **argv) {
     if (argv[i][0] == '-') {
       switch (argv[i][1]) {
       case 'd': case 'D':
-	debug = TRUE; continue;
+  debug = TRUE; continue;
       case 'v': case 'V':
-	verbose = TRUE; continue;
+  verbose = TRUE; continue;
       case 'e': case 'E':
-	noCode = TRUE; continue;
+  noCode = TRUE; continue;
       case '?': case 'h': case 'H':
-	fprintf(stderr, "Appel: tp -v -e -d -o file.out programme.txt\n");
-	exit(USAGE_ERROR);
+  fprintf(stderr, "Appel: tp -v -e -d -o file.out programme.txt\n");
+  exit(USAGE_ERROR);
       case'o':
-	  if ((out= fopen(argv[++i], "w")) == NULL) {
-	    fprintf(stderr, "erreur: Cannot open %s\n", argv[i]);
-	    exit(USAGE_ERROR);
-	  }
-	break;
+    if ((out= fopen(argv[++i], "w")) == NULL) {
+      fprintf(stderr, "erreur: Cannot open %s\n", argv[i]);
+      exit(USAGE_ERROR);
+    }
+  break;
       default:
-	fprintf(stderr, "Option inconnue: %c\n", argv[i][1]);
-	exit(USAGE_ERROR);
+  fprintf(stderr, "Option inconnue: %c\n", argv[i][1]);
+  exit(USAGE_ERROR);
       }
     } else break;
   }
@@ -211,9 +211,11 @@ TreeP makeLeafLVar(short op, VarDeclP lvar) {
 
 /* Fonction principale */
 void lancerCompilation(TreeP defClasses, TreeP root){
-	/*affichageArbre(root,0);*/
+  /*affichageArbre(root,0);*/
     
     /* definition des classes prefinies*/
+    verifMethClasse(root);
+    verifMethObjet();
     affichageClasses();
     affichageObjets();
     affichageMethodes();
@@ -232,9 +234,9 @@ void initClasses(){
 
 /* Créateur de structure classe */
 classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps){
-	classeP nouvClasse = NEW(1, classe);
-	nouvClasse->name = nameP;
-	nouvClasse->parametres = parametresP;
+  classeP nouvClasse = NEW(1, classe);
+  nouvClasse->name = nameP;
+  nouvClasse->parametres = parametresP;
     methodesTemp= NIL(method);
     int i =0;
     while(i<indexTab){
@@ -247,30 +249,30 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     nouvClasse->lmethodes = methodesTemp;
     methodesTemp = NIL(method);
 
-	nouvClasse->constructeur = constructeurP; 
+  nouvClasse->constructeur = constructeurP; 
     nouvClasse->super = getClasseMere(superP);
-	nouvClasse->next = NIL(classe);
+  nouvClasse->next = NIL(classe);
     if (!classes) initClasses();
     addClasse(nouvClasse);
     associationClasse(nouvClasse);
-	return nouvClasse;
+  return nouvClasse;
 } 
 
 /* Créateur de structure methode */
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP) {
-	methodP nouvMethode = NEW(1, method);
-	nouvMethode->redef = redefP;
-	nouvMethode->name = nameP;
-	nouvMethode->param = paramP;
-	nouvMethode->body = bodyP;
+  methodP nouvMethode = NEW(1, method);
+  nouvMethode->redef = redefP;
+  nouvMethode->name = nameP;
+  nouvMethode->param = paramP;
+  nouvMethode->body = bodyP;
   if (!classes) initClasses();
   nouvMethode->typeRetour = idToClass(typeRetourP);
-	nouvMethode->body = bodyP;
+  nouvMethode->body = bodyP;
     /* TODO gérer les overrides */
-	nouvMethode->next = NIL(method);
+  nouvMethode->next = NIL(method);
   addMethode(nouvMethode);
   addMethodeTemp(nouvMethode);
-	return nouvMethode;
+  return nouvMethode;
 }
 
 /* Créateur de structure VarDecl */
@@ -517,12 +519,12 @@ VarDeclP idToDecl(char* id){
   ptrVar elemActuel = pileVariables.sommet;
     
   while (compte < pileVariables.taille){
-		if( strcmp(elemActuel->var->name, id) == 0) return elemActuel->var;
-		elemActuel = elemActuel->next;
-		compte += 1;
-	}
-	printf("Variable introuvable : %s", id);
-	return NIL(VarDecl);
+    if( strcmp(elemActuel->var->name, id) == 0) return elemActuel->var;
+    elemActuel = elemActuel->next;
+    compte += 1;
+  }
+  printf("Variable introuvable : %s", id);
+  return NIL(VarDecl);
 }
 
 /* Prend une chaine de caractère et retourne un ptr vers la structure classe ayant ce nom */
@@ -630,6 +632,94 @@ char* recupEtiquette(short op){
 
 
 
+void verifMethClasse(TreeP arbreTest)
+{
+  classeP test = NEW(1,classe); 
+  test = classes;
+  while(test->next != NIL(classe))
+  {
+    if(strcmp(test->name,"Void") != 0 && strcmp(test->name,"String") != 0 && strcmp(test->name,"Integer") != 0)
+    {
+      switch(verifMethodeClasse(test,test->lmethodes))
+      {
+        case 0: 
+          printf("\n/*******[%s] Erreur type retour *******/\n ", test->name);
+        break;
+        case 2 :
+          printf("\n/*******[%s] Erreur type paramètre incorrect*******/\n ", test->name);
+        break;
+        case 3 :
+          printf("\n/*******[%s] Erreur nombre de paramètres incorrect*******/\n ", test->name);
+        break;
+        case 4 :
+          printf("\n/*******[%s] Erreur présence paramètres*******/\n ", test->name);
+        break;
+        case 5 :
+          printf("\n/*******[%s] Erreur type paramètre void*******/\n ", test->name);
+        break;
+        case 8 :
+          printf("\n/*******[%s] Methode non déclarée*******/\n", test->name);
+        break;
+        default:
+          printf("\n/*******[%s] No problem*******/\n", test->name);
+      }
+
+    }
+    
+    test = test->next;
+  }
+}
+
+void verifMethObjet()
+{
+  objectP test = NEW(1,object); 
+  test = objets;
+  if(test != NIL(object))
+  {
+    while(test->next != NIL(object))
+    {
+      switch(verifMethodeObjet(test,test->lmethodes))
+      {
+        case 0: 
+          printf("\n/*******[%s] Erreur type retour*******/\n ", test->name);
+        break;
+        case 2 :
+          printf("\n/*******[%s] Erreur type paramètre incorrect*******/\n ", test->name);
+        break;
+        case 3 :
+          printf("\n/*******[%s] Erreur nombre de paramètres incorrect*******/\n ", test->name);
+        break;
+        case 4 :
+          printf("\n/*******[%s] Erreur présence paramètres*******/\n ", test->name);
+        break;
+        case 5 :
+          printf("\n/*******[%s] Erreur type paramètre void*******/\n ", test->name);
+        break;
+        case 8 :
+          printf("\n/*******[%s] Methode non déclarée*******/\n", test->name);
+        break;
+        default:
+          printf("\n/*******[%s] No problem*******/\n", test->name);
+      }
+
+      test = test->next;
+    }
+  }
+  
+}
 
 
-
+void chercheMSG(TreeP arbre)
+{
+  if(arbre != NIL(Tree))
+  {
+    while(arbre->u.children[0] != NIL(Tree))
+    {
+      if(strcmp(recupEtiquette(arbre->op),"MSG") !=0)
+      {
+        printf("%s\n",recupEtiquette(arbre->op));
+      }
+      arbre = arbre->u.children[0];
+    }
+  }
+}

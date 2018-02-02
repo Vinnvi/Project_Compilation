@@ -35,12 +35,3 @@ bool verifSurcharges2(classeP maClasse,classeP maClasse2){
 
     return true;
 }
-
-
-bool verifParam(methodP meth1, varDeclP params)
-{
-    if(params != NIL(varDecl))
-    {
-
-    }
-}

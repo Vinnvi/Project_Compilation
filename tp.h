@@ -86,7 +86,7 @@ typedef unsigned char bool;
 #define TYPE_ERROR	42	/* type checking problem */
 #define OTHER_CONTEXTUAL_ERROR	43 /* replace by something more precise */
 #define EVAL_ERROR	50	/* dubious when writing a compiler ! */
-#define UNEXPECTED	10O
+#define UNEXPECTED	100
 
 /* structures necessaires pour le programme */
 typedef struct _Classe classe, *classeP;
@@ -267,7 +267,12 @@ void associationClasse(classeP cl);
 void associationObjet(objectP obj);
 void initClasses();
 
-bool verifParam(methodP meth, VarDeclP params);
+int verifMethodeClasse(classeP classtemoin, methodP methtest);
+int verifParam(methodP meth, VarDeclP params);
 bool verifRetour(methodP meth, classeP typeTest);
+void verifMethClasse();
+void verifMethObjet();
+bool verifSuper(classeP temoin, classeP test);
+int verifMethodeObjet(objectP objecttemoin, methodP methtest);
 
-
+void chercheMSG(TreeP arbre);
