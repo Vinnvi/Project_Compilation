@@ -123,28 +123,32 @@ bool verifSurcharges2(classeP maClasse){
 bool heritageSansCircuit(classeP classes){
 
   while(classes != NIL(classe)){
-      classeP pile = NEW(1,classe);
-      classeP classeActuelle = classes;/* classe dont on veut etudier si a partir d'elle on peut faire une boucle*/
-      classeP classeEnCours = classeActuelle; /* classe qui sert a tester par rapport a la pile */
+      classeP tableau[50];
+      classeP classeEnCours = classes; /* classe qui sert a tester par rapport a la pile */
+
+      int i = 0;
       while(classeEnCours != NIL(classe) ){
           /* on verifie par rapport a la pile*/
-          classeP pileBuff = pile;
-          while(pileBuff != NIL(classe) ){
-            if(classeEnCours == pileBuff )
+          int j = 0;
+
+          while(j<i){
+            if( strcmp(classeEnCours->name,tableau[j]->name) == 0 ) /* si la classe qu'on etudie a deja ete vue => circuit */
               return false;
-            pileBuff = pileBuff->next;
+            else
+              j++;
           }
 
           /* on continue s'il y a plus haut */
-          if(classeActuelle->super != NIL(classe) ){
-            classeActuelle->next = pile;
-            pile = classeActuelle;
-            classeEnCours = classeActuelle->super;
+          if(classeEnCours->super != NIL(classe) ){
+            tableau[i] = classeEnCours;
+            i++;
+            classeEnCours = classeEnCours->super;
           }
           else{
             classeEnCours = NIL(classe);
           }
       }
+
       classes = classes->next;
   }
   return true;

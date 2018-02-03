@@ -26,7 +26,7 @@ typedef unsigned char bool;
  * Il y a surement des choses a recuperer en plus de ce que vous avez
  * produit pour le tp.
  */
- 
+
 #define NE	1
 #define EQ	2
 #define LT	3
@@ -37,7 +37,7 @@ typedef unsigned char bool;
 #define EADD 	7
 #define ESUB 	8
 #define EMUL 	9
-#define EQUOT 	10	
+#define EQUOT 	10
 #define EREST 	11
 #define EAND 	12
 #define EAFF	13
@@ -106,7 +106,7 @@ typedef struct _pileVar pileVar, *ptrPileVar;
 typedef struct _varDecl {
   char *name;
   struct _varDecl *next;
-  struct _Classe *type; 
+  struct _Classe *type;
   char* nomType;
   TreeP expr;
   bool aVar;
@@ -115,7 +115,7 @@ typedef struct _varDecl {
     methodP methode;
     classeP classe;
     objectP objet;
-  } appartenance; 
+  } appartenance;
 
 } VarDecl, *VarDeclP;
 
@@ -179,7 +179,7 @@ struct _Method{
   union {
     classeP classe;
     objectP objet;
-  } appartenance; 
+  } appartenance;
 	struct _Method *methodeMere; /*Override*/
   bool redef;
 	struct _Method *next;
@@ -269,5 +269,7 @@ void associationClasse(classeP cl);
 void associationObjet(objectP obj);
 void initClasses();
 
-
-
+/* Partie verifs contextuelles */
+bool verifSurcharges(classeP c);
+bool verifSurcharges2(classeP maClasse);
+bool heritageSansCircuit(classeP classes);

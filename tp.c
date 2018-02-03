@@ -222,7 +222,14 @@ void lancerCompilation(TreeP defClasses, TreeP root){
         printf("Verification surcharges reussie !\n");
     }
     else{
-        printf("блять\n");
+        printf("блять 1\n");
+    }
+
+    if(heritageSansCircuit(classes)){
+      printf("Verification graphe heritage reussie !\n");
+    }
+    else{
+      printf("блять 2\n");
     }
 }
 
