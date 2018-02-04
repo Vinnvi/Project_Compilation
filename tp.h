@@ -76,6 +76,7 @@ typedef unsigned char bool;
 #define EIDCLASS 44
 #define ECORPS 45
 #define EDOTHIS 45
+#define EAFFDECL 46
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -228,6 +229,8 @@ TreeP makeLeafInt(short op, int val);
 TreeP makeLeafStr(short op, char *str);
 
 char* getChildStr(TreeP tree, int rank);
+VarDeclP getChildDecl(TreeP tree, int rank);
+
 
 
 classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps);

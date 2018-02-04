@@ -41,6 +41,7 @@ bool verifSurcharges2(classeP maClasse,classeP maClasse2){
 
 
 pileVar environnement; /* pile des variables pour la vérification contextuelles*/
+extern classeP classes;
 
 void initPile(){
     environnement.sommet = NIL(elmtVar);
@@ -56,7 +57,19 @@ void empiler(VarDeclP decl){
 }
 
 void depiler(){
+    elmtVarP temp = environnement.sommet;
     environnement.sommet = environnement.sommet->next;
+    environnement.taille -= 1;
+    free(temp);
+}
+
+void depilerBloc(){
+    elmtVarP elemActuel = environnement.sommet;
+    while(elemActuel){
+        elemActuel = elemActuel->next;
+        depiler();
+    }
+    depiler();
 }
 
 
@@ -84,9 +97,13 @@ void analysePortee (TreeP corps, pileVar env){
         	analysePortee(getChild(corps, 1), env);
         	break;
 
+        /* cas compliqué étant donné que les deux arbres peuvent être des fils. . . */
         case EAFF :
-        	analysePortee(getChild(corps, 0), env);
-        	/*TODO ajout de variable dans environnement*/ 
+        	analysePortee(getChild(corps, 1), env);
+            analysePortee(getChild(corps, 0), env);
+            /*if(getChild(corps, 0)->op == EID){
+                if(!verifId(getChildStr(corps, 0), env)) empiler();    
+            } TODO pas necessaire a priori*/
         	break;
 
         case EDOTHIS : 
@@ -95,7 +112,8 @@ void analysePortee (TreeP corps, pileVar env){
 
         case EDOT :
         case LARG :
-        case LINST : 
+        case LINST :
+        case LCLASS :
         	analysePortee(getChild(corps, 0), env);
         	analysePortee(getChild(corps, 1), env);
         	break;
@@ -105,22 +123,20 @@ void analysePortee (TreeP corps, pileVar env){
         case MSG :
         case ENEW :
         case EEXTND : 
-        	verifId(getChildStr(corps, 0), env);
+        	if(!verifClass(getChildStr(corps, 0), env)) printf("petit souci : %s \n", getChildStr(corps, 0));
         	analysePortee(getChild(corps, 1), env); 
         	break;
 
-        case ETHIS :
+        case ETHIS : 
         case ERETURN :
         case CSTE :
         case CSTR : 
         	break;
 
         case EID :
-        	verifId(getChildStr(corps, 0), env);
+        	if(!verifId(getChildStr(corps, 0), env)) printf("petit souci : %s \n", getChildStr(corps, 0));
         	break;
 
-        /*case ECLASS : 
-        	break; unused */
 
         case ITE :
         	analysePortee(getChild(corps, 0), env);
@@ -128,34 +144,54 @@ void analysePortee (TreeP corps, pileVar env){
         	analysePortee(getChild(corps, 2), env);
         	break;
 
-        
-        /*case LCHAMP : break;
-        case LPARAM : break; unused 
-        case LMETH : break;*/
-
-        case LCLASS : break; /* < l'utilisation de l'étiquette permet pas de faire ce qu'on veut : go modifier légèrement les étiquettes pour différencier Liste -> elmt Liste et Liste -> elmt sinon on s'en sort pas */
-
         case EBLOC : /* < this shit */
+            empiler(NIL(VarDecl));
+            /* TODO empiler les valeurs du premier fils du bloc (= la liste des champs) [env = empilageChamps(getchild, env) qui fait l'analyse en même temps pour chaque expression de valeur de champ] puis faire l'analyse du 2e fils avec */ 
+            analysePortee(getChild(corps, 0), env);
+            depilerBloc();
             break;
+
+        /*case ECLASS : break; 
+        case EOBJ : break; TODO traitement à part : pour chaque classe et objet, faire l'analyse sur le corps des méthodes et expressions des vardecl */
 
         case OVER : break;
 
-        /*case CHMP : break;
+        /*
+        case ECLASS : break; unused 
+        case LCHAMP : break;
+        case LPARAM : break; unused 
+        case LMETH : break;
+        case CHMP : break;
         case EEXPR : break;
         case ESEL : break;
         case EARG : break;
         case EVAR : break;
         case EPAR : break;
         case EMETHOD : break;
-        case EOBJ : break;
         case EPROG : break;
         case LSEL : break;
-        case EIDCLASS : break;
-        default : break; 1 usé*/
+        case EIDCLASS : break; unused */
+        default :
+            printf("Etiquette non prise en compte ou non reconnue : %s \n", recupEtiquette(corps->op)); 
+            break;
 	}
 }
 
 /* return un truc qui peut faire peter la fonction analyse */
-void verifId(char* id, pileVar env){
-	/* TODO */
+bool verifId(char* id, pileVar env){
+	elmtVarP elemActuel = env.sommet;
+    while (elemActuel){
+        if(strcmp(elemActuel->var->name, id) == 0) return TRUE;
+        elemActuel = elemActuel->next;
+    }
+    return FALSE;
+}
+
+bool verifClass(char* nomClasse, pileVar env){
+    classeP classeActuelle = classes;
+    while (classeActuelle){
+        if(strcmp(classeActuelle->name, nomClasse) == 0) return TRUE;
+        classeActuelle = classeActuelle->next;
+    }
+    return FALSE;
 }

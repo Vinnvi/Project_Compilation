@@ -13,10 +13,9 @@
 %type<ClasseP> Classe
 /* Pointeur vers objet */
 %type<ObjetP> Objet
-/* Pointeur vers union ObjetOuClasse */ 
-%type<CouOP> ObjetouClasse
+
 /* Pointeur vers Tree */
-%type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc  DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Valeur Instanciation Extends ExtendsOpt ListArgumentsOpt ListArguments CorpsClasse
+%type<pT> ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc  DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Valeur Instanciation Extends ExtendsOpt ListArgumentsOpt ListArguments CorpsClasse ObjetouClasse
 /* Pointeur vers VarDecl */
 %type<pV> Parametre ParametreDef Champ ListChamp ListChampOpt  ListParametresDef ListParametreOpt ListParametres
 
@@ -49,11 +48,11 @@ DefClasseObjetOpt : DefClasseObjet   {$$ = $1;}
 ;
 
 DefClasseObjet : ObjetouClasse DefClasseObjet   {$$ = makeTree(LCLASS, 2, $1, $2);}
-| ObjetouClasse                                 {$$ = makeTree(LCLASS, 1, $1);}
+| ObjetouClasse                                 {$$ = $1;}
 ;
 
-ObjetouClasse : Objet   {$$ = (CouOP)$1;}
-| Classe                {$$ = (CouOP)$1;}
+ObjetouClasse : Objet   {$$ = makeTree(ECLASS, 1, $1);}
+| Classe                {$$ = makeTree(EOBJ, 1, $1);}
 ;
 
 Objet: OBJ ClassId IS '{'ListChampOpt ListMethodeOpt'}' {$$ = makeObjet($2,$5,$6); }
@@ -63,7 +62,7 @@ BlocOpt : Bloc  {$$ = $1;}
 |               { $$ = NIL(Tree); }
 ;
 
-Bloc: '{' ListInstructionsOpt '}'           { $$ = makeTree(EBLOC, 2, $2, NIL(Tree)); } 
+Bloc: '{' ListInstructionsOpt '}'           { $$ = makeTree(EBLOC, 2, NIL(Tree), $2); } 
 | '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(EBLOC, 2, $2, $4); } 
 ;
 
@@ -153,7 +152,7 @@ VarOpt: VAR     {$$ = TRUE;}
 |               {$$ = FALSE;}
 ;
 
-DeclExpressionOpt : AFF Expression      {$$ = makeTree(EAFF, 1, $2);}
+DeclExpressionOpt : AFF Expression      {$$ = makeTree(EAFFDECL, 1, $2);}
 |                                       {$$ = NIL(Tree);}
 ;
 
