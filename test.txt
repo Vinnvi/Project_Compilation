@@ -1,28 +1,128 @@
 START
+Entree de Level
+---------- DEBUT Classe
+Entree de Level
+------DEBUT BLOC
+ALLOC 1
+DUPN 1
+ALLOC 1
+DUPN 1
+ALLOC 1
+DUPN 1
+PUSHI 25
+SUB
+------FIN BLOC
+Sortie de Level
+---------- DEBUT CorpsCLasse
+---- Nouveau champ : x
+ALLOC 1
+DUPN 1
+STOREG 6
+---- Nouveau champ : y
+ALLOC 1
+DUPN 1
+PUSHI 5
+STOREG 7
+---- Nouveau champ : z
+ALLOC 1
+DUPN 1
+STOREG 9
+---- Nouveau champ : w
+ALLOC 1
+DUPN 1
 PUSHI 1
+ADD
+STOREG 10
+---- Nouveau champ : w2
+ALLOC 1
+DUPN 1
+PUSHI 1
+ADD
+STOREG 11
+---- Nouveau champ : w3
+ALLOC 1
+DUPN 1
+PUSHI 1
+ADD
+STOREG 12
+---- Nouveau champ : name
+ALLOC 1
+DUPN 1
+PUSHS "?";
+
+
+  def getx() : Integer := this.x
+  def gety() : Integer := this.y
+  def getz() : Integer is { result := this.z; }
+
+  def setName(s: String) is { this.name := s; }
+
+  def print() is { this.name.println(); }
+
+  def printAll() is {
+      this.getx().toString().print(); " ".print();
+      this.gety().toString().print(); " ".print();
+      this.getz().toString().print(); " ".print();
+      this.w.toString().print(); " ".print();
+      this.w2.toString().print(); " ".print();
+      this.w3.toString().print(); " ".print();
+      
+      this.print();
+  }
+}
+{ 
+  var p1: Point := new Point(1, 5);
+  var p2: Point := new Point(2, 3);
+  is
+  p2.setName("glop");
+  p1.printAll();
+  p2.printAll();
+}
+STOREG 13
+Entree de Level
+Void_getx: NOP
+Sortie de Level
+---------- Fin CorpsClasse
+---------- Fin Classe
+Sortie de Level
+------------DEBUT Bloc Principal
+Entree de Level
 ------DEBUT BLOC
+---- Nouveau champ : p1
+ALLOC 1
+DUPN 1
+PUSHI 1
+STOREG 15
+---- Nouveau champ : p2
+ALLOC 1
+DUPN 1
+PUSHI 2
+STOREG 17
+PUSHN 1
+PUSHA p2
+CALL
+POPN 2
+PUSHN 1
+PUSHA setName
+CALL
+POPN 2
+PUSHN 1
+PUSHA p1
+CALL
+POPN 2
+PUSHN 1
+PUSHA printAll
+CALL
+POPN 2
+PUSHN 1
+PUSHA p2
+CALL
+POPN 2
+PUSHN 1
+PUSHA printAll
+CALL
+POPN 2
 ------FIN BLOC
-PUSHI 0
-PARAMDEF INTEGER
-------DEBUT BLOC
-JZ ELSE1
-THEN0 : 	NOP
-PUSHI 0
-JUMP ENDIFELSE2
-ELSE1 : 	NOP
-JZ ELSE4
-THEN3 : 	NOP
-PUSHI 0
-JUMP ENDIFELSE5
-ELSE4 : 	NOP
-------DEBUT BLOC
-------FIN BLOC
-SORTIE IF/ELSE : 	NOP
-SORTIE IF/ELSE : 	NOP
-------FIN BLOC
-PUSHI 0
-PARAMDEF INTEGER
-PUSHI 0
-PARAMDEF INTEGER
-------DEBUT BLOC
-------FIN BLOC
+Sortie de Level
+------------FIN Bloc Principal
+

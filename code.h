@@ -8,7 +8,32 @@ void NEWLABEL(char* c);
 void NEWMETHLABEL(char* nomMeth, char* typeRetour);
 */
 /*Instructions sur la pile*/
-/*
+
+typedef struct _Variable {
+  char* name;               /* TODO On peut recuperer de var - Nom de la variable */
+  VarDeclP var;             /* Pointeur vers la variable */
+  short addr;               /* Adresse de la variable dans la pile */
+  struct _Variable* next;   /* Variable suivante */
+} Variable, *VariableP;
+
+/* Couches de portée des différentes variables */
+typedef struct _Level {
+    int offset;
+    VariableP varLevel;        /* Premier symbole du level */
+    struct _Level* next;
+} Level, *LevelP;
+/* Structure des variables stockées dans notre pile */
+typedef struct _Stack {
+    int size;
+    LevelP top_level;
+} Stack, *stackP;
+
+void freeStack();
+void addVariable(VarDeclP var);
+VariableP getVariable(char* name);
+void entreeLevel(LevelP levelP);
+void sortieLevel();
+
 void PUSHI(int i);
 void PUSHS(char *c);
 void WRITES();
@@ -17,7 +42,7 @@ void PUSHG_addr(char* c);
 void PUSHL(int a);
 void PUSHL_addr(char* c);
 void STOREL(int x);
-void STOREG(int x);*/
+void STOREG(int x);
 char* makeLabel(char* nameLabel);
 int getAddr(char* name);
 
@@ -28,7 +53,6 @@ void generObjetOuClasse(TreeP objetOuClasse);
 void generObject(objectP obj);
 void generBlocOpt(TreeP blocOpt);
 void generBloc(TreeP bloc);
-void generBlocNonVide(TreeP bloc);
 void generListInstOpt(TreeP listInstOpt);
 void generListInst(TreeP listInst);
 void generInst(TreeP inst);
@@ -60,5 +84,3 @@ void generMessage(TreeP message);
 void generListChpOpt(VarDeclP listChpOpt);
 void generListChp(VarDeclP listChp);
 void generChp(VarDeclP chp);
-void generClassId(char* classId);
-void generOverride(bool override);

@@ -194,6 +194,17 @@ void setChild(TreeP tree, int rank, TreeP arg) {
   tree->u.children[rank] = arg;
 }
 
+TreeP makeLeafClass(short op, classeP chClasse) {
+  TreeP tree = makeNode(0, op);
+  tree->u.lclass = chClasse;
+  return tree;
+}
+
+TreeP makeLeafObjet(short op, objectP chObjet) {
+  TreeP tree = makeNode(0, op);
+  tree->u.lobj = chObjet;
+  return tree;
+}
 
 /* Constructeur de feuille dont la valeur est une chaine de caracteres */
 TreeP makeLeafStr(short op, char *str) {
@@ -230,7 +241,12 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     FILE *fileToWrite;
     fileToWrite = fopen("test.txt", "w+");
     lancerGeneration(defClasses,fileToWrite);
+    fprintf(fileToWrite, "------------DEBUT Bloc Principal\n");
     generBloc(root);
+    freeStack();
+    fprintf(fileToWrite, "------------FIN Bloc Principal\n");
+    fprintf(fileToWrite, "\n");
+    /* fclose(fileToWrite);*/
 }
 
 /* Initialise les classes de bases */

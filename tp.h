@@ -244,35 +244,9 @@ struct _bloc{
    TreeP lInstruction;
 };
 
-/* Structures de gestion des variables (port�e, masquage) */
-/**
-Emcapsule une variable et son adresse dans le programme
-*/
-typedef struct _Symbole {
-  /* VariableP var; */
-  short addr;
-  struct _Symbole* next;
-} Symbole, *symboleList, *SymboleP;
-
-/*
-Couches de portée des différentes variables
-*/
-typedef struct _Level {
-    int offset;
-    SymboleP symboles;
-    struct _Level* next;
-} Level, *LevelP;
-
-/**
-Contient l'ensemble des symboles du programme
-on a une pile de bulles, et on pile et d�pile � mesure que l'on entre et quitte des blocks
-*/
-typedef struct _Stack {
-    int size;
-    LevelP top_level;
-} Stack, *stackP;
-
 TreeP makeTree(short op, int nbChildren, ...);
+TreeP makeLeafClass(short op, classeP chClasse);
+TreeP makeLeafObjet(short op, objectP chObjet);
 TreeP makeLeafLVar(short op, VarDeclP lvar);
 TreeP makeLeafInt(short op, int val);
 TreeP makeLeafStr(short op, char *str);
