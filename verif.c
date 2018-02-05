@@ -31,7 +31,8 @@ bool verifSurcharges2(classeP maClasse,classeP maClasse2){
                 methodes2 = methodes2->next;
                 if(strcmp(methodes,methodes2) == 0) return FALSE;
             }
-            methodes = methodes->next;   
+            methodes = methodes->next;
+
         }
     }
     return TRUE;
@@ -93,6 +94,7 @@ void analysePortee (TreeP corps, pileVar env){
         case EQUOT : 
         case EREST :
         case EAND : 
+        case ELISTSEL :
         	analysePortee(getChild(corps, 0), env);
         	analysePortee(getChild(corps, 1), env);
         	break;
@@ -105,8 +107,8 @@ void analysePortee (TreeP corps, pileVar env){
             } TODO pas necessaire a priori de faire d'ajouts ici*/
         	break;
 
-        case EDOTHIS : 
-        	analysePortee(getChild(corps, 1), env);
+        case ESELDOT : 
+        	analysePortee(getChild(corps, 0), env);
         	break;
 
         case EDOT :

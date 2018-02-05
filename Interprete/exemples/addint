@@ -13,7 +13,11 @@
 	ALLOC 1		-- entier 3
 	DUPN 1
 	PUSHI 3
+<<<<<<< HEAD
 	STORE 0    
+=======
+	STORE 0
+>>>>>>> cdd2f356fa023d7ed909dc027ebc1eede729ae29
 -- start
 	JUMP start
 -- la fonction qui prend deux entiers en parametre et retourne leur somme
