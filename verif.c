@@ -153,3 +153,62 @@ bool heritageSansCircuit(classeP classes){
   }
   return true;
 }
+
+/* return null si erreur de typage */
+char* typeExpr(TreeP arbreExpression,classP classe){
+    switch(arbreExpression->op){
+        case EADD:
+        {
+            char* sousExp1 = arbreExpression(getChild(arbreExpression,0),classe);
+            char* sousExp2 = arbreExpression(getChild(arbreExpression,0),classe);
+            if(strcmp(sousExp1,sousExp2) == 0){
+               return sousExp1;
+            }
+            else{
+                return NULL;
+            }
+        }
+        case EMULT:
+        {
+            char* sousExp1 = arbreExpression(getChild(arbreExpression,0),classe);
+            char* sousExp2 = arbreExpression(getChild(arbreExpression,0),classe);
+            if(strcmp(sousExp1,sousExp2) == 0){
+               return sousExp1;
+            }
+            else{
+                return NULL;
+            }
+        }
+        case EQUOT:
+        {
+            char* sousExp1 = arbreExpression(getChild(arbreExpression,0),classe);
+            char* sousExp2 = arbreExpression(getChild(arbreExpression,0),classe);
+            if(strcmp(sousExp1,sousExp2) == 0){
+               return sousExp1;
+            }
+            else{
+                return NULL;
+            }
+        }
+        case EMULT:
+        {
+            char* sousExp1 = arbreExpression(getChild(arbreExpression,0),classe);
+            char* sousExp2 = arbreExpression(getChild(arbreExpression,0),classe);
+            if(strcmp(sousExp1,sousExp2) == 0){
+               return sousExp1;
+            }
+            else{
+                return NULL;
+            }
+        }
+        case ENEW : /*instanciation */
+        {
+            return getChild(arbreExpression,0)->u.str;
+        }
+    
+    }     
+}
+
+
+
+
