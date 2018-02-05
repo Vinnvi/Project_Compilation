@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "tp.h"
+#include "code.h"
 #include "tp_y.h"
 
 extern int yyparse();
@@ -169,11 +170,19 @@ TreeP makeTree(short op, int nbChildren, ...) {
 
 /* Retourne le rank-ieme fils d'un arbre (de 0 a n-1) */
 TreeP getChild(TreeP tree, int rank) {
-  if (tree->nbChildren < rank -1) {
-    fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
-    abort(); /* plante le programme en cas de rang incorrect */
-  }
-  return tree->u.children[rank];
+    if (tree->nbChildren < rank -1) {
+        fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
+        abort(); /* plante le programme en cas de rang incorrect */
+    }
+    return tree->u.children[rank];
+}
+
+VarDeclP getChildList(TreeP tree, int rank) {
+    if (tree->nbChildren < rank -1) {
+        fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
+        abort(); /* plante le programme en cas de rang incorrect */
+    }
+    return tree->u.lvar;
 }
 
 
@@ -185,6 +194,17 @@ void setChild(TreeP tree, int rank, TreeP arg) {
   tree->u.children[rank] = arg;
 }
 
+TreeP makeLeafClass(short op, classeP chClasse) {
+  TreeP tree = makeNode(0, op);
+  tree->u.lclass = chClasse;
+  return tree;
+}
+
+TreeP makeLeafObjet(short op, objectP chObjet) {
+  TreeP tree = makeNode(0, op);
+  tree->u.lobj = chObjet;
+  return tree;
+}
 
 /* Constructeur de feuille dont la valeur est une chaine de caracteres */
 TreeP makeLeafStr(short op, char *str) {
@@ -231,6 +251,15 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     else{
       printf("блять 2\n");
     }
+    FILE *fileToWrite;
+    fileToWrite = fopen("test.txt", "w+");
+    lancerGeneration(defClasses,fileToWrite);
+    fprintf(fileToWrite, "------------DEBUT Bloc Principal\n");
+    generBloc(root);
+    freeStack();
+    fprintf(fileToWrite, "------------FIN Bloc Principal\n");
+    fprintf(fileToWrite, "\n");
+    /* fclose(fileToWrite);*/
 }
 
 /* Initialise les classes de bases */
@@ -258,25 +287,15 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     }
     indexTab = 0;
     nouvClasse->lmethodes = methodesTemp;
-
-
     methodesTemp = NIL(method);
 
-    nouvClasse->constructeur = constructeurP;
+	nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
-	  nouvClasse->next = NIL(classe);
+	nouvClasse->next = NIL(classe);
+    nouvClasse->body = corps;
     if (!classes) initClasses();
     addClasse(nouvClasse);
     associationClasse(nouvClasse);
-
-
-    /* On donne le type de chaque methode*/
-    methodP m = nouvClasse->lmethodes;
-    while(m != NIL(method)){
-      m->typeRetour = idToClass(m->nomTypeRetour);
-      m = m->next;
-
-    }
 	return nouvClasse;
 }
 
@@ -288,7 +307,7 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	nouvMethode->param = paramP;
 	nouvMethode->body = bodyP;
   if (!classes) initClasses();
-  nouvMethode->nomTypeRetour = typeRetourP;
+  nouvMethode->typeRetour = idToClass(typeRetourP);
 	nouvMethode->body = bodyP;
     /* TODO gérer les overrides */
 	nouvMethode->next = NIL(method);
@@ -331,13 +350,6 @@ objectP makeObjet(char* name, VarDeclP attributs, methodP lmethodes){
 
     addObjet(nouvObjet);
     associationObjet(nouvObjet);
-    /* On donne le type de chaque methode*/
-    methodP m = nouvObjet->lmethodes;
-    while(m != NIL(method)){
-      m->typeRetour = idToClass(m->nomTypeRetour);
-      m = m->next;
-
-    }
     return nouvObjet;
 }
 
@@ -369,7 +381,6 @@ void associationClasse(classeP cl){
         methActuelle->typeRetour = idToClass(methActuelle->nomTypeRetour);
         methActuelle = methActuelle->next;
     }
-
     VarDeclP attributActuel = cl->attributs;
     while(attributActuel){
         attributActuel->appartenance.classe = cl;
@@ -652,6 +663,15 @@ char* recupEtiquette(short op){
         case 42 : return "EPROG";
         case 43 : return "LSEL";
         case 44 : return "EIDCLASS";
+        case 45 : return "ECORPS";
+        case 46 : return "LOBJET";
+        case 47 : return "EDEFOBJ";
+        case 48 : return "EDEFCLASS";
+        case 49 : return "ETHISSELECT";
+        case 50 : return "LISTDOT";
+        case 51 : return "EINST";
+        case 52 : return "EADDSOLO";
+        case 53 : return "ESUBSOLO";
         default : return "ERREUR";
     }
 

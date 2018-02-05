@@ -155,12 +155,12 @@ bool heritageSansCircuit(classeP classes){
 }
 
 /* return null si erreur de typage */
-char* typeExpr(TreeP arbreExpression,classP classe){
+char* typeExpr(TreeP arbreExpression,classeP classe){
     switch(arbreExpression->op){
         case EADD:
         {
-            char* sousExp1 = arbreExpression(getChild(arbreExpression,0),classe);
-            char* sousExp2 = arbreExpression(getChild(arbreExpression,0),classe);
+            char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
+            char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
             if(strcmp(sousExp1,sousExp2) == 0){
                return sousExp1;
             }
@@ -168,10 +168,10 @@ char* typeExpr(TreeP arbreExpression,classP classe){
                 return NULL;
             }
         }
-        case EMULT:
+        case EMUL:
         {
-            char* sousExp1 = arbreExpression(getChild(arbreExpression,0),classe);
-            char* sousExp2 = arbreExpression(getChild(arbreExpression,0),classe);
+            char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
+            char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
             if(strcmp(sousExp1,sousExp2) == 0){
                return sousExp1;
             }
@@ -181,8 +181,8 @@ char* typeExpr(TreeP arbreExpression,classP classe){
         }
         case EQUOT:
         {
-            char* sousExp1 = arbreExpression(getChild(arbreExpression,0),classe);
-            char* sousExp2 = arbreExpression(getChild(arbreExpression,0),classe);
+            char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
+            char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
             if(strcmp(sousExp1,sousExp2) == 0){
                return sousExp1;
             }
@@ -190,10 +190,10 @@ char* typeExpr(TreeP arbreExpression,classP classe){
                 return NULL;
             }
         }
-        case EMULT:
+        case ESUB:
         {
-            char* sousExp1 = arbreExpression(getChild(arbreExpression,0),classe);
-            char* sousExp2 = arbreExpression(getChild(arbreExpression,0),classe);
+            char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
+            char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
             if(strcmp(sousExp1,sousExp2) == 0){
                return sousExp1;
             }
@@ -206,7 +206,8 @@ char* typeExpr(TreeP arbreExpression,classP classe){
             return getChild(arbreExpression,0)->u.str;
         }
     
-    }     
+    }
+    return NULL;
 }
 
 

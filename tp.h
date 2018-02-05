@@ -77,6 +77,14 @@ typedef unsigned char bool;
 #define LSEL 43
 #define EIDCLASS 44
 #define ECORPS 45
+#define LOBJET 46
+#define EDEFOBJ 47
+#define EDEFCLASS 48
+#define ETHISSELECT 49
+#define LISTDOT 50
+#define EINST 51
+#define EADDSOLO 52
+#define ESUBSOLO 53
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -104,12 +112,12 @@ typedef struct _pileVar pileVar, *ptrPileVar;
 
 /* Adapt as needed. Currently it is simply a list of names ! */
 typedef struct _varDecl {
-  char *name;
-  struct _varDecl *next;
-  struct _Classe *type;
-  char* nomType;
-  TreeP expr;
-  bool aVar;
+  char *name;               /* Nom de la variable */
+  struct _varDecl *next;    /* VarDecl suivante si elle existe */
+  struct _Classe *type;     /* Type de la variable */
+  char* nomType;            /* Nom du type de la variable */
+  TreeP expr;               /* Si variable définit par une expr */
+  bool aVar;                /* Si VAR devant ou non */
 
   union {
     methodP methode;
@@ -161,6 +169,7 @@ struct _Classe{
 	 char* name; /* identificateur */
 	 methodP lmethodes; /*pointeur sur la liste des methodes de la classe*/
      TreeP constructeur;
+     TreeP body;
      VarDeclP attributs; /*Attributs de la classe*/
      VarDeclP parametres; /* liste des parametres du constructeur de la classe*/
 	 classeP super; /*classe mere*/
@@ -238,6 +247,8 @@ struct _bloc{
 };
 
 TreeP makeTree(short op, int nbChildren, ...);
+TreeP makeLeafClass(short op, classeP chClasse);
+TreeP makeLeafObjet(short op, objectP chObjet);
 TreeP makeLeafLVar(short op, VarDeclP lvar);
 TreeP makeLeafInt(short op, int val);
 TreeP makeLeafStr(short op, char *str);
@@ -263,6 +274,7 @@ VarDeclP idToDecl(char* id);
 classeP idToClass(char* id);
 objectP idToObj(char* id);
 methodP idToMeth(char* id, methodP lmethodes);
+TreeP getChild(TreeP tree, int rank);
 void addMethodeTemp(methodP m);
 void addVarTemp(VarDeclP v);
 void associationClasse(classeP cl);
@@ -270,6 +282,8 @@ void associationObjet(objectP obj);
 void initClasses();
 
 /* Partie verifs contextuelles */
+char* typeExpr(TreeP arbreExpression,classeP classe);
 bool verifSurcharges(classeP c);
 bool verifSurcharges2(classeP maClasse);
 bool heritageSansCircuit(classeP classes);
+VarDeclP getChildList(TreeP tree, int rank);
