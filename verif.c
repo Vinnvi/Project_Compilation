@@ -201,11 +201,15 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
                 return NULL;
             }
         }
-        case ENEW : /*instanciation */
+        case ENEW: /*instanciation */
         {
             return getChild(arbreExpression,0)->u.str;
         }
     
+        case EDOT:
+        {
+            
+        }
     }
     return NULL;
 }
