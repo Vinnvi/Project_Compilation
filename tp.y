@@ -99,7 +99,8 @@ Operation : Operation RelOp Operation           {$$ = makeTree(yylval.C, 2, $1, 
 | ArgumentOuCible                               {$$ = $1;}
 ;
 
-Instanciation: NEW ClassId '(' ListArgumentsOpt ')' {$$ = makeTree(ENEW, 2, $2, $4);}
+Instanciation: NEW ClassId '(' ListArgumentsOpt ')' {$$ = makeTree(ENEW, 2,
+    makeLeafStr(EIDCLASS,$2), $4);}
 ;
 
 Classe: CLASS ClassId '('ListParametreOpt')' ExtendsOpt BlocOpt IS CorpsClasse { $$ = makeClass($2, $4, $6, $7, $9); }

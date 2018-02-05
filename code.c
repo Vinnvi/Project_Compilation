@@ -68,6 +68,7 @@ void O_SUPEQ() { fprintf(out, "SUPEQ\n"); stack.size--; }
 void O_INF() { fprintf(out, "INF\n"); stack.size--; }
 void O_SUP() { fprintf(out, "SUP\n"); stack.size--; }
 
+/* On libere la pile */
 void freeStack() {
     LevelP level = stack.top_level;
     while (level) {
@@ -126,6 +127,18 @@ int getNumberChp(VarDeclP chVar)
     int nbAttributs = 0;
     if(strcmp(chVar->nomType,"String") || strcmp(chVar->nomType,"Integer")) return 1;
     VarDeclP varActuel = getPointeurClasse(chVar->nomType)->attributs;
+    while(varActuel != NULL && varActuel)
+    {
+        varActuel = varActuel->next;
+        nbAttributs++;
+    }
+    return nbAttributs;
+}
+int getNumberClass(char* chClass)
+{
+    int nbAttributs = 0;
+    if(strcmp(chClass,"String") || strcmp(chClass,"Integer")) return 1;
+    VarDeclP varActuel = getPointeurClasse(chClass)->attributs;
     while(varActuel != NULL && varActuel)
     {
         varActuel = varActuel->next;
@@ -249,7 +262,6 @@ void generInst(TreeP inst)
             generExpr(getChild(inst,1));
             break;
         case ITE :
-            printf("second ");
             ; /* Besoin de laisser un statement a cause des anciens usages */
             char* labelTHEN = makeLabel("THEN");
             char* labelELSE = makeLabel("ELSE");
@@ -260,7 +272,6 @@ void generInst(TreeP inst)
             generIfElse(getChild(inst,1));
             JUMP(labelIFELSE);
             NEWLABEL(labelELSE);
-            printf("second ");
             generIfElse(getChild(inst,2));
             NEWLABEL("SORTIE IF/ELSE");
             break;
@@ -288,53 +299,44 @@ void generOperation(TreeP operation)
     switch(operation->op){
         case EADD :
             generOperation(getChild(operation,0));
-            /* TODO */
             generOperation(getChild(operation,1));
             O_ADD();
             break;
-            /* TODO si add tout seul? */
-        case EADDSOLO : /* TODO */
+        case EADDSOLO :
             generOperation(getChild(operation,0));
             O_ADD();
             break;
         case ESUB :
             generOperation(getChild(operation,0));
-            /* TODO */
             generOperation(getChild(operation,1));
             O_SUB();
             break;
-            /* TODO si sub tout seul? */
         case ESUBSOLO :
             generOperation(getChild(operation,0));
             O_SUB();
             break;
         case EMUL :
             generOperation(getChild(operation,0));
-            /* TODO */
             generOperation(getChild(operation,1));
             O_MUL();
             break;
         case EQUOT :
             generOperation(getChild(operation,0));
-            /* TODO */
             generOperation(getChild(operation,1));
             O_DIV();
             break;
         case EREST :
             generOperation(getChild(operation,0));
-            /* TODO */
             generOperation(getChild(operation,1));
             O_REST();
             break;
         case EAND :
             generOperation(getChild(operation,0));
-            /* TODO */
             generOperation(getChild(operation,1));
             O_CONCAT();
             break;
         case (NE || EQ || LT || LE || GT || GE) :
             generOperation(getChild(operation,0));
-            /* TODO */
             generOperation(getChild(operation,1));
             break;
         default :
@@ -344,6 +346,11 @@ void generOperation(TreeP operation)
 }
 void generInstanciation(TreeP instanciation)
 {
+    char* nomClass = getChild(instanciation,0)->u.str;
+    fprintf(out, "---- Nouvelle Instanciation de type  : %s\n",nomClass);
+    int nb = getNumberClass(nomClass);
+    ALLOC(nb); /* TODO nb */
+    DUPN(1);
     generListArgOpt(getChild(instanciation,1));
 }
 void generClass(classeP class)
@@ -352,10 +359,8 @@ void generClass(classeP class)
     fprintf(out, "---------- DEBUT Classe\n");
     if(class == NIL(classe)) return;
     generListParamOpt(class->parametres);
-    /* TODO generExtendsOpt(class->super); */
     generBlocOpt(class->constructeur);
     generCorpsClass(class->body);
-    /* TODO generCorpsClass(class->body); */
     /* TODO Il faut revoir extends et corps */
     fprintf(out, "---------- Fin Classe\n");
     sortieLevel(NEW(1,Level));
@@ -384,17 +389,15 @@ void generListMeth(methodP listMeth)
 }
 void generMeth(methodP meth) /* TODO */
 {
+    NEWMETHLABEL(meth->name,meth->nomTypeRetour);
     if (meth == NULL) return;
     NEWMETHLABEL(meth->name, meth->typeRetour->name);/*TODO generOverride */
-    /* generListParamOpt(getChild(meth,2));*/
+    generListParamOpt(meth->param);
 
 }
 void generListParamOpt(VarDeclP listParamOpt)
 {
     if( (listParamOpt != NULL)&&(listParamOpt != NIL(VarDecl)) ){
-        bool testBool = listParamOpt->aVar;
-        char* testChar = listParamOpt->nomType;
-        TreeP test = listParamOpt->expr;
         if(listParamOpt->expr == NIL(Tree)) generListParam(listParamOpt);
         else generListParamDef(listParamOpt);
     }
@@ -410,19 +413,18 @@ void generListParam(VarDeclP listParam)
 }
 void generParam(VarDeclP param)
 {
-    printf("name : %s\n",param->name);
+    /* printf("name : %s\n",param->name); */
 }
 void generListParamDef(VarDeclP listParamDef)
 {
-    /*
     if(listParamDef->aVar == TRUE){
-        generExpr(listPAramDef->expr);
-        STOREG_addr(listPAramDef->);
+        generExpr(listParamDef->expr);
+        /* STOREG_addr(listParamDef->); */
     }
     else{
-        generExpr(listPAramDef->expr);
-        STOREG_addr(selectorid->u.str);
-    }*/
+        generExpr(listParamDef->expr);
+        /* STOREG_addr(listParamDef->u.str); */
+    }
     generParamDef(listParamDef);
     if(listParamDef->next != NIL(VarDecl)) generListParamDef(listParamDef->next);
 }
@@ -444,7 +446,6 @@ void generParamDef(VarDeclP paramDef)
 
 void generDeclExprOpt(TreeP declExprOpt)
 {
-  /* TODO AFF*/
   if(declExprOpt == NIL(Tree)) return;
   generExpr(getChild(declExprOpt,0));
 }
@@ -462,7 +463,7 @@ void generExtends(TreeP extends)
 
 void generListArgOpt(TreeP listArgOpt)
 {
-    if(listArgOpt == NIL(Tree) || listArgOpt == NULL) return;
+    if(listArgOpt == NIL(Tree)) return;
     generListArg(listArgOpt);
 }
 void generListArg(TreeP listArg)
@@ -471,7 +472,7 @@ void generListArg(TreeP listArg)
         generExpr(getChild(listArg,0));
         generListArg(getChild(listArg,1));
     }
-    /* TODO TODO TODO TODO else generExpr(getChild(listArg,0)); */
+    else generExpr(listArg);
 }
 void generArgOuCible(TreeP argOuCible)/* TODO */
 {
@@ -527,7 +528,7 @@ void generSelection(TreeP selection)
         case EID :
             break; /* TODO */
         case CSTR :
-            printf("REGARDE LA \n %s\n",selection->u.str);
+            /*printf("REGARDE LA \n %s\n",selection->u.str);*/
             PUSHS(selection->u.str);
             break;
         case CAST :
