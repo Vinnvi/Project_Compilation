@@ -97,13 +97,12 @@ void analysePortee (TreeP corps, pileVar env){
         	analysePortee(getChild(corps, 1), env);
         	break;
 
-        /* cas compliqué étant donné que les deux arbres peuvent être des fils. . . */
         case EAFF :
         	analysePortee(getChild(corps, 1), env);
             analysePortee(getChild(corps, 0), env);
             /*if(getChild(corps, 0)->op == EID){
                 if(!verifId(getChildStr(corps, 0), env)) empiler();    
-            } TODO pas necessaire a priori*/
+            } TODO pas necessaire a priori de faire d'ajouts ici*/
         	break;
 
         case EDOTHIS : 
@@ -123,7 +122,7 @@ void analysePortee (TreeP corps, pileVar env){
         case MSG :
         case ENEW :
         case EEXTND : 
-        	if(!verifClass(getChildStr(corps, 0), env)) printf("petit souci : %s \n", getChildStr(corps, 0));
+        	if(!verifClass(getChildStr(corps, 0), env)) printf("Id introuvable : %s \n", getChildStr(corps, 0));
         	analysePortee(getChild(corps, 1), env); 
         	break;
 
@@ -134,7 +133,7 @@ void analysePortee (TreeP corps, pileVar env){
         	break;
 
         case EID :
-        	if(!verifId(getChildStr(corps, 0), env)) printf("petit souci : %s \n", getChildStr(corps, 0));
+        	if(!verifId(getChildStr(corps, 0), env)) printf("Id introuvable : %s \n", getChildStr(corps, 0));
         	break;
 
 
@@ -144,7 +143,7 @@ void analysePortee (TreeP corps, pileVar env){
         	analysePortee(getChild(corps, 2), env);
         	break;
 
-        case EBLOC : /* < this shit */
+        case EBLOC : 
             empiler(NIL(VarDecl));
             /* TODO empiler les valeurs du premier fils du bloc (= la liste des champs) [env = empilageChamps(getchild, env) qui fait l'analyse en même temps pour chaque expression de valeur de champ] puis faire l'analyse du 2e fils avec */ 
             analysePortee(getChild(corps, 0), env);
