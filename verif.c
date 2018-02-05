@@ -201,19 +201,56 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
                 return NULL;
             }
         }
-        case ENEW: /*instanciation */
+        case EINST: /*instantiation*/
         {
-            return getChild(arbreExpression,0)->u.str;
+          TreeP instantiation = getChild(arbreExpression,0);
+          if(instantiation->op == ENEW){
+            return getChild(instantiation,0)->u.str; /* On retourne le classId*/
+          }
         }
-    
-        case EDOT:
+
+        /* Partie arguments ou cible */
+        case CSTE:
         {
-            
+          return "Integer";
         }
+
+        case ETHISSELECT:
+        {
+          /*But : s'ssurer que l'expression apres le this est bien du type classe*/
+          char* classeName = classe->name;
+          TreeP sousArbre = getChild(arbreExpression,0);
+          switch(sousArbre){
+            case ETHIS :
+              return classeName;
+            case EDOT :
+
+          }
+        }
+
+        /*Partie selection( pour la récursivité) */
+        case EID : /*oummar, pour savoir sur quoi ça pointe  :-( */
+        {
+
+        }
+        case CSTR :
+        {
+          return "String";
+        }
+
+        case EEXPR :
+        {
+
+        }
+        case CAST :
+        {
+          TreeP sousexp1 = getChild(arbreExpression,0);
+          /*TODO*/
+        }
+        default:
+          return NULL;
+
+
     }
     return NULL;
 }
-
-
-
-
