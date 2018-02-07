@@ -161,7 +161,7 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
         {
             char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
             char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
-            if(strcmp(sousExp1,sousExp2) == 0){
+            if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
                return sousExp1;
             }
             else{
@@ -172,7 +172,7 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
         {
             char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
             char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
-            if(strcmp(sousExp1,sousExp2) == 0){
+            if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
                return sousExp1;
             }
             else{
@@ -183,7 +183,7 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
         {
             char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
             char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
-            if(strcmp(sousExp1,sousExp2) == 0){
+            if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
                return sousExp1;
             }
             else{
@@ -194,7 +194,7 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
         {
             char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
             char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
-            if(strcmp(sousExp1,sousExp2) == 0){
+            if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
                return sousExp1;
             }
             else{
@@ -220,14 +220,52 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
           /*But : s'ssurer que l'expression apres le this est bien du type classe*/
           char* classeName = classe->name;
           TreeP sousArbre = getChild(arbreExpression,0);
-          switch(sousArbre){
+          /* Partie ThisSelect */
+          switch(sousArbre->op){
             case ETHIS :
               return classeName;
             case EDOT :
-
+            {
+              char* maSelection = typeExpr(getChild(sousArbre,1),classe);
+              return maSelection;
+            }
+            case LISTDOT :
+            {
+              return typeExpr(getChild(sousArbre,0),classe);
+            }
           }
         }
 
+        case EDOT:
+        {
+          if(arbreExpression->nbChildren == 2){
+            /* On est dans ListSelection*/
+            TreeP sousArbre1 = getChild(arbreExpression,0);
+            TreeP sousArbre2 = getChild(arbreExpression,1);
+
+            /*Partie SelWithClassID*/
+            switch (sousArbre1->op){
+              case LSEL:
+              {
+                return typeExpr(getChild(sousArbre1,0),classe);
+              }
+              case ESEL:
+              {
+                return typeExpr(getChild(sousArbre1,0),classe);
+              }
+              case CLASS:
+              {
+                return getChild(sousArbre1,0)->u.str;
+              }
+            }
+            char* maSelection = typeExpr(sousArbre2,classe);
+
+            return maSelection;
+          }
+          else{
+            return typeExpr(getChild(arbreExpression,0),classe);
+          }
+        }
         /*Partie selection( pour la récursivité) */
         case EID : /*oummar, pour savoir sur quoi ça pointe  :-( */
         {
@@ -240,17 +278,51 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
 
         case EEXPR :
         {
-
+          return typeExpr(getChild(arbreExpression,0),classe);
         }
         case CAST :
         {
-          TreeP sousexp1 = getChild(arbreExpression,0);
-          /*TODO*/
+          TreeP sousexp1 = getChild(arbreExpression,1);
+          char* typeExpressionCast = typeExpr(sousexp1,classe);
+          char* typeCast = getChild(arbreExpression,0)->u.str;
+          if(verificationCast(typeExpressionCast,typeCast)) /* On verifie le lien entre les 2 classes*/
+            return typeCast;
+          else
+            return false;
         }
+
+
+
         default:
           return NULL;
 
 
     }
     return NULL;
+}
+
+/* s'assurer qu'il y a bien un lien entre la mere et la fille */
+bool verificationCast(char* fille,char* mere){
+  classeP classeFille = idToClass(fille);
+  classeP classeMere  = idToClass(mere);
+  if(classeFille->super != NIL(classe)){
+    classeFille = classeFille->super;
+  }
+  else{
+    return false;
+  }
+  while(classeFille != NIL(classe)){
+    if(strcmp(classeFille->name,classeMere->name)==0){
+      return true; /* On a trouve le lien */
+    }
+    else{
+      if(classeFille->super != NIL(classe)){
+        classeFille = classeFille->super;
+      }
+      else{ /* On a pas trouve la classe mere en remontant les classes*/
+        return false;
+      }
+    }
+  }
+  return false;
 }

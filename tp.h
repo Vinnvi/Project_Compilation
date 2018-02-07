@@ -41,7 +41,7 @@ typedef unsigned char bool;
 #define EREST 	11
 #define EAND 	12
 #define EAFF	13
-#define EDOT    14
+#define EDOT  14
 #define EEXTND  15
 #define ETHIS   16
 #define ERETURN 17
@@ -287,3 +287,4 @@ bool verifSurcharges(classeP c);
 bool verifSurcharges2(classeP maClasse);
 bool heritageSansCircuit(classeP classes);
 VarDeclP getChildList(TreeP tree, int rank);
+bool verificationCast(char* fille,char* mere);
