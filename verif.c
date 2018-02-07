@@ -154,7 +154,7 @@ bool heritageSansCircuit(classeP classes){
   return true;
 }
 
-/* return null si erreur de typage */
+/* return null si erreur de typage sinon renvoie la type de l'expression */
 char* typeExpr(TreeP arbreExpression,classeP classe){
     switch(arbreExpression->op){
         case EADD:
@@ -201,6 +201,38 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
                 return NULL;
             }
         }
+        case ESUBSOLO :
+        {
+          char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
+          if(strcmp(sousExp1,"Integer")==0 ){
+             return sousExp1;
+          }
+          else{
+              return NULL;
+          }
+        }
+
+        case EADDSOLO :
+        {
+          char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
+          if(strcmp(sousExp1,"Integer")==0 ){
+             return sousExp1;
+          }
+          else{
+              return NULL;
+          }
+        }
+        case EREST:
+        {
+          char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
+          char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
+          if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
+             return sousExp1;
+          }
+          else{
+              return NULL;
+          }
+        }
         case EINST: /*instantiation*/
         {
           TreeP instantiation = getChild(arbreExpression,0);
@@ -208,7 +240,17 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
             return getChild(instantiation,0)->u.str; /* On retourne le classId*/
           }
         }
-
+        case EAND :
+        {
+          char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
+          char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
+          if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
+             return sousExp1;
+          }
+          else{
+              return NULL;
+          }
+        }
         /* Partie arguments ou cible */
         case CSTE:
         {
@@ -217,7 +259,6 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
 
         case ETHISSELECT:
         {
-          /*But : s'ssurer que l'expression apres le this est bien du type classe*/
           char* classeName = classe->name;
           TreeP sousArbre = getChild(arbreExpression,0);
           /* Partie ThisSelect */
@@ -231,7 +272,7 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
             }
             case LISTDOT :
             {
-              return typeExpr(getChild(sousArbre,0),classe);
+              return typeExpr(getChild(sousArbre,1),classe);
             }
           }
         }
@@ -240,27 +281,27 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
         {
           if(arbreExpression->nbChildren == 2){
             /* On est dans ListSelection*/
+
             TreeP sousArbre1 = getChild(arbreExpression,0);
             TreeP sousArbre2 = getChild(arbreExpression,1);
+            char* classeEnCours = NULL; /*classe a partir de laquelle on va chercher la selection*/
 
             /*Partie SelWithClassID*/
             switch (sousArbre1->op){
               case LSEL:
               {
-                return typeExpr(getChild(sousArbre1,0),classe);
+                classeEnCours =  typeExpr(getChild(sousArbre1,0),classe);
               }
               case ESEL:
               {
-                return typeExpr(getChild(sousArbre1,0),classe);
+                classeEnCours = typeExpr(getChild(sousArbre1,0),classe);
               }
               case CLASS:
               {
-                return getChild(sousArbre1,0)->u.str;
+                classeEnCours = getChild(sousArbre1,0)->u.str;
               }
             }
-            char* maSelection = typeExpr(sousArbre2,classe);
-
-            return maSelection;
+            return typeExpr(sousArbre2,idToClass(classeEnCours));
           }
           else{
             return typeExpr(getChild(arbreExpression,0),classe);
@@ -291,6 +332,11 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
             return false;
         }
 
+        case MSG:
+        {
+          /* recupere l'id par la portee*/
+
+        }
 
 
         default:
