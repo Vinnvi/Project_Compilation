@@ -76,14 +76,10 @@ void depilerBloc(){
 
 /* IL SE PEUT QUE LES 'env' SOIENT INUTILES */
 void analysePortee (TreeP corps, pileVar env){
+    printf("Etiquette %s \n", recupEtiquette(corps->op));
 	switch(corps->op){
 		case EADD : 
         case ESUB :
-        	if(corps->nbChildren == 1){
-        		analysePortee(getChild(corps, 0), env);
-        		break;
-        	}
-
         case NE : 	
         case EQ : 	
         case LT : 	
@@ -96,27 +92,29 @@ void analysePortee (TreeP corps, pileVar env){
         case EAND : 
         case ELISTSEL :
         	analysePortee(getChild(corps, 0), env);
-        	analysePortee(getChild(corps, 1), env);
+            analysePortee(getChild(corps, 1), env);
         	break;
 
         case EAFF :
-        	analysePortee(getChild(corps, 1), env);
             analysePortee(getChild(corps, 0), env);
+            analysePortee(getChild(corps, 1), env);
             /*if(getChild(corps, 0)->op == EID){
                 if(!verifId(getChildStr(corps, 0), env)) empiler();    
             } TODO pas necessaire a priori de faire d'ajouts ici*/
         	break;
 
-        case ESELDOT : 
-        	analysePortee(getChild(corps, 0), env);
+        case ESELDOT :
+        case EADDSOLO : 
+        case ESUBSOLO :
+            analysePortee(getChild(corps, 1), env);
         	break;
 
         case EDOT :
         case LARG :
         case LINST :
         case LCLASS :
-        	analysePortee(getChild(corps, 0), env);
-        	analysePortee(getChild(corps, 1), env);
+            analysePortee(getChild(corps, 0), env);
+            analysePortee(getChild(corps, 1), env);
         	break;
 
 
@@ -125,7 +123,7 @@ void analysePortee (TreeP corps, pileVar env){
         case ENEW :
         case EEXTND : 
         	if(!verifClass(getChildStr(corps, 0), env)) printf("Id introuvable : %s \n", getChildStr(corps, 0));
-        	analysePortee(getChild(corps, 1), env); 
+            analysePortee(getChild(corps, 1), env);
         	break;
 
         case ETHIS : 
@@ -140,14 +138,15 @@ void analysePortee (TreeP corps, pileVar env){
 
 
         case ITE :
-        	analysePortee(getChild(corps, 0), env);
-        	analysePortee(getChild(corps, 1), env);
-        	analysePortee(getChild(corps, 2), env);
+            analysePortee(getChild(corps, 0), env);
+            analysePortee(getChild(corps, 1), env);
+            analysePortee(getChild(corps, 2), env);
         	break;
 
         case EBLOC : 
             empiler(NIL(VarDecl));
             /* TODO empiler les valeurs du premier fils du bloc (= la liste des champs) [env = empilageChamps(getchild, env) qui fait l'analyse en même temps pour chaque expression de valeur de champ] puis faire l'analyse du 2e fils avec */ 
+            empilerBloc();
             analysePortee(getChild(corps, 0), env);
             depilerBloc();
             break;
@@ -195,4 +194,8 @@ bool verifClass(char* nomClasse, pileVar env){
         classeActuelle = classeActuelle->next;
     }
     return FALSE;
+}
+
+void empilerBloc(){
+    
 }
