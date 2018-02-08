@@ -347,6 +347,29 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
     return NULL;
 }
 
+/* verifier la declaration d'un champ */
+bool verificationChamp(TreeP arbreExpression,classeP classe){
+  char* typeVar = getChild(arbreExpression,1)->u.str;
+  TreeP exprOpt = getChild(arbreExpression,2);
+  if(exprOpt != NIL(Tree)){
+    if(exprOpt->op == EAFF){
+      char* typeExpression = typeExpr(getChild(exprOpt,0),classe);
+      if(typeExpression != NULL){
+        if(strcmp(typeVar,typeExpression) == 0){
+          return true;
+        }
+        else{
+          return false;
+        }
+      }
+    }
+    else{
+      return true;
+    }
+  }
+  return false;
+}
+
 /* s'assurer qu'il y a bien un lien entre la mere et la fille */
 bool verificationCast(char* fille,char* mere){
   classeP classeFille = idToClass(fille);

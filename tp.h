@@ -288,3 +288,4 @@ bool verifSurcharges2(classeP maClasse);
 bool heritageSansCircuit(classeP classes);
 VarDeclP getChildList(TreeP tree, int rank);
 bool verificationCast(char* fille,char* mere);
+bool verificationChamp(TreeP arbreExpression,classeP classe);
