@@ -241,10 +241,10 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     FILE *fileToWrite;
     fileToWrite = fopen("test.txt", "w+");
     lancerGeneration(defClasses,fileToWrite);
-    fprintf(fileToWrite, "------------DEBUT Bloc Principal\n");
+    fprintf(fileToWrite, "---------------------------- DEBUT Bloc Principal\n");
     generBloc(root);
     freeStack();
-    fprintf(fileToWrite, "------------FIN Bloc Principal\n");
+    fprintf(fileToWrite, "---------------------------- FIN Bloc Principal\n");
     fprintf(fileToWrite, "\n");
     /* fclose(fileToWrite);*/
 }
@@ -256,7 +256,7 @@ void initClasses(){
   cInteger->name = "Integer";
   addClasse(cInteger);
   makeClass("Void",NULL,NULL,NULL,NULL);
-    makeClass("String",NULL,NULL,NULL,NULL);
+  makeClass("String",NULL,NULL,NULL,NULL);
 }
 
 /* Créateur de structure classe */
@@ -288,7 +288,8 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
 
 /* Créateur de structure methode */
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP) {
-	methodP nouvMethode = NEW(1, method);
+    printf("ICI on a eu %s \n",nameP);
+    methodP nouvMethode = NEW(1, method);
 	nouvMethode->redef = redefP;
 	nouvMethode->name = nameP;
 	nouvMethode->param = paramP;

@@ -171,10 +171,9 @@ struct _Classe{
      VarDeclP attributs; /*Attributs de la classe*/
      VarDeclP parametres; /* liste des parametres du constructeur de la classe*/
 	 classeP super; /*classe mere*/
+     int nbChp;
 	 struct _Classe *next; /*Pour chainer les classes*/
 };
-
-
 
 /* Structure d'une méthode */
 struct _Method{
@@ -198,6 +197,7 @@ struct _Object{
     /*TreeP body; corps de l'objet*/
 	methodP lmethodes; /* pointeur sur la liste des methodes de l'objet */
 	VarDeclP attributs; /* pointeur sur la liste des attributs de l'objet */
+    int nbChp;
 	struct _Object *next;
 };
 

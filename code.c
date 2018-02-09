@@ -68,6 +68,16 @@ void O_SUPEQ() { fprintf(out, "SUPEQ\n"); stack.size--; }
 void O_INF() { fprintf(out, "INF\n"); stack.size--; }
 void O_SUP() { fprintf(out, "SUP\n"); stack.size--; }
 
+/* Actualise la structure de classe/objet en indiquant nombre de champs */
+void setNbChpClass(char* name, int chNbChp){
+    classeP chClasse = getPointeurClasse(name);
+    if(chClasse != NIL(classe)) chClasse->nbChp = chNbChp;
+    else{ /* On est sur un objet */
+        objectP chObjet = idToObj(name);
+        chObjet->nbChp = chNbChp;
+    }
+}
+
 /* On libere la pile */
 void freeStack() {
     LevelP level = stack.top_level;
@@ -85,7 +95,6 @@ void freeStack() {
 }
 /* On rentre dans un nouveau niveau de portee */
 void entreeLevel(LevelP levelP) {
-    fprintf(out, "Entree de Level\n");
     levelP->next = stack.top_level;    /* On lie au niveau precedent */
     stack.top_level = levelP;          /* Ce niveau est desormais au dessus */
     levelP->offset = stack.size - 1;    /* TODO */
@@ -93,7 +102,6 @@ void entreeLevel(LevelP levelP) {
 /* On sort d'un niveau de portee */
 void sortieLevel() {
     if (stack.top_level == NULL) return;   /* Pas de niveau, rien a faire */
-    fprintf(out, "Sortie de Level\n");
     LevelP levelP = stack.top_level->next; /* Niveau precedent devient le plus haut */
     stack.top_level = levelP;              /* On actualise sur la pile */
 }
@@ -122,29 +130,11 @@ VariableP getVariable(char* name) {
     }
     return NULL;
 }
-int getNumberChp(VarDeclP chVar)
+
+int getNbChpClass(char* chClass)
 {
-    int nbAttributs = 0;
-    if(strcmp(chVar->nomType,"String") || strcmp(chVar->nomType,"Integer")) return 1;
-    VarDeclP varActuel = getPointeurClasse(chVar->nomType)->attributs;
-    while(varActuel != NULL && varActuel)
-    {
-        varActuel = varActuel->next;
-        nbAttributs++;
-    }
-    return nbAttributs;
-}
-int getNumberClass(char* chClass)
-{
-    int nbAttributs = 0;
-    if(strcmp(chClass,"String") || strcmp(chClass,"Integer")) return 1;
-    VarDeclP varActuel = getPointeurClasse(chClass)->attributs;
-    while(varActuel != NULL && varActuel)
-    {
-        varActuel = varActuel->next;
-        nbAttributs++;
-    }
-    return nbAttributs;
+    if(!strcmp(chClass,"String") || !strcmp(chClass,"Integer")) return 1;
+    else return getPointeurClasse(chClass)->nbChp;
 }
 int getAddr(char* name) {
     LevelP level = stack.top_level; /* On se positionne sur dernier niveau de portee */
@@ -211,8 +201,8 @@ void generObject(objectP obj)
 {
     entreeLevel(NEW(1,Level));
     fprintf(out, "/////////////// DEBUT Objet\n");
-    generListChpOpt(obj->attributs);
-    generListMethOpt(obj->lmethodes);
+    generListChpOpt(obj->attributs, obj->name);
+    generListMethOpt(obj->lmethodes,obj->name);
     fprintf(out, "/////////////// FIN Objet\n");
     sortieLevel(NEW(1,Level));
 }
@@ -225,14 +215,12 @@ void generBlocOpt(TreeP blocOpt)
 void generBloc(TreeP bloc)
 {
     entreeLevel(NEW(1,Level));
-    fprintf(out, "------DEBUT BLOC\n");
     if(getChild(bloc,1) == NIL(Tree))           /* Bloc est une liste d'Instructions */
         generListInstOpt(getChild(bloc,0));
     else{
-        generListChp((VarDeclP)getChild(bloc,0));
+        generListChpBloc((VarDeclP)getChild(bloc,0));
         generListInst(getChild(bloc,1));
     }
-    fprintf(out, "------FIN BLOC\n");
     sortieLevel();
 }
 void generListInstOpt(TreeP listInstOpt)
@@ -347,52 +335,92 @@ void generOperation(TreeP operation)
 void generInstanciation(TreeP instanciation)
 {
     char* nomClass = getChild(instanciation,0)->u.str;
-    fprintf(out, "---- Nouvelle Instanciation de type  : %s\n",nomClass);
-    int nb = getNumberClass(nomClass);
+    fprintf(out, "-- Nouvelle Instanciation de type  : %s\n",nomClass);
+    int nb = getNbChpClass(nomClass);
     ALLOC(nb); /* TODO nb */
-    DUPN(1);
-    generListArgOpt(getChild(instanciation,1));
+    generListArgOptInst(getChild(instanciation,1),0);
 }
 void generClass(classeP class)
 {
     entreeLevel(NEW(1,Level));
-    fprintf(out, "---------- DEBUT Classe\n");
+    fprintf(out, "\n---------------------------- DEBUT Classe\n");
     if(class == NIL(classe)) return;
-    generListParamOpt(class->parametres);
-    generBlocOpt(class->constructeur);
-    generCorpsClass(class->body);
+    /* On ne genere que le code des methodes a la definition de la classe */
+    if(class->parametres != NIL(VarDecl)) fprintf(out, "---- Parametres de la Classe\n");
+    /* generListParamOpt(class->parametres); */
+    if(class->constructeur != NIL(Tree)) fprintf(out, "---- Constructeur de la Classe\n");
+    generCorpsClass(class->body, class->name);
     /* TODO Il faut revoir extends et corps */
-    fprintf(out, "---------- Fin Classe\n");
+    fprintf(out, "---------------------------- Fin Classe\n\n");
     sortieLevel(NEW(1,Level));
 }
-void generCorpsClass(TreeP corpsClasse)
+void generCorpsClass(TreeP corpsClasse, char* name)
 {
     fprintf(out, "---------- DEBUT CorpsCLasse\n");
     if(corpsClasse->op == ECORPS){
-        generListChpOpt((VarDeclP)getChild(corpsClasse,0));
-        generListMethOpt((methodP)getChild(corpsClasse,1));
+        generListChpOpt((VarDeclP)getChild(corpsClasse,0),name);
+        generListMethOpt((methodP)getChild(corpsClasse,1),name);
     }
     fprintf(out, "---------- Fin CorpsClasse\n");
 }
 
-void generListMethOpt(methodP listMethOpt)
+void generListMethOpt(methodP listMethOpt, char* name)
 {
     if(listMethOpt == NIL(method)) return;
-    generListMeth(listMethOpt);
+    else {
+        methodP methodes = NEW(1,method);
+        classeP chClass = getPointeurClasse(name);
+        if(chClass != NIL(classe)) methodes = chClass->lmethodes;
+        else{
+            objectP chObj = idToObj(name);
+            methodes = chObj->lmethodes;
+        }
+        while(methodes != NIL(method)){
+            generMeth(methodes);
+            methodes = methodes->next;
+        }
+    }
 }
 void generListMeth(methodP listMeth)
 {
+    fprintf(out,"AVANT methode %s\n",listMeth->name);
     entreeLevel(NEW(1,Level));
     generMeth(listMeth);
-    if(listMeth->next != NIL(method)) generListMeth(listMeth->next);
+    if(listMeth->next != NIL(method)) {
+        generListMeth(listMeth->next);}
     sortieLevel();
 }
 void generMeth(methodP meth) /* TODO */
 {
-    NEWMETHLABEL(meth->name,meth->nomTypeRetour);
+    fprintf(out,"-- Definition de la methode %s\n",meth->name);
+    entreeLevel(NEW(1,Level));
     if (meth == NULL) return;
-    NEWMETHLABEL(meth->name, meth->typeRetour->name);/*TODO generOverride */
-    generListParamOpt(meth->param);
+    NEWMETHLABEL(meth->name,meth->typeRetour->name);
+    /* ##### GENERATION DU CODE DES PARAMETRES #####*/
+    /* On compte le nombre de parametres methode car necessaire pour position PUSHL*/
+    int nbParam = 0; int position = 0;
+    VarDeclP paramMeth = meth->param;
+    while(paramMeth)
+    {
+        paramMeth = paramMeth->next;
+        nbParam++;
+    }
+    position -= nbParam;
+    /* On empile le resultat de l appel de la fonction */
+    VarDeclP resultat = NEW(1,VarDecl);
+    resultat->name = "this";
+    addVariable(resultat);
+    /* On empile chacun des parametres dans la pile */
+    paramMeth = meth->param;
+    while(paramMeth){
+        addVariable(paramMeth);
+        PUSHL(position);
+        position++;
+        paramMeth = paramMeth->next;
+    }
+    /* ##### GENERATION DU CODE DU CORPS DE LA METHODE #####*/
+    generExpr(meth->body);
+    sortieLevel();
 
 }
 void generListParamOpt(VarDeclP listParamOpt)
@@ -466,13 +494,35 @@ void generListArgOpt(TreeP listArgOpt)
     if(listArgOpt == NIL(Tree)) return;
     generListArg(listArgOpt);
 }
+void generListArgOptInst(TreeP listArgOpt, int pos)
+{
+    if(listArgOpt == NIL(Tree)) return;
+    generListArgInst(listArgOpt, pos);
+}
 void generListArg(TreeP listArg)
 {
-    if(listArg->op == LARG) {
+    if(listArg->op == LARG)
+    {
         generExpr(getChild(listArg,0));
         generListArg(getChild(listArg,1));
     }
     else generExpr(listArg);
+}
+void generListArgInst(TreeP listArg, int pos)
+{
+    DUPN(1);
+    if(listArg->op == LARG)
+    {
+        fprintf(out, "-- Parametre Instanciation\n");
+        generExpr(getChild(listArg,0));
+        STORE(pos);
+        generListArgInst(getChild(listArg,1),pos++);
+    }
+    else {
+        fprintf(out, "-- Parametre Instanciation\n");
+        generExpr(listArg);
+        STORE(pos);
+    }
 }
 void generArgOuCible(TreeP argOuCible)/* TODO */
 {
@@ -548,26 +598,30 @@ void generMessage(TreeP message)
     CALL();
     POPN(2);    /*TODO TODO TODO Trouver nombre POPN ICI */
 }
-void generListChpOpt(VarDeclP listChpOpt)
+void generListChpOpt(VarDeclP listChpOpt, char* name)
 {
     if(listChpOpt == NIL(VarDecl)) return;
-    generListChp(listChpOpt);
+    generListChp(listChpOpt, name, 1);
 }
-void generListChp(VarDeclP listChp)
+void generListChp(VarDeclP listChp, char* name, int pos)
 {
   generChp(listChp);
-  if(listChp->next != NULL) generListChp(listChp->next);
+  if(listChp->next != NULL) generListChp(listChp->next, name, pos+1);
+  else {
+      setNbChpClass(name, pos);
+  }
 }
+void generListChpBloc(VarDeclP listChp)
+{
+  generChpBloc(listChp);
+  if(listChp->next != NULL) generListChpBloc(listChp->next);
+}
+/* Declarations de variables dans une definition de classe ou d objet */
 void generChp(VarDeclP chp)
 {
-    /* TODO PUSH new chp */
-    /*TODO chp->name */
     if (chp->aVar == TRUE){
         if( getVariable(chp->name) == NULL) addVariable(chp);
-        fprintf(out, "---- Nouveau champ : %s\n",chp->name);
-        int nb = getNumberChp(chp);
-        ALLOC(nb); /* TODO nb */
-        DUPN(1);
+        fprintf(out, "---- Définition du champ %s \n",chp->name);
     }
     else {
         if( getVariable(chp->name) == NULL){
@@ -575,7 +629,33 @@ void generChp(VarDeclP chp)
             fprintf(out,"ERROR, variable %s non définie",chp->name);
         }
     }
-    if(chp->expr != NIL(Tree)) generDeclExprOpt(chp->expr);
-    else { }
-    STOREG_addr(chp->name);
+}
+
+/* Declarations de variables dans un bloc, il faut donc allouer ici*/
+void generChpBloc(VarDeclP chp)
+{
+    if (chp->aVar == TRUE){ /* Nouvelle definition de variable */
+        if( getVariable(chp->name) == NULL){ /* nom de la variable non utilise */
+            addVariable(chp);
+            fprintf(out, "---- Définition du champ %s \n",chp->name);
+            /* On doit allouer la place necessaire selon le nombre de champs */
+            ALLOC(getNbChpClass(chp->nomType));
+            DUPN(1);
+            generDeclExprOpt(chp->expr);
+            STORE(0);
+        }
+        else { /* erreur nom de la variable deja existant */
+            printf("ERROR, nom de la variable %s déja existant\n",chp->name);
+            fprintf(out,"ERROR, nom de la variable %s déja existant\n",chp->name);
+        }
+    }
+    else {
+        if( getVariable(chp->name) == NULL){
+            printf("ERROR, variable %s non définie\n",chp->name);
+            fprintf(out,"ERROR, variable %s non définie\n",chp->name);
+        }
+        else{
+
+        }
+    }
 }
