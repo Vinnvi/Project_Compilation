@@ -44,7 +44,7 @@ IdentP idents = NIL(IdentS);
  */
 YYSTYPE yylval;
 
-bool verbose = FALSE;
+bool verbose = TRUE;
 
 /* Compteurs */
 int nbIdent = 0;

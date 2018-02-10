@@ -22,9 +22,9 @@ void empiler(VarDeclP decl);
 void depiler();
 void depilerBloc();
 
-void analysePortee (TreeP corps, pileVar env);
-bool verifId(char* id, pileVar env);
-bool verifClass(char* nomClasse, pileVar env);
+void analysePortee (TreeP corps);
+bool verifId(char* id);
+bool verifClass(char* nomClasse);
 void empilerBloc();
 
 

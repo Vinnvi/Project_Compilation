@@ -83,7 +83,7 @@ Instruction : Expression ';'                        {$$ = $1;}
 ;
 
 InstIfElse : Instruction    {$$ = $1;}
-| Bloc                      {$$ = makeTree(EBLOC, 1, $1);}
+| Bloc                      {$$ = $1;}
 ;
 
 Expression: Instanciation   {$$ = makeTree(EINST, 1, $1);}

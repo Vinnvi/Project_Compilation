@@ -1482,7 +1482,7 @@ yyreduce:
 
   case 23:
 #line 86 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(EBLOC, 1, (yyvsp[0].pT));}
+    {(yyval.pT) = (yyvsp[0].pT);}
 #line 1487 "tp_y.c" /* yacc.c:1646  */
     break;
 

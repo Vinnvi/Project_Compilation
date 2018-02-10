@@ -256,14 +256,19 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     affichageObjets();
     affichageMethodes();
 
-    FILE *fileToWrite;
+    printf("Début analyse\n");
+    analysePortee(root);
+    printf("Fin analyse\n");
+
+
+    /*FILE *fileToWrite;
     fileToWrite = fopen("test.txt", "w+");
     lancerGeneration(defClasses,fileToWrite);
     fprintf(fileToWrite, "------------DEBUT Bloc Principal\n");
     generBloc(root);
     freeStack();
     fprintf(fileToWrite, "------------FIN Bloc Principal\n");
-    fprintf(fileToWrite, "\n");
+    fprintf(fileToWrite, "\n");*/
     /* fclose(fileToWrite);*/
 }
 
@@ -657,7 +662,7 @@ char* recupEtiquette(short op){
         case 30 : return "MSG";
         case 31 : return "EBLOC";
         case 32 : return "ENEW";
-        case 33 : return "over";
+        case 33 : return "OVER";
         case 34 : return "CHMP";
         case 35 : return "EEXPR";
         case 36 : return "ESEL";
@@ -678,6 +683,10 @@ char* recupEtiquette(short op){
         case 51 : return "EINST";
         case 52 : return "EADDSOLO";
         case 53 : return "ESUBSOLO";
+        case 54 : return "ESELDOT"; 
+		case 55 : return "ELISTSEL";
+		case 56 : return "EAFFDECL";
+
         default : return "ERREUR";
     }
 
