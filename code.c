@@ -26,7 +26,7 @@ void NEWMETHLABEL(char* nomMeth, char* typeRetour) { fprintf(out, "%s_%s: ", typ
 void PUSHI(int i) { fprintf(out, "PUSHI %d\n", i); stack.size++; }
 void PUSHS(char *c) { fprintf(out, "PUSHS %s\n", c); stack.size++; }
 void PUSHG(int a) { fprintf(out, "PUSHG %d\n", a); stack.size++; }
-void PUSHL(int a) { fprintf(out, "PUSHL %d\n", a); stack.size++; }/*
+void PUSHL(int a) { fprintf(out, "PUSHL %d\n", a); stack.size++; }
 void PUSHG_addr(char* c) {
     int a = getAddr(c);
     if (a < 0) { fprintf(out, "PUSHG addr(%s)(%d)\n", c, a); stack.size++; }
@@ -34,7 +34,7 @@ void PUSHG_addr(char* c) {
 void PUSHL_addr(char* c) {
 	int a = getAddr(c);
 	if (a < 0) { fprintf(out, "PUSHL addr(%s)(%d)\n", c, a); stack.size++; }
-    else PUSHL(a); }*/
+    else PUSHL(a); }
 void WRITES() { fprintf(out, "WRITES\n"); stack.size --; }
 void STOREL(int x) { fprintf(out, "STOREL %d\n", x); stack.size--; }
 void STOREG(int x) { fprintf(out, "STOREG %d\n", x); stack.size--; }
@@ -134,7 +134,9 @@ VariableP getVariable(char* name) {
 int getNbChpClass(char* chClass)
 {
     if(!strcmp(chClass,"String") || !strcmp(chClass,"Integer")) return 1;
-    else return getPointeurClasse(chClass)->nbChp;
+    else {
+        return getPointeurClasse(chClass)->nbChp;
+    }
 }
 int getAddr(char* name) {
     LevelP level = stack.top_level; /* On se positionne sur dernier niveau de portee */
@@ -244,10 +246,33 @@ void generInst(TreeP inst)
             fprintf(out, "RETURN\n");
             break;
         case EAFF :
+            fprintf(out,"-- Instruction avec affectation\n");
             ALLOC(1);   /* TODO nb */
             DUPN(1);    /* TODO nb */
-            generArgOuCible(getChild(inst,0));
-            generExpr(getChild(inst,1));
+            TreeP partieGauche = getChild(inst,0);
+            TreeP partieDroite = getChild(inst,1);
+            if(partieGauche->op == EID) { /* Juste un id a gauche */
+                if(partieDroite->op == EINST) { /*Instanciation */
+                    generExpr(getChild(inst,1));        /* on genere code du NEW Class */
+                    STOREG_addr(partieGauche->u.str);   /* On store a l adresse de l id */
+                }
+                else { /* Une operation */
+                    PUSHG_addr(partieGauche->u.str);
+                    generExpr(getChild(inst,1));
+                    STORE(0); /* Il manque la valeur d offset ici ?*/
+                }
+            }
+            else { /* Autre chose que juste un Id */
+                if( (partieGauche->op == CSTE) || (partieGauche->op == CSTR) ){
+                    printf("Pourquoi mettre une constante int ou String a gauche?");
+                    fprintf(out,"Pourquoi mettre une constante int ou String a gauche?");
+                }
+                else if (partieGauche->op == EDOT) { /* Liste de Selection */
+                    generListSelection(getChild(partieGauche,0));
+                    generExpr(getChild(inst,1));
+                    STORE(0); /* Il manque la valeur d offset ici ?*/
+                }
+            }
             break;
         case ITE :
             ; /* Besoin de laisser un statement a cause des anciens usages */
@@ -574,6 +599,7 @@ void generSelWithClassID(TreeP selWithClassID)
 }
 void generSelection(TreeP selection)
 {
+    printf("ICIIIIIIII %d\n",selection->op);
     switch(selection->op){
         case EID :
             break; /* TODO */
@@ -584,14 +610,19 @@ void generSelection(TreeP selection)
         case CAST :
              generExpr(getChild(selection,1));
              break;
+        case ESEL :
+
+            break;
         case EEXPR :
             generExpr(getChild(selection,0));
             break;
-      default : generMessage(selection); break;
+      default : printf("LAAAA\n");generMessage(selection); break;
     }
 }
 void generMessage(TreeP message)
 {
+    printf("NOW %s\n",getChild(message,0)->u.str);
+    fprintf(out,"-- Appel de fonction %s\n",getChild(message,0)->u.str);
     PUSHN(1);
     generListArgOpt(getChild(message,1));
     PUSHA(getChild(message,0)->u.str);
@@ -616,7 +647,7 @@ void generListChpBloc(VarDeclP listChp)
   generChpBloc(listChp);
   if(listChp->next != NULL) generListChpBloc(listChp->next);
 }
-/* Declarations de variables dans une definition de classe ou d objet */
+/* Declarations de variables dans une definition de classe ou d objet, un simple message */
 void generChp(VarDeclP chp)
 {
     if (chp->aVar == TRUE){

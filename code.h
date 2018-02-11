@@ -40,6 +40,8 @@ void WRITES();
 void PUSHG(int a);
 void PUSHG_addr(char* c);
 void PUSHL(int a);
+void PUSHG_addr(char* c);
+void PUSHL_addr(char* c);
 void PUSHL_addr(char* c);
 void STOREL(int x);
 void STOREG(int x);

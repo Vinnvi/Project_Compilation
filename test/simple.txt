@@ -10,7 +10,7 @@ class Point(xc: Integer, yc: Integer) {
   var w: Integer := this.y + 1;  /* OK : valeur de y deja definie */
   var w2: Integer := this.w+1;   /* va etre ecrasee dans le constructeur */
   var w3: Integer := this.w2+1;  /* mais a servi a initialiser w3  */
-  var name: String := "?";
+
 
 
   def getx() : Integer := this.x
@@ -36,7 +36,6 @@ class Point(xc: Integer, yc: Integer) {
   var p1: Point := new Point(1, 5);
   var p2: Point := new Point(2, 3);
   is
-  p2.setName("glob");
   p1.printAll();
   p2.printAll();
 }

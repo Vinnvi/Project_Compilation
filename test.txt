@@ -10,30 +10,33 @@ START
 ---- DÃ©finition du champ w 
 ---- DÃ©finition du champ w2 
 ---- DÃ©finition du champ w3 
----- DÃ©finition du champ name 
 -- Definition de la methode printAll
 Void_printAll: NOP
+-- Appel de fonction p01
 PUSHN 1
-PUSHA PÁ>
+PUSHA p01
 CALL
 POPN 2
 -- Definition de la methode print
 Void_print: NOP
+-- Appel de fonction €,1
 PUSHN 1
-PUSHA `½>
+PUSHA €,1
 CALL
 POPN 2
 -- Definition de la methode setName
 Void_setName: NOP
 PUSHL -1
+-- Appel de fonction Ð)1
 PUSHN 1
-PUSHA °º>
+PUSHA Ð)1
 CALL
 POPN 2
 -- Definition de la methode getz
 Void_getz: NOP
+-- Appel de fonction 
 PUSHN 1
-PUSHA à·>
+PUSHA 
 CALL
 POPN 2
 -- Definition de la methode gety
@@ -45,10 +48,10 @@ Void_getx: NOP
 
 ---------------------------- DEBUT Bloc Principal
 ---- DÃ©finition du champ p1 
-ALLOC 7
+ALLOC 6
 DUPN 1
 -- Nouvelle Instanciation de type  : Point
-ALLOC 7
+ALLOC 6
 DUPN 1
 -- Parametre Instanciation
 PUSHI 1
@@ -59,10 +62,10 @@ PUSHI 5
 STORE 0
 STORE 0
 ---- DÃ©finition du champ p2 
-ALLOC 7
+ALLOC 6
 DUPN 1
 -- Nouvelle Instanciation de type  : Point
-ALLOC 7
+ALLOC 6
 DUPN 1
 -- Parametre Instanciation
 PUSHI 2
@@ -72,30 +75,12 @@ DUPN 1
 PUSHI 3
 STORE 0
 STORE 0
-PUSHN 1
-PUSHA p2
-CALL
-POPN 2
-PUSHN 1
-PUSHS "glob");
-  p1.printAll();
-  p2.printAll();
-}
-PUSHA setName
-CALL
-POPN 2
-PUSHN 1
-PUSHA p1
-CALL
-POPN 2
+-- Appel de fonction printAll
 PUSHN 1
 PUSHA printAll
 CALL
 POPN 2
-PUSHN 1
-PUSHA p2
-CALL
-POPN 2
+-- Appel de fonction printAll
 PUSHN 1
 PUSHA printAll
 CALL
