@@ -204,6 +204,7 @@ char* getChildStr(TreeP tree, int rank) {
   return tree->u.str;
 }
 
+/* Retourne le rank-ieme fils d'un arbre, cense etre une feuille VarDeclP*/
 VarDeclP getChildDecl(TreeP tree, int rank){
   if (tree->nbChildren < rank -1) {
     fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
@@ -212,12 +213,14 @@ VarDeclP getChildDecl(TreeP tree, int rank){
   return tree->u.lvar;	
 }
 
+/* Constructeur de feuille dont la valeur est une classe */
 TreeP makeLeafClass(short op, classeP chClasse) {
   TreeP tree = makeNode(0, op);
   tree->u.lclass = chClasse;
   return tree;
 }
 
+/* Constructeur de feuille dont la valeur est un objet */
 TreeP makeLeafObjet(short op, objectP chObjet) {
   TreeP tree = makeNode(0, op);
   tree->u.lobj = chObjet;
@@ -256,7 +259,7 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     affichageObjets();
     affichageMethodes();
 
-    printf("Début analyse\n");
+    printf("Début analyse. Les erreurs s'afficheront ci-dessous.\n");
     analysePortee(root);
     printf("Fin analyse\n");
 
@@ -384,6 +387,7 @@ void affichageArbre(TreeP tree,int niveauArbre){
 
 }
 
+/* Associe les champs d'une classe à la classe à laquelle ils appartiennent */
 void associationClasse(classeP cl){
     methodP methActuelle = cl->lmethodes;
     while(methActuelle){
@@ -399,6 +403,7 @@ void associationClasse(classeP cl){
     }
 }
 
+/* Associe les champs d'un objet à la classe à laquelle ils appartiennent */
 void associationObjet(objectP obj){
     methodP methActuelle = obj->lmethodes;
     while(methActuelle){
@@ -412,6 +417,14 @@ void associationObjet(objectP obj){
         attributActuel->type = idToClass(attributActuel->nomType);
         attributActuel = attributActuel->next;
     }
+}
+
+void attributionType(VarDeclP listeVar){
+	VarDeclP varActuelle = listeVar;
+	while(varActuelle){
+		varActuelle->type = idToClass(varActuelle->nomType);
+		varActuelle = varActuelle->next;
+	}
 }
 
 /* Ajoute une classe dans la variable globale des classes */

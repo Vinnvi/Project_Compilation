@@ -26,10 +26,12 @@ void depilerBloc();
 void analysePortee (TreeP corps);
 bool verifId(char* id);
 bool verifClass(char* nomClasse);
+
 bool verifMethodeDansClasse(classeP class, char* nomMethode);
 bool verifChampDansClasse(classeP class, char* nomChamp);
 classeP decapsulageClasse(TreeP listeSel);
-
+char* getId(TreeP arbre);
+bool verifDot(TreeP sel);
 
 
 bool verifSurcharges(classeP c);

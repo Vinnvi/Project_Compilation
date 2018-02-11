@@ -265,5 +265,6 @@ void addMethodeTemp(methodP m);
 void addVarTemp(VarDeclP v);
 void associationClasse(classeP cl);
 void associationObjet(objectP obj);
+void attributionType(VarDeclP listeVar);
 void initClasses();
 VarDeclP getChildList(TreeP tree, int rank);

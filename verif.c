@@ -9,47 +9,18 @@ extern char *strdup(const char*);
 
 extern void setError(int code);
 
-/*
-bool verifSurcharges(classeP c){
-    classeP maClasse = c;
-    if(maClasse == NIL(classe) ) return TRUE;
-    classeP maClasse2 = maClasse;
-    do{
-        if(!verifSurcharges2(maClasse,maClasse2)) return FALSE; 
-    }while(maClasse2->next != NIL(classe) );  
-
-    return TRUE;
-}
-
-bool verifSurcharges2(classeP maClasse,classeP maClasse2){
-    
-    if(maClasse == maClasse2){
-        methodP methodes = maClasse->lmethodes;
-        while(methodes == NIL(methode) ){
-            methodP methodes2 = methodes;
-            while(methodes2->next != NIL(methode) ){ 
-                methodes2 = methodes2->next;
-                if(strcmp(methodes,methodes2) == 0) return FALSE;
-            }
-            methodes = methodes->next;
-
-        }
-    }
-    return TRUE;
-}
-*/
-/* #############################################################################################################*/
-
 
 pileVar environnement; /* pile des variables pour la vérification contextuelles*/
 extern classeP classes;
 extern objectP objets;
 
+ /* Initialise la pile */
 void initPile(){
     environnement.sommet = NIL(elmtVar);
     environnement.taille = 0;
 }
 
+/* Empile un element de pile ayant pour VarDecl decl */
 void empiler(VarDeclP decl){
     elmtVarP elem = NEW(1, elmtVar);
     elem->var = decl;
@@ -58,6 +29,7 @@ void empiler(VarDeclP decl){
     environnement.taille += 1; 
 }
 
+/* Dépile le sommet de la pile d'environnement */
 void depiler(){
     elmtVarP temp = environnement.sommet;
     environnement.sommet = environnement.sommet->next;
@@ -65,6 +37,7 @@ void depiler(){
     free(temp);
 }
 
+/* Fait les empilements nécessaires pour gérer la portée des variables dans un bloc */
 void empilerBloc(VarDeclP listeChamp){
     VarDeclP declActuel = listeChamp;
     empiler(NIL(VarDecl));
@@ -74,6 +47,7 @@ void empilerBloc(VarDeclP listeChamp){
     }
 }
 
+/* Fait les dépilements nécessaires pour gérer la portée des variables dans un bloc */
 void depilerBloc(){
     elmtVarP elemActuel = environnement.sommet;
     while(elemActuel->next){
@@ -84,9 +58,8 @@ void depilerBloc(){
 }
 
 
-/* IL SE PEUT QUE LES 'env' SOIENT INUTILES */
+/* Fonction principale de l'analyse de portée */
 void analysePortee (TreeP corps){
-    /*printf("Etiquette %s \n", recupEtiquette(corps->op));*/
 	switch(corps->op){
 		case EADD : 
         case ESUB :
@@ -105,28 +78,21 @@ void analysePortee (TreeP corps){
         case LARG :
         case LINST :
 
-            printf("%s 0\n", recupEtiquette(corps->op));
         	analysePortee(getChild(corps, 0));
-            printf("%s 1\n", recupEtiquette(corps->op));
             analysePortee(getChild(corps, 1));
         	break;
 
         case ESEL : 
-        case EDOT :
         case LSEL :
         case ESELDOT :
         case EADDSOLO : 
         case ESUBSOLO :
-            printf("%s\n", recupEtiquette(corps->op));
             analysePortee(getChild(corps, 0));
             break;
 
         case ITE :
-            printf("%s 0\n", recupEtiquette(corps->op));
             analysePortee(getChild(corps, 0));
-            printf("%s 1\n", recupEtiquette(corps->op));
             analysePortee(getChild(corps, 1));
-            printf("%s 2\n", recupEtiquette(corps->op));
             analysePortee(getChild(corps, 2));
             break;
 
@@ -134,7 +100,6 @@ void analysePortee (TreeP corps){
         case ENEW :
         case EEXTND : 
         	if(!verifClass(getChildStr(corps, 0))) printf("ClassId introuvable : %s \n", getChildStr(corps, 0));
-            printf("%s\n", recupEtiquette(corps->op));
             analysePortee(getChild(corps, 1));
         	break;
 
@@ -145,7 +110,6 @@ void analysePortee (TreeP corps){
              char* id = getChildStr(getChild(corps, 0), 0);
              /* TODO le fils gauche c'est pas un clasId donc c'est pas un verifClass qu'il faut faire */
             if(!verifClass(id)) printf("Id introuvable : %s \n", id);
-            printf("%s\n", recupEtiquette(corps->op));
 
             /* ici c'est un ListArgumentOpt donc peut valoir Nil(Tree) */
             if (getChild(corps, 1)) analysePortee(getChild(corps, 1));
@@ -167,15 +131,11 @@ void analysePortee (TreeP corps){
             break;
 
         case EBLOC :
-            printf("%s\n", recupEtiquette(corps->op)); 
             if(getChild(corps, 1)){
-                printf("#### Empilage Bloc\n");
-                empilerBloc(getChild(corps, 0));
+                empilerBloc((VarDeclP)getChild(corps, 0)); /* On a une fonction nommée getChildDecl() qui a la même utilité que getChild mais renvoie de manière "propre" un fils de type VarDeclP. Cependant, l'utiliser ici nous donne une Segmentation Fault inattendue dont la source n'est pas de notre ressort */
 
-                printf("#### Bloc\n");
                 analysePortee(getChild(corps, 1));
 
-                printf("#### Depilage Bloc\n");
                 depilerBloc();
             }
             else{
@@ -184,29 +144,17 @@ void analysePortee (TreeP corps){
 
             break;
 
-        /*case ECLASS : break; 
-        case EOBJ : break; TODO traitement à part : pour chaque classe et objet, faire l'analyse sur le corps des méthodes et expressions des vardecl */
+        case EDOT :
+            if (!verifDot(getChild(corps,0))) printf("Appel à une méthode inconnue (Opération DOT)\n");
+            break;
 
-        /*
-        case ECLASS : break; unused 
-        case LCHAMP : break;
-        case LPARAM : break; unused 
-        case LMETH : break;
-        case CHMP : break;online
-        case EEXPR : break;
-        case EARG : break;
-        case EVAR : break;
-        case EPAR : break;
-        case EMETHOD : break;
-        case EPROG : break;
-         unused */
         default :
             printf("Etiquette non prise en compte ou non reconnue : %s \n", recupEtiquette(corps->op)); 
             break;
 	}
 }
 
-/* return un truc qui peut faire peter la fonction analyse */
+/* Renvoie true si un VarDecl ayant pour nom id existe */
 bool verifId(char* id){
 	elmtVarP elemActuel = environnement.sommet;
     while (elemActuel->var){
@@ -216,6 +164,7 @@ bool verifId(char* id){
     return FALSE;
 }
 
+/* Renvoie true si une classe ayant pour nom nomClasse existe */
 bool verifClass(char* nomClasse){
     classeP classeActuelle = classes;
     while (classeActuelle){
@@ -225,6 +174,7 @@ bool verifClass(char* nomClasse){
     return FALSE;
 }
 
+/* Renvoie true si la classe a une methode ayant pour nom nomMethode */
 bool verifMethodeDansClasse(classeP class, char* nomMethode){
     methodP methActuelle = class->lmethodes;
     while (methActuelle){
@@ -234,6 +184,7 @@ bool verifMethodeDansClasse(classeP class, char* nomMethode){
     return FALSE;
 }
 
+/* Renvoie true si la classe a un champ ayant pour nom nomChamp */
 bool verifChampDansClasse(classeP class, char* nomChamp){
     VarDeclP chpActuel = class->attributs;
     while (chpActuel){
@@ -243,25 +194,33 @@ bool verifChampDansClasse(classeP class, char* nomChamp){
     return FALSE;       
 }
 
-
-/* Pour gérer l'utilisation récursive du DOT */
-/*classeP decapsulageClasse(TreeP listeSel){
-    switch(listeSel->op){
-
-        case CLASS : 
-            return idToClass(getChildStr(listeSel, 0));
+/* Parcours l'arbre jusqu'à tomber sur un Id */
+char* getId(TreeP arbre){
+    int i = 0;
+    char* id = NEW(1, char);
+    switch(arbre->op){
+        case EID :
+            return getChildStr(arbre, 0);
             break;
-            
-        case LISTDOT :
-        case ESELDOT :
-        case ELISTSEL :
-
-
-        case LSEL :
-        case ESEL :
-            return decapsulageClasse(getChild(listeSel, 0));
-            break;
-
+        default :
+            if (arbre->nbChildren > 0){
+                for (i = 0; i < arbre->nbChildren; i++){
+                    id = getId(getChild(arbre, i));
+                    if (id) return id;
+                }
+                return NIL(char);   
+            }
+            else return NIL(char);
     }
-    return Nil(classe);
-}*/
+}
+
+/* Fait les vérifications nécésaires pour un arbre dont l'étiquette est EDOT */
+bool verifDot(TreeP sel){
+
+    VarDeclP var = idToDecl(getId(getChild(sel, 0)));
+    classeP cl = var->type;
+    char* id = getId(getChild(sel, 1));
+    if (verifChampDansClasse(cl, id)) return TRUE;
+    else return verifMethodeDansClasse(cl, id);
+}
+

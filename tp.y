@@ -65,7 +65,7 @@ BlocOpt : Bloc  {$$ = $1;}
 ;
 
 Bloc: '{' ListInstructionsOpt '}'           { $$ = makeTree(EBLOC, 2, $2, NIL(Tree)); }
-| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(EBLOC, 2, $2, $4); }
+| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(EBLOC, 2, $2, $4); attributionType($2); }
 ;
 
 ListInstructionsOpt : ListInstructions  {$$ = $1;}
