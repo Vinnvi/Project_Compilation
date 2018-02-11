@@ -13,8 +13,10 @@
 %type<ClasseP> Classe
 /* Pointeur vers objet (objectP) */
 %type<ObjetP> Objet
+
 /* Pointeur vers Tree */
 %type<pT> ObjetouClasse ListInstructions ListInstructionsOpt Instruction InstIfElse BlocOpt Bloc   DeclExpressionOpt Expression ListSelection Selection SelWithClassID Operation Message ThisSelect DefClasseObjetOpt DefClasseObjet ArgumentOuCible Instanciation Extends ExtendsOpt ListArgumentsOpt ListArguments CorpsClasse
+
 /* Pointeur vers VarDecl */
 %type<pV> Parametre ParametreDef Champ ListChamp ListChampOpt  ListParametresDef ListParametreOpt ListParametres
 
@@ -47,6 +49,7 @@ DefClasseObjetOpt : DefClasseObjet   {$$ = $1;}
 ;
 
 DefClasseObjet : ObjetouClasse DefClasseObjet   {$$ = makeTree(LCLASS, 2, $1, $2);}
+
 | ObjetouClasse                                 {$$ = makeTree(LOBJET, 1, $1);}
 ;
 
@@ -118,7 +121,8 @@ ListMethode : Methode ListMethode   {$$ = $1; $1->next = $2;}
 ;
 
 Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression  { $$ = makeMethod($1, $3, $5, $8, $10); }
-|  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS Bloc        { $$ = makeMethod($1, $3, $5, $7, $9); }
+
+|  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS Bloc       { $$ = makeMethod($1, $3, $5, $7, $9); }
 ;
 
 NomClasseOpt : ':' ClassId  {$$ = $2;}
@@ -149,7 +153,7 @@ VarOpt: VAR     {$$ = TRUE;}
 |               {$$ = FALSE;}
 ;
 
-DeclExpressionOpt : AFF Expression      {$$ = makeTree(EAFF, 1, $2);}
+DeclExpressionOpt : AFF Expression      {$$ = makeTree(EAFFDECL, 1, $2);}
 |                                       {$$ = NIL(Tree);}
 ;
 
@@ -172,11 +176,11 @@ ArgumentOuCible: ListSelection  {$$ = makeTree(EDOT,1,$1);}
 ;
 
 ThisSelect : THIS DOT ListSelection             { $$ = makeTree(LISTDOT, 2, $1, $3); }
-| THIS DOT Selection                            { $$ = makeTree(EDOT, 2, $1, $3); }
+| THIS DOT Selection                            { $$ = makeTree(ESELDOT, 2, $1, $3); }
 | THIS                                          { $$ = makeLeafStr(ETHIS, "this"); }
 ;
 
-ListSelection : SelWithClassID DOT Selection    {$$ = makeTree(EDOT, 2, $1, $3);}
+ListSelection : SelWithClassID DOT Selection    {$$ = makeTree(ELISTSEL, 2, $1, $3);}
 ;
 
 SelWithClassID : ListSelection      {$$ = makeTree(LSEL,1,$1);}

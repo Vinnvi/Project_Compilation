@@ -83,6 +83,9 @@ typedef unsigned char bool;
 #define EINST 51
 #define EADDSOLO 52
 #define ESUBSOLO 53
+#define ESELDOT 54
+#define ELISTSEL 55
+#define EAFFDECL 56
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0
@@ -103,10 +106,6 @@ typedef struct _Object object, *objectP;
 typedef struct _Programme prog,*ProgP;
 typedef struct _Tree Tree,*TreeP;
 typedef union _ClasseOuObjet CouO, *CouOP;
-
-/* Pile pour l'analyse de portée */
-typedef struct _elmtVar elmtVar, *ptrVar;
-typedef struct _pileVar pileVar, *ptrPileVar;
 
 /* Adapt as needed. Currently it is simply a list of names ! */
 typedef struct _varDecl {
@@ -202,18 +201,6 @@ struct _Object{
 };
 
 /* ################################ */
-/* Structures de pile pour l'analyse de portée */
-struct _pileVar{
-    ptrVar sommet;
-    int taille;
-};
-
-struct _elmtVar{
-    VarDeclP var;
-    ptrVar next;
-};
-
-/* ################################ */
 
 /* Peut-être inutile */
 union _ClasseOuObjet{
@@ -245,11 +232,17 @@ struct _bloc{
 };
 
 TreeP makeTree(short op, int nbChildren, ...);
+TreeP getChild(TreeP tree, int rank) ;
+void setChild(TreeP tree, int rank, TreeP arg);
 TreeP makeLeafClass(short op, classeP chClasse);
 TreeP makeLeafObjet(short op, objectP chObjet);
 TreeP makeLeafLVar(short op, VarDeclP lvar);
 TreeP makeLeafInt(short op, int val);
 TreeP makeLeafStr(short op, char *str);
+
+char* getChildStr(TreeP tree, int rank);
+VarDeclP getChildDecl(TreeP tree, int rank);
+
 
 
 classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps);

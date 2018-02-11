@@ -10,38 +10,64 @@ START
 ---- DÃ©finition du champ w 
 ---- DÃ©finition du champ w2 
 ---- DÃ©finition du champ w3 
--- Definition de la methode printAll
+---- Definition de la methode printAll
 Void_printAll: NOP
--- Appel de fonction p01
-PUSHN 1
-PUSHA p01
-CALL
-POPN 2
--- Definition de la methode print
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+WRITES
+PUSHS "\n"
+WRITES
+---- Definition de la methode print
 Void_print: NOP
--- Appel de fonction €,1
-PUSHN 1
-PUSHA €,1
-CALL
-POPN 2
--- Definition de la methode setName
+WRITES
+---- Definition de la methode setName
 Void_setName: NOP
 PUSHL -1
--- Appel de fonction Ð)1
-PUSHN 1
-PUSHA Ð)1
-CALL
-POPN 2
--- Definition de la methode getz
+-- Instruction avec affectation
+ALLOC 1
+DUPN 1
+---- Definition de la methode getz
 Void_getz: NOP
--- Appel de fonction 
-PUSHN 1
-PUSHA 
-CALL
-POPN 2
--- Definition de la methode gety
+-- Instruction avec affectation
+ALLOC 1
+DUPN 1
+Variable result, quelle adresse renvoyer?
+PUSHG addr(result)(-1)
+STORE 0
+---- Definition de la methode gety
 Void_gety: NOP
--- Definition de la methode getx
+---- Definition de la methode getx
 Void_getx: NOP
 ---------- Fin CorpsClasse
 ---------------------------- Fin Classe
@@ -75,15 +101,5 @@ DUPN 1
 PUSHI 3
 STORE 0
 STORE 0
--- Appel de fonction printAll
-PUSHN 1
-PUSHA printAll
-CALL
-POPN 2
--- Appel de fonction printAll
-PUSHN 1
-PUSHA printAll
-CALL
-POPN 2
 ---------------------------- FIN Bloc Principal
 

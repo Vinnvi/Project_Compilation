@@ -7,6 +7,7 @@
 #include "tp.h"
 #include "code.h"
 #include "tp_y.h"
+#include "verif.h"
 
 extern int yyparse();
 extern int yylineno;
@@ -33,7 +34,7 @@ FILE *out; /* fichier de sortie pour le code engendre */
 classeP classes = NIL(classe); /* liste des classes*/
 objectP objets = NIL(object); /*liste des objets */
 methodP methodes = NIL(method); /*liste des objets */
-pileVar pileVariables; /* pile des variables pour la vérification contextuelles*/
+extern pileVar environnement; /* pile des variables pour la vérification contextuelles*/
 methodP methodesTemp = NIL(method);
 
 int indexTab = 0;
@@ -194,6 +195,23 @@ void setChild(TreeP tree, int rank, TreeP arg) {
   tree->u.children[rank] = arg;
 }
 
+/* Retourne le rank-ieme fils d'un arbre, cense etre une feuille string*/
+char* getChildStr(TreeP tree, int rank) {
+  if (tree->nbChildren < rank -1) {
+    fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
+    abort(); /* plante le programme en cas de rang incorrect */
+  }
+  return tree->u.str;
+}
+
+VarDeclP getChildDecl(TreeP tree, int rank){
+  if (tree->nbChildren < rank -1) {
+    fprintf(stderr, "Incorrect rank in getChild: %d\n", rank);
+    abort(); /* plante le programme en cas de rang incorrect */
+  }
+  return tree->u.lvar;
+}
+
 TreeP makeLeafClass(short op, classeP chClasse) {
   TreeP tree = makeNode(0, op);
   tree->u.lclass = chClasse;
@@ -288,7 +306,6 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
 
 /* Créateur de structure methode */
 methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP, TreeP bodyP) {
-    printf("ICI on a eu %s \n",nameP);
     methodP nouvMethode = NEW(1, method);
 	nouvMethode->redef = redefP;
 	nouvMethode->name = nameP;
@@ -540,13 +557,14 @@ classeP getPointeurClasse(char* s){
 /* Prend une chaine de caractère et retourne un ptr vers la structure VarDecl ayant ce nom */
 VarDeclP idToDecl(char* id){
   int compte = 0;
-  if (!pileVariables.sommet){
+  if (!environnement.sommet){
     printf("Pas de variables");
     return NIL(VarDecl);
   }
-  ptrVar elemActuel = pileVariables.sommet;
+  elmtVarP elemActuel = environnement.sommet;
 
-  while (compte < pileVariables.taille){
+  while (compte < environnement.taille){
+
 		if( strcmp(elemActuel->var->name, id) == 0) return elemActuel->var;
 		elemActuel = elemActuel->next;
 		compte += 1;
