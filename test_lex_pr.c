@@ -150,10 +150,17 @@ int main(int argc, char **argv) {
       /* ici on suppose qu'on a recupere la valeur de la constante, pas sa
        * representation sous forme de chaine de caracteres.
        */
+<<<<<<< HEAD
       if (verbose)  printf("Constante:\t\t%d\n", yylval.I);
       break;
     case Cstr:
       if (verbose)  printf("Chaine:\t\t\t'%s'\n", yylval.S);
+=======
+      if (verbose) printf("Constante:\t\t%d\n", yylval.I);
+      break;
+    case Cstr:
+      if (verbose) printf("Chaine:\t\t\t'%s'\n", yylval.S);
+>>>>>>> analysePorteeSimple
       break;
     case IS: 
     case CLASS:

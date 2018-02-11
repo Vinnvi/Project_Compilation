@@ -20,11 +20,19 @@ struct _elmtVar{
 void initPile();
 void empiler(VarDeclP decl);
 void depiler();
+void empilerBloc();
 void depilerBloc();
 
-void analysePortee (TreeP corps, pileVar env);
-bool verifId(char* id, pileVar env);
-bool verifClass(char* nomClasse, pileVar env);
+void analysePortee (TreeP corps);
+bool verifId(char* id);
+bool verifClass(char* nomClasse);
+
+bool verifMethodeDansClasse(classeP class, char* nomMethode);
+bool verifChampDansClasse(classeP class, char* nomChamp);
+classeP decapsulageClasse(TreeP listeSel);
+char* getId(TreeP arbre);
+bool verifDot(TreeP sel);
+
 
 bool verifSurcharges(classeP c);
 bool verifSurcharges2(classeP maClasse,classeP maClasse2);

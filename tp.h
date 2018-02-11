@@ -31,7 +31,6 @@ typedef unsigned char bool;
 #define LE	4
 #define GT	5
 #define GE	6
-
 #define EADD 	7
 #define ESUB 	8
 #define EMUL 	9
@@ -43,14 +42,10 @@ typedef unsigned char bool;
 #define EEXTND  15
 #define ETHIS   16
 #define ERETURN 17
-
 #define CSTE 	18
 #define CSTR 	19
 #define EID      20
 #define ECLASS  21
-/* faire des étiquettes genre TYPE? CAST? et y attribuer des règles genre QQCHS -> Id dans le cas où on fait des casts ou ce genre de choses*/
-
-
 #define CAST 22
 #define ITE 23
 #define LCHAMP 24
@@ -270,5 +265,6 @@ void addMethodeTemp(methodP m);
 void addVarTemp(VarDeclP v);
 void associationClasse(classeP cl);
 void associationObjet(objectP obj);
+void attributionType(VarDeclP listeVar);
 void initClasses();
 VarDeclP getChildList(TreeP tree, int rank);

@@ -65,7 +65,7 @@ BlocOpt : Bloc  {$$ = $1;}
 ;
 
 Bloc: '{' ListInstructionsOpt '}'           { $$ = makeTree(EBLOC, 2, $2, NIL(Tree)); }
-| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(EBLOC, 2, $2, $4); }
+| '{' ListChamp IS ListInstructions '}'     { $$ = makeTree(EBLOC, 2, $2, $4); attributionType($2); }
 ;
 
 ListInstructionsOpt : ListInstructions  {$$ = $1;}
@@ -83,7 +83,7 @@ Instruction : Expression ';'                        {$$ = $1;}
 ;
 
 InstIfElse : Instruction    {$$ = $1;}
-| Bloc                      {$$ = makeTree(EBLOC, 1, $1);}
+| Bloc                      {$$ = $1;}
 ;
 
 Expression: Instanciation   {$$ = makeTree(EINST, 1, $1);}
@@ -177,7 +177,7 @@ ArgumentOuCible: ListSelection  {$$ = makeTree(EDOT,1,$1);}
 
 ThisSelect : THIS DOT ListSelection             { $$ = makeTree(LISTDOT, 2, $1, $3); }
 | THIS DOT Selection                            { $$ = makeTree(ESELDOT, 2, $1, $3); }
-| THIS                                          { $$ = makeLeafStr(ETHIS, "this"); }
+| THIS                                          { $$ = makeLeafStr(ETHIS, "this");/* les THIS ne peuvent apparaitre que dans les méthodes*/ }
 ;
 
 ListSelection : SelWithClassID DOT Selection    {$$ = makeTree(ELISTSEL, 2, $1, $3);}
@@ -185,7 +185,7 @@ ListSelection : SelWithClassID DOT Selection    {$$ = makeTree(ELISTSEL, 2, $1, 
 
 SelWithClassID : ListSelection      {$$ = makeTree(LSEL,1,$1);}
 | Selection                         {$$ = makeTree(ESEL,1,$1);}
-| ClassId                           {$$ = makeLeafStr(CLASS, $1);}
+| ClassId                           {$$ = makeLeafStr(EIDCLASS, $1);}
 ;
 
 Selection : Id                  {$$ = makeLeafStr(EID, $1);}
