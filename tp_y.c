@@ -1422,7 +1422,7 @@ yyreduce:
 
   case 13:
 #line 68 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeTree(EBLOC, 2, (yyvsp[-3].pV), (yyvsp[-1].pT)); }
+    { (yyval.pT) = makeTree(EBLOC, 2, (yyvsp[-3].pV), (yyvsp[-1].pT)); attributionType((yyvsp[-3].pV)); }
 #line 1427 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1482,7 +1482,7 @@ yyreduce:
 
   case 23:
 #line 86 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(EBLOC, 1, (yyvsp[0].pT));}
+    {(yyval.pT) = (yyvsp[0].pT);}
 #line 1487 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1789,7 +1789,7 @@ yyreduce:
 
   case 74:
 #line 180 "tp.y" /* yacc.c:1646  */
-    { (yyval.pT) = makeLeafStr(ETHIS, "this"); }
+    { (yyval.pT) = makeLeafStr(ETHIS, "this");/* les THIS ne peuvent apparaitre que dans les méthodes*/ }
 #line 1794 "tp_y.c" /* yacc.c:1646  */
     break;
 
@@ -1813,7 +1813,7 @@ yyreduce:
 
   case 78:
 #line 188 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeLeafStr(CLASS, (yyvsp[0].S));}
+    {(yyval.pT) = makeLeafStr(EIDCLASS, (yyvsp[0].S));}
 #line 1818 "tp_y.c" /* yacc.c:1646  */
     break;
 
