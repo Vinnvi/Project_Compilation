@@ -133,7 +133,7 @@ void analysePortee (TreeP corps){
         case CAST :
         case ENEW :
         case EEXTND : 
-        	if(!verifClass(getChildStr(corps, 0))) printf("Id introuvable : %s \n", getChildStr(corps, 0));
+        	if(!verifClass(getChildStr(corps, 0))) printf("ClassId introuvable : %s \n", getChildStr(corps, 0));
             printf("%s\n", recupEtiquette(corps->op));
             analysePortee(getChild(corps, 1));
         	break;
@@ -162,7 +162,9 @@ void analysePortee (TreeP corps){
         	if(!verifId(getChildStr(corps, 0))) printf("Id introuvable : %s \n", getChildStr(corps, 0));
         	break;
 
-
+        case EIDCLASS :
+            if(!verifClass(getChildStr(corps, 0))) printf("ClassId introuvable : %s \n", getChildStr(corps, 0));
+            break;
 
         case EBLOC :
             printf("%s\n", recupEtiquette(corps->op)); 
@@ -190,15 +192,14 @@ void analysePortee (TreeP corps){
         case LCHAMP : break;
         case LPARAM : break; unused 
         case LMETH : break;
-        case CHMP : break;
+        case CHMP : break;online
         case EEXPR : break;
         case EARG : break;
         case EVAR : break;
         case EPAR : break;
         case EMETHOD : break;
         case EPROG : break;
-         break;
-        case EIDCLASS : break; unused */
+         unused */
         default :
             printf("Etiquette non prise en compte ou non reconnue : %s \n", recupEtiquette(corps->op)); 
             break;
@@ -224,3 +225,43 @@ bool verifClass(char* nomClasse){
     return FALSE;
 }
 
+bool verifMethodeDansClasse(classeP class, char* nomMethode){
+    methodP methActuelle = class->lmethodes;
+    while (methActuelle){
+        if(strcmp(methActuelle->name, nomMethode) == 0) return TRUE;
+        methActuelle = methActuelle->next;
+    }
+    return FALSE;
+}
+
+bool verifChampDansClasse(classeP class, char* nomChamp){
+    VarDeclP chpActuel = class->attributs;
+    while (chpActuel){
+        if(strcmp(chpActuel->name, nomChamp) == 0) return TRUE;
+        chpActuel = chpActuel->next;
+    }
+    return FALSE;       
+}
+
+
+/* Pour gérer l'utilisation récursive du DOT */
+/*classeP decapsulageClasse(TreeP listeSel){
+    switch(listeSel->op){
+
+        case CLASS : 
+            return idToClass(getChildStr(listeSel, 0));
+            break;
+            
+        case LISTDOT :
+        case ESELDOT :
+        case ELISTSEL :
+
+
+        case LSEL :
+        case ESEL :
+            return decapsulageClasse(getChild(listeSel, 0));
+            break;
+
+    }
+    return Nil(classe);
+}*/

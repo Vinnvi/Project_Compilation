@@ -245,7 +245,7 @@ is
   p2.print();
   o.clone().print();
   o.clone().move(54, 36).print(true);
-  O.allClones();
+  o.allClones();
   /* Ne doit pas compiler car clone() renvoie statiquement un Point alors
    * que o est declare comme PointColore
    * o := o.clone();

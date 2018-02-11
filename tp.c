@@ -686,8 +686,8 @@ char* recupEtiquette(short op){
         case 54 : return "ESELDOT"; 
 		case 55 : return "ELISTSEL";
 		case 56 : return "EAFFDECL";
-
         default : return "ERREUR";
+
     }
 
 }
