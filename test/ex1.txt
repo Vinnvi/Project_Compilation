@@ -192,7 +192,7 @@ object Test is {
 }
 
 /* des exemples ad-hoc qui montrent d'autres aspects ... */
-class A() extends A2() is {
+class A() is {
   var v : Integer := 1;
   def f(x : Void) is { "A::f()\"n".print(); }
   def h(x: Integer, y : Integer := 2) : Integer := x + y

@@ -35,7 +35,7 @@ objectP objets = NIL(object); /*liste des objets */
 methodP methodes = NIL(method); /*liste des objets */
 pileVar pileVariables; /* pile des variables pour la vérification contextuelles*/
 methodP methodesTemp = NIL(method);
-
+VarDeclP variables = NIL(VarDecl);
 int indexTab = 0;
 methodP tableau[50];
 
@@ -238,19 +238,15 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     affichageObjets();
     affichageMethodes();
 
+    printf("%s\n",typeAttribut("hasClone", idToClass("Point")));
     if(verifSurcharges(classes)){
         printf("Verification surcharges reussie !\n");
-    }
-    else{
-        printf("блять 1\n");
     }
 
     if(heritageSansCircuit(classes)){
       printf("Verification graphe heritage reussie !\n");
     }
-    else{
-      printf("блять 2\n");
-    }
+
     FILE *fileToWrite;
     fileToWrite = fopen("test.txt", "w+");
     lancerGeneration(defClasses,fileToWrite);
@@ -307,6 +303,7 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	nouvMethode->param = paramP;
 	nouvMethode->body = bodyP;
   if (!classes) initClasses();
+  nouvMethode->nomTypeRetour = typeRetourP;
   nouvMethode->typeRetour = idToClass(typeRetourP);
 	nouvMethode->body = bodyP;
     /* TODO gérer les overrides */
@@ -429,6 +426,11 @@ void addMethodeTemp(methodP m){
     methodesTemp = m;
 }
 
+void addAttribut(VarDeclP v){
+    v->next = variables;
+    variables = v;
+}
+
 /* Fonction de test */
 void affichageClasses(){
     classeP listClass = NEW(1, classe);
@@ -446,6 +448,13 @@ void affichageClasses(){
         while(params != NIL(VarDecl)){
             printf(" %s", params->name);
             params = params->next;
+        }
+        printf("| liste des attributs : ");
+        VarDeclP attributs = NEW(1,VarDecl);
+        attributs = listClass->attributs;
+        while(attributs != NIL(VarDecl)){
+            printf(" %s", attributs->name);
+            attributs = attributs->next;
         }
         printf("| liste des methodes : ");
         methodP methodes = NEW(1,method);

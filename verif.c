@@ -6,7 +6,6 @@
 #include "verif.h"
 
 extern char *strdup(const char*);
-
 extern void setError(int code);
 
 bool verifSurcharges(classeP c){
@@ -160,45 +159,49 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
         case EADD:
         {
             char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
-            char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
+            char* sousExp2 = typeExpr(getChild(arbreExpression,1),classe);
             if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
                return sousExp1;
             }
             else{
-                return NULL;
+              fprintf(stderr, "Erreur : typage Incorrect : addition impossible entre un %s et un %s\n",sousExp1,sousExp2);
+              exit(TYPE_ERROR);
             }
         }
         case EMUL:
         {
             char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
-            char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
+            char* sousExp2 = typeExpr(getChild(arbreExpression,1),classe);
             if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
                return sousExp1;
             }
             else{
-                return NULL;
+              fprintf(stderr, "Erreur : typage Incorrect : multiplication impossible entre un %s et un %s\n",sousExp1,sousExp2);
+              exit(TYPE_ERROR);
             }
         }
         case EQUOT:
         {
             char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
-            char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
+            char* sousExp2 = typeExpr(getChild(arbreExpression,1),classe);
             if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
                return sousExp1;
             }
             else{
-                return NULL;
+              fprintf(stderr, "Erreur : typage Incorrect : division impossible entre un %s et un %s\n",sousExp1,sousExp2);
+              exit(TYPE_ERROR);
             }
         }
         case ESUB:
         {
             char* sousExp1 = typeExpr(getChild(arbreExpression,0),classe);
-            char* sousExp2 = typeExpr(getChild(arbreExpression,0),classe);
+            char* sousExp2 = typeExpr(getChild(arbreExpression,1),classe);
             if(strcmp(sousExp1,sousExp2) == 0 && strcmp(sousExp1,"Integer")==0 && strcmp(sousExp2,"Integer") == 0 ){
                return sousExp1;
             }
             else{
-                return NULL;
+                fprintf(stderr, "Erreur : typage Incorrect : soustraction impossible entre un %s et un %s\n",sousExp1,sousExp2);
+                exit(TYPE_ERROR);
             }
         }
         case ESUBSOLO :
@@ -208,7 +211,8 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
              return sousExp1;
           }
           else{
-              return NULL;
+            fprintf(stderr, "Erreur : typage Incorrect : %s au lieu de Integer\n",sousExp1);
+            exit(TYPE_ERROR);
           }
         }
 
@@ -219,7 +223,8 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
              return sousExp1;
           }
           else{
-              return NULL;
+            fprintf(stderr, "Erreur : typage Incorrect : %s au lieu de Integer\n",sousExp1);
+            exit(TYPE_ERROR);
           }
         }
         case EREST:
@@ -230,7 +235,8 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
              return sousExp1;
           }
           else{
-              return NULL;
+            fprintf(stderr, "Erreur : typage Incorrect : %s au lieu de Integer\n",sousExp1);
+            exit(TYPE_ERROR);
           }
         }
         case EINST: /*instantiation*/
@@ -248,7 +254,8 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
              return sousExp1;
           }
           else{
-              return NULL;
+            fprintf(stderr, "Erreur : typage Incorrect :\n");
+            exit(TYPE_ERROR);
           }
         }
         /* Partie arguments ou cible */
@@ -308,9 +315,10 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
           }
         }
         /*Partie selection( pour la récursivité) */
-        case EID : /*oummar, pour savoir sur quoi ça pointe  :-( */
+        case EID :
         {
-
+          char* typeAtt = typeAttribut(getChild(arbreExpression,0)->u.str,classe);
+          return typeAtt;
         }
         case CSTR :
         {
@@ -328,26 +336,31 @@ char* typeExpr(TreeP arbreExpression,classeP classe){
           char* typeCast = getChild(arbreExpression,0)->u.str;
           if(verificationCast(typeExpressionCast,typeCast)) /* On verifie le lien entre les 2 classes*/
             return typeCast;
-          else
-            return false;
+          else{
+            fprintf(stderr, "Erreur : cast Incorrect : %s doit être une fille de %s\n",typeExpressionCast,typeCast);
+            exit(TYPE_ERROR);
+          }
         }
 
         case MSG:
         {
-          /* recupere l'id par la portee*/
-
+          /* On recherche d'abord le type de la fonction */
+          char* typeMsg = typeFonction(getChild(arbreExpression,0)->u.str,classe);
+          return typeMsg;
         }
 
-
         default:
-          return NULL;
-
+        {
+          fprintf(stderr, "Erreur : typage Incorrect \n");
+          exit(TYPE_ERROR);
+        }
 
     }
-    return NULL;
+    fprintf(stderr, "Erreur : typage Incorrect\n");
+    exit(TYPE_ERROR);
 }
 
-/* verifier la declaration d'un champ */
+/* verifier la declaration d'un champ (verifier que le type de la decl correspond au type qu'on donne a var) */
 bool verificationChamp(TreeP arbreExpression,classeP classe){
   char* typeVar = getChild(arbreExpression,1)->u.str;
   TreeP exprOpt = getChild(arbreExpression,2);
@@ -370,7 +383,7 @@ bool verificationChamp(TreeP arbreExpression,classeP classe){
   return false;
 }
 
-/* s'assurer qu'il y a bien un lien entre la mere et la fille */
+/* s'assurer qu'il y a bien un lien entre la mere et la fille pour la verification de cast (fonctionnal) */
 bool verificationCast(char* fille,char* mere){
   classeP classeFille = idToClass(fille);
   classeP classeMere  = idToClass(mere);
@@ -394,4 +407,48 @@ bool verificationCast(char* fille,char* mere){
     }
   }
   return false;
+}
+
+/*renvoie le type d'une fonction*/
+char* typeFonction(char* name,classeP maClasse){
+  methodP methodes = maClasse->lmethodes;
+  while(methodes != NIL(method)){
+
+    if(strcmp(methodes->name,name) == 0){ /* on a trouve la methode*/
+      return methodes->nomTypeRetour;
+    }
+    else{
+      methodes = methodes->next;
+    }
+  }
+  /*On a pas trouve la methode dans la classe courante*/
+  if(maClasse->super != NIL(classe) ){
+    return typeFonction(name,maClasse->super);
+  }
+  else{
+    fprintf(stderr, "Erreur : typage Fonction Incorrect\n");
+    exit(TYPE_ERROR);
+  }
+}
+
+
+char* typeAttribut(char* name,classeP maClasse){
+  VarDeclP attributs = maClasse->attributs;
+  while(attributs != NIL(VarDecl)){
+
+    if(strcmp(attributs->name,name) == 0){ /* on a trouve la methode*/
+      return attributs->nomType;
+    }
+    else{
+      attributs = attributs->next;
+    }
+  }
+  /*On a pas trouve la methode dans la classe courante*/
+  if(maClasse->super != NIL(classe) ){
+    return typeFonction(name,maClasse->super);
+  }
+  else{
+    fprintf(stderr, "Erreur : typage Fonction Incorrect\n");
+    exit(TYPE_ERROR);
+  }
 }

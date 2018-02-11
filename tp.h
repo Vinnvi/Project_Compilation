@@ -289,3 +289,5 @@ bool heritageSansCircuit(classeP classes);
 VarDeclP getChildList(TreeP tree, int rank);
 bool verificationCast(char* fille,char* mere);
 bool verificationChamp(TreeP arbreExpression,classeP classe);
+char* typeFonction(char* name,classeP maClasse);
+char* typeAttribut(char* name,classeP maClasse);
