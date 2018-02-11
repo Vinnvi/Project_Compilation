@@ -35,11 +35,11 @@ class Point(var x: Integer, var y: Integer := 0, var name: String := "")
       if verbose then { this.print(); } else {}
   }
 
-  def print(verbose : Integer := 0 ) is { 
-       if verbose then "Inside Point::print".println(); else { } 
+  def print(verbose : Integer := 0 ) is {
+       if verbose then "Inside Point::print".println(); else { }
        /* Exemples avec l'operateur & de concatenation de chaines*/
        name.print();
-      ( "= (" & x.toString() & ", " & y.toString() & ")" ).println(); 
+      ( "= (" & x.toString() & ", " & y.toString() & ")" ).println();
   }
 
   /* par defaut, on ajoute un ' au nom de l'objet. On pourra le changer
@@ -194,16 +194,16 @@ object Test is {
 /* des exemples ad-hoc qui montrent d'autres aspects ... */
 class A() is {
   var v : Integer := 1;
-  def f() is { "A::f()\"n".print(); }
+  def f(x : Void) is { "A::f()\"n".print(); }
   def h(x: Integer, y : Integer := 2) : Integer := x + y
 }
 
 class A2() extends A() is {
   var v : String := "hello"; /* masque le champ v de la classe A */
 
-  override def f() is { "A2::f()\"n".print(); }
+  override def f(x : Void) is { "A2::f()\"n".print(); }
 
-  def g() is {
+  def g() : Integer is {
       v := "world"; /* par defaut, il s'agit du champ de A2 */
       /* this etant caste en A, le champ v en question est celui de A */
       (A this).v := 1;

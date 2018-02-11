@@ -34,5 +34,5 @@ char* getId(TreeP arbre);
 bool verifDot(TreeP sel);
 
 
-bool verifSurcharges(classeP c);
-bool verifSurcharges2(classeP maClasse,classeP maClasse2);
+/*bool verifSurcharges(classeP c);
+bool verifSurcharges2(classeP maClasse,classeP maClasse2);*/

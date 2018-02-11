@@ -36,7 +36,7 @@ objectP objets = NIL(object); /*liste des objets */
 methodP methodes = NIL(method); /*liste des objets */
 extern pileVar environnement; /* pile des variables pour la vérification contextuelles*/
 methodP methodesTemp = NIL(method);
-
+VarDeclP variables = NIL(VarDecl);
 int indexTab = 0;
 methodP tableau[50];
 
@@ -259,10 +259,19 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     affichageObjets();
     affichageMethodes();
 
+
     printf("Début analyse. Les erreurs s'afficheront ci-dessous.\n");
     analysePortee(root);
     printf("Fin analyse\n");
 
+    printf("%s\n",typeAttribut("hasClone", idToClass("Point")));
+    if(verifSurcharges(classes)){
+        printf("Verification surcharges reussie !\n");
+    }
+
+    if(heritageSansCircuit(classes)){
+      printf("Verification graphe heritage reussie !\n");
+    }
 
     FILE *fileToWrite;
     fileToWrite = fopen("test.txt", "w+");
@@ -320,6 +329,7 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
 	nouvMethode->param = paramP;
 	nouvMethode->body = bodyP;
   if (!classes) initClasses();
+  nouvMethode->nomTypeRetour = typeRetourP;
   nouvMethode->typeRetour = idToClass(typeRetourP);
 	nouvMethode->body = bodyP;
     /* TODO gérer les overrides */
@@ -452,6 +462,11 @@ void addMethodeTemp(methodP m){
     methodesTemp = m;
 }
 
+void addAttribut(VarDeclP v){
+    v->next = variables;
+    variables = v;
+}
+
 /* Fonction de test */
 void affichageClasses(){
     classeP listClass = NEW(1, classe);
@@ -470,11 +485,18 @@ void affichageClasses(){
             printf(" %s", params->name);
             params = params->next;
         }
+        printf("| liste des attributs : ");
+        VarDeclP attributs = NEW(1,VarDecl);
+        attributs = listClass->attributs;
+        while(attributs != NIL(VarDecl)){
+            printf(" %s", attributs->name);
+            attributs = attributs->next;
+        }
         printf("| liste des methodes : ");
         methodP methodes = NEW(1,method);
         methodes = listClass->lmethodes;
         while(methodes != NIL(method)){
-            printf(" %s (%s, %s)", methodes->name, methodes->typeRetour->name, methodes->appartenance.classe->name);
+            printf(" %s (%s, %s) - %d", methodes->name, methodes->typeRetour->name, methodes->appartenance.classe->name,methodes->redef);
             methodes = methodes->next;
         }
         printf("\n");
