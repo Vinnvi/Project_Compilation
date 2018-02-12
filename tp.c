@@ -785,6 +785,6 @@ methodP recupMethodClass(classeP listTemoin, char* idTest)
   {
     return recupMethodClass(check->super, idTest);
   }
-  printf("\n/*******[%s] Methode introuvable *******/\n ", idTest);
-  exit(0);
+  fprintf(stderr, "Erreur : Methode introuvable (%s)\n",idTest);
+  exit(PARAM_ERROR);
 }

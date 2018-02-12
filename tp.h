@@ -93,6 +93,7 @@ typedef unsigned char bool;
 #define DECL_ERROR	41	/* scope problem */
 #define TYPE_ERROR	42	/* type checking problem */
 #define OTHER_CONTEXTUAL_ERROR	43 /* replace by something more precise */
+#define PARAM_ERROR 44
 #define EVAL_ERROR	50	/* dubious when writing a compiler ! */
 #define UNEXPECTED	100
 
