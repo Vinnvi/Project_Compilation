@@ -2,6 +2,8 @@
 
 #define TRUE 1
 #define FALSE 0
+#define true 1
+#define false 0
 
 typedef unsigned char bool;
 
@@ -38,7 +40,7 @@ typedef unsigned char bool;
 #define EREST 	11
 #define EAND 	12
 #define EAFF	13
-#define EDOT    14
+#define EDOT  14
 #define EEXTND  15
 #define ETHIS   16
 #define ERETURN 17
@@ -267,4 +269,14 @@ void associationClasse(classeP cl);
 void associationObjet(objectP obj);
 void attributionType(VarDeclP listeVar);
 void initClasses();
+
+/* Partie verifs contextuelles */
+char* typeExpr(TreeP arbreExpression,classeP classe);
+bool verifSurcharges(classeP c);
+bool verifSurcharges2(classeP maClasse);
+bool heritageSansCircuit(classeP classes);
 VarDeclP getChildList(TreeP tree, int rank);
+bool verificationCast(char* fille,char* mere);
+bool verificationChamp(TreeP arbreExpression,classeP classe);
+char* typeFonction(char* name,classeP maClasse);
+char* typeAttribut(char* name,classeP maClasse);

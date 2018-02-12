@@ -10,68 +10,88 @@ START
 ---- Definition du champ w 
 ---- Definition du champ w2 
 ---- Definition du champ w3 
+---- Definition du champ name 
 ---- Definition de la methode printAll
 Void_printAll: NOP
+-- Appel methode toString
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode toString
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode toString
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode toString
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode toString
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode toString
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+-- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
 ---- Definition de la methode print
 Void_print: NOP
+-- Appel methode println
 WRITES
 ---- Definition de la methode setName
 Void_setName: NOP
 PUSHL -1
 -- Instruction avec affectation
 ---- Definition de la methode getz
-Void_getz: NOP
+Integer_getz: NOP
 -- Instruction avec affectation
 Variable result, quelle adresse renvoyer?
 PUSHG addr(result)(-1)
 STORE 0
 ---- Definition de la methode gety
-Void_gety: NOP
+Integer_gety: NOP
 ---- Definition de la methode getx
-Void_getx: NOP
+Integer_getx: NOP
 ---------- Fin CorpsClasse
 ---------------------------- Fin Classe
 
 ---------------------------- DEBUT Bloc Principal
 ---- Définition du champ p1 
 -- Nouvelle Instanciation de type  : Point
-ALLOC 6
+ALLOC 7
 DUPN 1
 -- Parametre Instanciation
 PUSHI 1
@@ -83,7 +103,7 @@ STORE 0
 STORE 0
 ---- Définition du champ p2 
 -- Nouvelle Instanciation de type  : Point
-ALLOC 6
+ALLOC 7
 DUPN 1
 -- Parametre Instanciation
 PUSHI 2
@@ -93,5 +113,16 @@ DUPN 1
 PUSHI 3
 STORE 0
 STORE 0
+-- Appel methode setName
+PUSHS "glob");
+  p1.printAll();
+  p2.printAll();
+}
+PUSHG 0
+PUSHA setName
+CALL
+POPN 0
+-- Appel methode printAll
+-- Appel methode printAll
 ---------------------------- FIN Bloc Principal
 
