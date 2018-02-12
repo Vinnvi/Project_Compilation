@@ -302,9 +302,9 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     nouvClasse->lmethodes = methodesTemp;
     methodesTemp = NIL(method);
 
-	nouvClasse->constructeur = constructeurP;
+	  nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
-	nouvClasse->next = NIL(classe);
+	  nouvClasse->next = NIL(classe);
     nouvClasse->body = corps;
     if (!classes) initClasses();
     addClasse(nouvClasse);
@@ -454,14 +454,13 @@ void addMethodeTemp(methodP m){
 
 /* Fonction de test */
 void affichageClasses(){
-    classeP listClass = NEW(1, classe);
-    listClass = classes;
+    classeP /*listClass = NEW(1, classe);
+    */listClass = classes;
     printf("\n ---Liste des classes--- \n");
     while(listClass != NIL(classe)){
         printf("Nom de classe : %s ",listClass->name);
         if(listClass->super != NULL){
             printf("| Classe mere : %s ",listClass->super->name);
-
         }
         printf("| liste des parametres : ");
         VarDeclP params = NEW(1,VarDecl);
@@ -593,6 +592,7 @@ VarDeclP idToDecl(char* id){
 
 /* Prend une chaine de caractère et retourne un ptr vers la structure classe ayant ce nom */
 classeP idToClass(char* id){
+
   if (!classes){
     initClasses();
   }
@@ -603,7 +603,7 @@ classeP idToClass(char* id){
     if( strcmp(classActuelle->name, id) == 0) return classActuelle;
     classActuelle = classActuelle->next;
   }
-  printf("Classe introuvable : %s", id);
+  printf("Classe introuvable : %s\n", id);
   return NIL(classe);
 }
 
@@ -619,7 +619,7 @@ objectP idToObj(char* id){
     if( strcmp(objetActuel->name, id) == 0) return objetActuel;
     objetActuel = objetActuel->next;
   }
-  printf("Objet introuvable : %s", id);
+  printf("Objet introuvable : %s\n", id);
   return NIL(object);
 }
 
@@ -635,7 +635,7 @@ methodP idToMeth(char* id, methodP lmethodes){
     if( strcmp(methActuelle->name, id) == 0) return methActuelle;
     methActuelle = methActuelle->next;
   }
-  printf("Methode introuvable : %s", id);
+  printf("Methode introuvable : %s\n", id);
   return NIL(method);
 }
 
