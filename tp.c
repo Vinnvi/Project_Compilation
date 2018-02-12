@@ -313,7 +313,10 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
 	nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
 	nouvClasse->next = NIL(classe);
-    nouvClasse->body = corps;
+    if (corps){
+      nouvClasse->body = getChild(corps, 1);
+      nouvClasse->attributs = (VarDeclP) getChild(corps, 0);
+    }
     if (!classes) initClasses();
     addClasse(nouvClasse);
     associationClasse(nouvClasse);
@@ -330,7 +333,6 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
   if (!classes) initClasses();
   nouvMethode->nomTypeRetour = typeRetourP;
   nouvMethode->typeRetour = idToClass(typeRetourP);
-	nouvMethode->body = bodyP;
     /* TODO gérer les overrides */
 	nouvMethode->next = NIL(method);
   addMethode(nouvMethode);
@@ -498,7 +500,7 @@ void affichageClasses(){
             printf(" %s (%s, %s) - %d", methodes->name, methodes->typeRetour->name, methodes->appartenance.classe->name,methodes->redef);
             methodes = methodes->next;
         }
-        printf("\n");
+        printf("\n\n");
         listClass = listClass->next;
     }
 }
@@ -524,7 +526,7 @@ void affichageObjets(){
             printf(" %s (%s, %s)", methodes->name, methodes->typeRetour->name, methodes->appartenance.objet->name);
             methodes = methodes->next;
         }
-        printf("\n");
+        printf("\n\n");
         listObjet = listObjet->next;
 
     }
