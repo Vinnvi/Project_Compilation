@@ -264,7 +264,7 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     analysePortee(root);
     printf("Fin analyse\n");
 
-    printf("%s\n",typeAttribut("hasClone", idToClass("Point")));
+    /* printf("%s\n",typeAttribut("hasClone", idToClass("Point"))); */
     if(verifSurcharges(classes)){
         printf("Verification surcharges reussie !\n");
     }

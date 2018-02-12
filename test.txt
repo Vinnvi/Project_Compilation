@@ -14,63 +14,139 @@ START
 ---- Definition de la methode printAll
 Void_printAll: NOP
 -- Appel methode toString
+PUSHL 1
+PUSHA toString
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode toString
+PUSHL 1
+PUSHA toString
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode toString
+PUSHL 1
+PUSHA toString
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode toString
+PUSHL 1
+PUSHA toString
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode toString
+PUSHL 1
+PUSHA toString
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode toString
+PUSHL 1
+PUSHA toString
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 -- Appel methode print
 WRITES
 PUSHS "\n"
 WRITES
+PUSHL 1
+PUSHA print
+CALL
+POPN 1
 ---- Definition de la methode print
 Void_print: NOP
 -- Appel methode println
 WRITES
+PUSHL 1
+PUSHA println
+CALL
+POPN 1
 ---- Definition de la methode setName
 Void_setName: NOP
 PUSHL -1
@@ -123,6 +199,14 @@ PUSHA setName
 CALL
 POPN 0
 -- Appel methode printAll
+PUSHL 1
+PUSHA printAll
+CALL
+POPN 1
 -- Appel methode printAll
+PUSHL 1
+PUSHA printAll
+CALL
+POPN 1
 ---------------------------- FIN Bloc Principal
 
