@@ -310,14 +310,11 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     nouvClasse->lmethodes = methodesTemp;
     methodesTemp = NIL(method);
 
-
 	nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
-	nouvClasse->next = NIL(classe);
-    if (corps){
-      nouvClasse->body = getChild(corps, 1);
-      nouvClasse->attributs = (VarDeclP) getChild(corps, 0);
-    }
+	 nouvClasse->next = NIL(classe);
+    nouvClasse->body = corps;
+    if (corps) nouvClasse->attributs = (VarDeclP) getChild(corps, 0);
     if (!classes) initClasses();
     addClasse(nouvClasse);
     associationClasse(nouvClasse);
@@ -600,6 +597,10 @@ classeP getPointeurClasse(char* s){
 
 /* Prend une chaine de caractère et retourne un ptr vers la structure VarDecl ayant ce nom */
 VarDeclP idToDecl(char* id){
+  if (!id){
+      printf("Recherche à entrée nulle.\n");
+      abort();
+  } 
   int compte = 0;
   if (!environnement.sommet){
     printf("Pas de variables");
@@ -619,11 +620,10 @@ VarDeclP idToDecl(char* id){
 
 /* Prend une chaine de caractère et retourne un ptr vers la structure classe ayant ce nom */
 classeP idToClass(char* id){
+  if (!id) return idToClass("Void");
   if (!classes){
     initClasses();
   }
-  if (!id) return idToClass("Void");
-
   classeP classActuelle = classes;
   while (classActuelle){
     if( strcmp(classActuelle->name, id) == 0) return classActuelle;
@@ -635,6 +635,10 @@ classeP idToClass(char* id){
 
 /* Prend une chaine de caractère et retourne un ptr la structure object ayant ce nom */
 objectP idToObj(char* id){
+  if (!id){
+      printf("Recherche à entrée nulle.\n");
+      abort();
+  } 
   if (!objets){
     printf("Pas d'objets'");
     return NIL(object);
@@ -651,6 +655,10 @@ objectP idToObj(char* id){
 
 /* Prend une chaine de caractère et retourne un ptr la structure methode ayant ce nom */
 methodP idToMeth(char* id, methodP lmethodes){
+  if (!id){
+      printf("Recherche à entrée nulle.\n");
+      abort();
+  } 
   if (!lmethodes){
     printf("Pas de methodes");
     return NIL(method);

@@ -98,7 +98,7 @@ void analysePortee (TreeP corps){
         case CAST :
         case ENEW :
         case EEXTND :
-        	if(!verifClass(getChildStr(corps, 0))) printf("ClassId introuvable : %s \n", getChildStr(corps, 0));
+        	if(!verifClass(getChildStr(corps, 0))) printf("Erreur : ClassId introuvable : %s \n", getChildStr(corps, 0));
             analysePortee(getChild(corps, 1));
         	break;
 
@@ -108,7 +108,7 @@ void analysePortee (TreeP corps){
             ; /* empty statement*/
              char* id = getChildStr(getChild(corps, 0), 0);
              /* TODO le fils gauche c'est pas un clasId donc c'est pas un verifClass qu'il faut faire */
-            if(!verifClass(id)) printf("Id introuvable : %s \n", id);
+            if(!verifClass(id)) printf("Erreur : Id introuvable : %s \n", id);
 
             /* ici c'est un ListArgumentOpt donc peut valoir Nil(Tree) */
             if (getChild(corps, 1)) analysePortee(getChild(corps, 1));
@@ -122,11 +122,11 @@ void analysePortee (TreeP corps){
         	break;
 
         case EID :
-        	if(!verifId(getChildStr(corps, 0))) printf("Id introuvable : %s \n", getChildStr(corps, 0));
+        	if(!verifId(getChildStr(corps, 0))) printf("Erreur : Id introuvable : %s \n", getChildStr(corps, 0));
         	break;
 
         case EIDCLASS :
-            if(!verifClass(getChildStr(corps, 0))) printf("ClassId introuvable : %s \n", getChildStr(corps, 0));
+            if(!verifClass(getChildStr(corps, 0))) printf("Erreur : ClassId introuvable : %s \n", getChildStr(corps, 0));
             break;
 
         case EBLOC :
@@ -144,11 +144,11 @@ void analysePortee (TreeP corps){
             break;
 
         case EDOT :
-            if (!verifDot(getChild(corps,0))) printf("Appel à une méthode inconnue (Opération DOT)\n");
+            if (!verifDot(getChild(corps,0))) printf("Erreur : Appel à une méthode inconnue (Opération DOT)\n");
             break;
 
         default :
-            printf("Etiquette non prise en compte ou non reconnue : %s \n", recupEtiquette(corps->op));
+            printf("Erreur : Etiquette non prise en compte ou non reconnue : %s \n", recupEtiquette(corps->op));
             break;
 	}
 }
@@ -215,8 +215,12 @@ char* getId(TreeP arbre){
 
 /* Fait les vérifications nécésaires pour un arbre dont l'étiquette est EDOT */
 bool verifDot(TreeP sel){
-
-    VarDeclP var = idToDecl(getId(getChild(sel, 0)));
+    char* varId = getId(getChild(sel, 0));
+    if (!varId){
+        fprintf(stderr, "Erreur : Tentative d'appel de fonction de recherche avec une entrée = null. Arrêt du programme.\n");
+        exit(DECL_ERROR);
+    }
+    VarDeclP var = idToDecl(varId);
     classeP cl = var->type;
     char* id = getId(getChild(sel, 1));
     if (verifChampDansClasse(cl, id)) return TRUE;
