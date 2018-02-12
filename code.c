@@ -6,7 +6,7 @@
 
 extern char* strdup(const char *);
 
-Stack stack = {0, NULL};
+Stack stack = {0};
 FILE* out;
 int i;
 static int numLabel = 0;
