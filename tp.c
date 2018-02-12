@@ -310,13 +310,11 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     nouvClasse->lmethodes = methodesTemp;
     methodesTemp = NIL(method);
 
-	nouvClasse->constructeur = constructeurP;
+	 nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
-	nouvClasse->next = NIL(classe);
-    if (corps){
-      nouvClasse->body = getChild(corps, 1);
-      nouvClasse->attributs = (VarDeclP) getChild(corps, 0);
-    }
+	 nouvClasse->next = NIL(classe);
+    nouvClasse->body = corps;
+    if (corps) nouvClasse->attributs = (VarDeclP) getChild(corps, 0);
     if (!classes) initClasses();
     addClasse(nouvClasse);
     associationClasse(nouvClasse);
