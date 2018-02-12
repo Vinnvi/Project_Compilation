@@ -6,7 +6,7 @@
 
 extern char* strdup(const char *);
 
-Stack stack = {0, NULL};
+Stack stack = {0};
 FILE* out;
 int i;
 static int numLabel = 0;
@@ -402,8 +402,15 @@ void generDeclExprOpt(TreeP declExprOpt)
 /* Liste optionelle des arguments d un appel d une methode */
 void generListArgOpt(TreeP listArgOpt, char* nomMethod)
 {
-    if(listArgOpt == NIL(Tree)) return;
-    generListArg(listArgOpt,nomMethod, 0);
+    if(listArgOpt == NIL(Tree)) {
+        PUSHL(1);
+        PUSHA(nomMethod);
+        CALL();
+        POPN(1);
+    }
+    else{
+        generListArg(listArgOpt,nomMethod, 0);
+    }
 }
 /* Liste des arguments d un appel d une methode */
 void generListArg(TreeP listArg, char* nomMethod, int pos)
@@ -531,6 +538,7 @@ void generMessage(TreeP message)
     }
     else{
         fprintf(out,"-- Appel methode %s\n",nomMethode->u.str);
+
     }
     generListArgOpt(getChild(message,1),nomMethode->u.str);
 }

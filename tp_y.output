@@ -1,0 +1,2188 @@
+Grammar
+
+    0 $accept: Programme $end
+
+    1 Programme: DefClasseObjetOpt Bloc
+
+    2 DefClasseObjetOpt: DefClasseObjet
+    3                  | %empty
+
+    4 DefClasseObjet: ObjetouClasse DefClasseObjet
+    5               | ObjetouClasse
+
+    6 ObjetouClasse: Objet
+    7              | Classe
+
+    8 Objet: OBJ ClassId IS '{' ListChampOpt ListMethodeOpt '}'
+
+    9 BlocOpt: Bloc
+   10        | %empty
+
+   11 Bloc: '{' ListInstructionsOpt '}'
+   12     | '{' ListChamp IS ListInstructions '}'
+
+   13 ListInstructionsOpt: ListInstructions
+   14                    | %empty
+
+   15 ListInstructions: Instruction ListInstructions
+   16                 | Instruction
+
+   17 Instruction: Expression ';'
+   18            | RETURN ';'
+   19            | ArgumentOuCible AFF Expression ';'
+   20            | IF Operation THEN InstIfElse ELSE InstIfElse
+
+   21 InstIfElse: Instruction
+   22           | Bloc
+
+   23 Expression: Instanciation
+   24           | Operation
+
+   25 Operation: Operation RelOp Operation
+   26          | Operation ADD Operation
+   27          | Operation SUB Operation
+   28          | Operation PROD Operation
+   29          | Operation QUOT Operation
+   30          | Operation REST Operation
+   31          | Operation AND Operation
+   32          | ADD Operation
+   33          | SUB Operation
+   34          | ArgumentOuCible
+
+   35 Instanciation: NEW ClassId '(' ListArgumentsOpt ')'
+
+   36 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
+
+   37 CorpsClasse: '{' ListChampOpt ListMethodeOpt '}'
+
+   38 ListMethodeOpt: ListMethode
+   39               | %empty
+
+   40 ListMethode: Methode ListMethode
+   41            | Methode
+
+   42 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
+   43        | OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS Bloc
+
+   44 NomClasseOpt: ':' ClassId
+   45             | %empty
+
+   46 ListParametreOpt: ListParametres
+   47                 | ListParametresDef
+   48                 | %empty
+
+   49 ListParametres: Parametre ',' ListParametres
+   50               | Parametre ',' ListParametresDef
+   51               | Parametre
+
+   52 Parametre: VarOpt Id ':' ClassId
+
+   53 ListParametresDef: ParametreDef ',' ListParametresDef
+   54                  | ParametreDef
+
+   55 ParametreDef: VarOpt Id ':' ClassId AFF Expression
+
+   56 VarOpt: VAR
+   57       | %empty
+
+   58 DeclExpressionOpt: AFF Expression
+   59                  | %empty
+
+   60 ExtendsOpt: Extends
+   61           | %empty
+
+   62 Extends: EXTENDS ClassId '(' ListArgumentsOpt ')'
+
+   63 ListArgumentsOpt: ListArguments
+   64                 | %empty
+
+   65 ListArguments: Expression ',' ListArguments
+   66              | Expression
+
+   67 ArgumentOuCible: ListSelection
+   68                | ThisSelect
+   69                | Cste
+   70                | Selection
+
+   71 ThisSelect: THIS DOT ListSelection
+   72           | THIS DOT Selection
+   73           | THIS
+
+   74 ListSelection: SelWithClassID DOT Selection
+
+   75 SelWithClassID: ListSelection
+   76               | Selection
+   77               | ClassId
+
+   78 Selection: Id
+   79          | Message
+   80          | Cstr
+   81          | '(' Expression ')'
+   82          | '(' ClassId Expression ')'
+
+   83 Message: Id '(' ListArgumentsOpt ')'
+
+   84 ListChampOpt: ListChamp
+   85             | %empty
+
+   86 ListChamp: Champ ListChamp
+   87          | Champ
+
+   88 Champ: VAR Id ':' ClassId DeclExpressionOpt ';'
+
+   89 OverrideOpt: OVERRIDE
+   90            | %empty
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 35 36 42 43 62 81 82 83
+')' (41) 35 36 42 43 62 81 82 83
+',' (44) 49 50 53 65
+':' (58) 42 44 52 55 88
+';' (59) 17 18 19 88
+'{' (123) 8 11 12 37
+'}' (125) 8 11 12 37
+error (256)
+IS (258) 8 12 36 43
+CLASS (259) 36
+VAR (260) 56 88
+EXTENDS (261) 62
+DEF (262) 42 43
+OVERRIDE (263) 89
+IF (264) 20
+THEN (265) 20
+ELSE (266) 20
+AFF (267) 19 42 55 58
+RETURN (268) 18
+OBJ (269) 8
+ADD (270) 26 32
+SUB (271) 27 33
+PROD (272) 28
+QUOT (273) 29
+REST (274) 30
+NEW (275) 35
+DOT (276) 71 72 74
+AND (277) 31
+Id (278) 42 43 52 55 78 83 88
+ClassId (279) 8 35 36 42 44 52 55 62 77 82 88
+Cstr (280) 80
+Cste (281) 69
+RelOp (282) 25
+THIS (283) 71 72 73
+
+
+Nonterminals, with rules where they appear
+
+$accept (36)
+    on left: 0
+Programme (37)
+    on left: 1, on right: 0
+DefClasseObjetOpt (38)
+    on left: 2 3, on right: 1
+DefClasseObjet (39)
+    on left: 4 5, on right: 2 4
+ObjetouClasse (40)
+    on left: 6 7, on right: 4 5
+Objet (41)
+    on left: 8, on right: 6
+BlocOpt (42)
+    on left: 9 10, on right: 36
+Bloc (43)
+    on left: 11 12, on right: 1 9 22 43
+ListInstructionsOpt (44)
+    on left: 13 14, on right: 11
+ListInstructions (45)
+    on left: 15 16, on right: 12 13 15
+Instruction (46)
+    on left: 17 18 19 20, on right: 15 16 21
+InstIfElse (47)
+    on left: 21 22, on right: 20
+Expression (48)
+    on left: 23 24, on right: 17 19 42 55 58 65 66 81 82
+Operation (49)
+    on left: 25 26 27 28 29 30 31 32 33 34, on right: 20 24 25 26 27
+    28 29 30 31 32 33
+Instanciation (50)
+    on left: 35, on right: 23
+Classe (51)
+    on left: 36, on right: 7
+CorpsClasse (52)
+    on left: 37, on right: 36
+ListMethodeOpt (53)
+    on left: 38 39, on right: 8 37
+ListMethode (54)
+    on left: 40 41, on right: 38 40
+Methode (55)
+    on left: 42 43, on right: 40 41
+NomClasseOpt (56)
+    on left: 44 45, on right: 43
+ListParametreOpt (57)
+    on left: 46 47 48, on right: 36 42 43
+ListParametres (58)
+    on left: 49 50 51, on right: 46 49
+Parametre (59)
+    on left: 52, on right: 49 50 51
+ListParametresDef (60)
+    on left: 53 54, on right: 47 50 53
+ParametreDef (61)
+    on left: 55, on right: 53 54
+VarOpt (62)
+    on left: 56 57, on right: 52 55
+DeclExpressionOpt (63)
+    on left: 58 59, on right: 88
+ExtendsOpt (64)
+    on left: 60 61, on right: 36
+Extends (65)
+    on left: 62, on right: 60
+ListArgumentsOpt (66)
+    on left: 63 64, on right: 35 62 83
+ListArguments (67)
+    on left: 65 66, on right: 63 65
+ArgumentOuCible (68)
+    on left: 67 68 69 70, on right: 19 34
+ThisSelect (69)
+    on left: 71 72 73, on right: 68
+ListSelection (70)
+    on left: 74, on right: 67 71 75
+SelWithClassID (71)
+    on left: 75 76 77, on right: 74
+Selection (72)
+    on left: 78 79 80 81 82, on right: 70 72 74 76
+Message (73)
+    on left: 83, on right: 79
+ListChampOpt (74)
+    on left: 84 85, on right: 8 37
+ListChamp (75)
+    on left: 86 87, on right: 12 84 86
+Champ (76)
+    on left: 88, on right: 86 87
+OverrideOpt (77)
+    on left: 89 90, on right: 42 43
+
+
+State 0
+
+    0 $accept: . Programme $end
+
+    CLASS  shift, and go to state 1
+    OBJ    shift, and go to state 2
+
+    $default  reduce using rule 3 (DefClasseObjetOpt)
+
+    Programme          go to state 3
+    DefClasseObjetOpt  go to state 4
+    DefClasseObjet     go to state 5
+    ObjetouClasse      go to state 6
+    Objet              go to state 7
+    Classe             go to state 8
+
+
+State 1
+
+   36 Classe: CLASS . ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
+
+    ClassId  shift, and go to state 9
+
+
+State 2
+
+    8 Objet: OBJ . ClassId IS '{' ListChampOpt ListMethodeOpt '}'
+
+    ClassId  shift, and go to state 10
+
+
+State 3
+
+    0 $accept: Programme . $end
+
+    $end  shift, and go to state 11
+
+
+State 4
+
+    1 Programme: DefClasseObjetOpt . Bloc
+
+    '{'  shift, and go to state 12
+
+    Bloc  go to state 13
+
+
+State 5
+
+    2 DefClasseObjetOpt: DefClasseObjet .
+
+    $default  reduce using rule 2 (DefClasseObjetOpt)
+
+
+State 6
+
+    4 DefClasseObjet: ObjetouClasse . DefClasseObjet
+    5               | ObjetouClasse .
+
+    CLASS  shift, and go to state 1
+    OBJ    shift, and go to state 2
+
+    $default  reduce using rule 5 (DefClasseObjet)
+
+    DefClasseObjet  go to state 14
+    ObjetouClasse   go to state 6
+    Objet           go to state 7
+    Classe          go to state 8
+
+
+State 7
+
+    6 ObjetouClasse: Objet .
+
+    $default  reduce using rule 6 (ObjetouClasse)
+
+
+State 8
+
+    7 ObjetouClasse: Classe .
+
+    $default  reduce using rule 7 (ObjetouClasse)
+
+
+State 9
+
+   36 Classe: CLASS ClassId . '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
+
+    '('  shift, and go to state 15
+
+
+State 10
+
+    8 Objet: OBJ ClassId . IS '{' ListChampOpt ListMethodeOpt '}'
+
+    IS  shift, and go to state 16
+
+
+State 11
+
+    0 $accept: Programme $end .
+
+    $default  accept
+
+
+State 12
+
+   11 Bloc: '{' . ListInstructionsOpt '}'
+   12     | '{' . ListChamp IS ListInstructions '}'
+
+    VAR      shift, and go to state 17
+    IF       shift, and go to state 18
+    RETURN   shift, and go to state 19
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    $default  reduce using rule 14 (ListInstructionsOpt)
+
+    ListInstructionsOpt  go to state 29
+    ListInstructions     go to state 30
+    Instruction          go to state 31
+    Expression           go to state 32
+    Operation            go to state 33
+    Instanciation        go to state 34
+    ArgumentOuCible      go to state 35
+    ThisSelect           go to state 36
+    ListSelection        go to state 37
+    SelWithClassID       go to state 38
+    Selection            go to state 39
+    Message              go to state 40
+    ListChamp            go to state 41
+    Champ                go to state 42
+
+
+State 13
+
+    1 Programme: DefClasseObjetOpt Bloc .
+
+    $default  reduce using rule 1 (Programme)
+
+
+State 14
+
+    4 DefClasseObjet: ObjetouClasse DefClasseObjet .
+
+    $default  reduce using rule 4 (DefClasseObjet)
+
+
+State 15
+
+   36 Classe: CLASS ClassId '(' . ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse
+
+    VAR  shift, and go to state 43
+
+    Id        reduce using rule 57 (VarOpt)
+    $default  reduce using rule 48 (ListParametreOpt)
+
+    ListParametreOpt   go to state 44
+    ListParametres     go to state 45
+    Parametre          go to state 46
+    ListParametresDef  go to state 47
+    ParametreDef       go to state 48
+    VarOpt             go to state 49
+
+
+State 16
+
+    8 Objet: OBJ ClassId IS . '{' ListChampOpt ListMethodeOpt '}'
+
+    '{'  shift, and go to state 50
+
+
+State 17
+
+   88 Champ: VAR . Id ':' ClassId DeclExpressionOpt ';'
+
+    Id  shift, and go to state 51
+
+
+State 18
+
+   20 Instruction: IF . Operation THEN InstIfElse ELSE InstIfElse
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 52
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 19
+
+   18 Instruction: RETURN . ';'
+
+    ';'  shift, and go to state 54
+
+
+State 20
+
+   32 Operation: ADD . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 55
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 21
+
+   33 Operation: SUB . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 56
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 22
+
+   35 Instanciation: NEW . ClassId '(' ListArgumentsOpt ')'
+
+    ClassId  shift, and go to state 57
+
+
+State 23
+
+   78 Selection: Id .
+   83 Message: Id . '(' ListArgumentsOpt ')'
+
+    '('  shift, and go to state 58
+
+    $default  reduce using rule 78 (Selection)
+
+
+State 24
+
+   77 SelWithClassID: ClassId .
+
+    $default  reduce using rule 77 (SelWithClassID)
+
+
+State 25
+
+   80 Selection: Cstr .
+
+    $default  reduce using rule 80 (Selection)
+
+
+State 26
+
+   69 ArgumentOuCible: Cste .
+
+    $default  reduce using rule 69 (ArgumentOuCible)
+
+
+State 27
+
+   71 ThisSelect: THIS . DOT ListSelection
+   72           | THIS . DOT Selection
+   73           | THIS .
+
+    DOT  shift, and go to state 59
+
+    $default  reduce using rule 73 (ThisSelect)
+
+
+State 28
+
+   81 Selection: '(' . Expression ')'
+   82          | '(' . ClassId Expression ')'
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 60
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Expression       go to state 61
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 29
+
+   11 Bloc: '{' ListInstructionsOpt . '}'
+
+    '}'  shift, and go to state 62
+
+
+State 30
+
+   13 ListInstructionsOpt: ListInstructions .
+
+    $default  reduce using rule 13 (ListInstructionsOpt)
+
+
+State 31
+
+   15 ListInstructions: Instruction . ListInstructions
+   16                 | Instruction .
+
+    IF       shift, and go to state 18
+    RETURN   shift, and go to state 19
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    $default  reduce using rule 16 (ListInstructions)
+
+    ListInstructions  go to state 63
+    Instruction       go to state 31
+    Expression        go to state 32
+    Operation         go to state 33
+    Instanciation     go to state 34
+    ArgumentOuCible   go to state 35
+    ThisSelect        go to state 36
+    ListSelection     go to state 37
+    SelWithClassID    go to state 38
+    Selection         go to state 39
+    Message           go to state 40
+
+
+State 32
+
+   17 Instruction: Expression . ';'
+
+    ';'  shift, and go to state 64
+
+
+State 33
+
+   24 Expression: Operation .
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+
+    ADD    shift, and go to state 65
+    SUB    shift, and go to state 66
+    PROD   shift, and go to state 67
+    QUOT   shift, and go to state 68
+    REST   shift, and go to state 69
+    AND    shift, and go to state 70
+    RelOp  shift, and go to state 71
+
+    $default  reduce using rule 24 (Expression)
+
+
+State 34
+
+   23 Expression: Instanciation .
+
+    $default  reduce using rule 23 (Expression)
+
+
+State 35
+
+   19 Instruction: ArgumentOuCible . AFF Expression ';'
+   34 Operation: ArgumentOuCible .
+
+    AFF  shift, and go to state 72
+
+    $default  reduce using rule 34 (Operation)
+
+
+State 36
+
+   68 ArgumentOuCible: ThisSelect .
+
+    $default  reduce using rule 68 (ArgumentOuCible)
+
+
+State 37
+
+   67 ArgumentOuCible: ListSelection .
+   75 SelWithClassID: ListSelection .
+
+    DOT       reduce using rule 75 (SelWithClassID)
+    $default  reduce using rule 67 (ArgumentOuCible)
+
+
+State 38
+
+   74 ListSelection: SelWithClassID . DOT Selection
+
+    DOT  shift, and go to state 73
+
+
+State 39
+
+   70 ArgumentOuCible: Selection .
+   76 SelWithClassID: Selection .
+
+    DOT       reduce using rule 76 (SelWithClassID)
+    $default  reduce using rule 70 (ArgumentOuCible)
+
+
+State 40
+
+   79 Selection: Message .
+
+    $default  reduce using rule 79 (Selection)
+
+
+State 41
+
+   12 Bloc: '{' ListChamp . IS ListInstructions '}'
+
+    IS  shift, and go to state 74
+
+
+State 42
+
+   86 ListChamp: Champ . ListChamp
+   87          | Champ .
+
+    VAR  shift, and go to state 17
+
+    $default  reduce using rule 87 (ListChamp)
+
+    ListChamp  go to state 75
+    Champ      go to state 42
+
+
+State 43
+
+   56 VarOpt: VAR .
+
+    $default  reduce using rule 56 (VarOpt)
+
+
+State 44
+
+   36 Classe: CLASS ClassId '(' ListParametreOpt . ')' ExtendsOpt BlocOpt IS CorpsClasse
+
+    ')'  shift, and go to state 76
+
+
+State 45
+
+   46 ListParametreOpt: ListParametres .
+
+    $default  reduce using rule 46 (ListParametreOpt)
+
+
+State 46
+
+   49 ListParametres: Parametre . ',' ListParametres
+   50               | Parametre . ',' ListParametresDef
+   51               | Parametre .
+
+    ','  shift, and go to state 77
+
+    $default  reduce using rule 51 (ListParametres)
+
+
+State 47
+
+   47 ListParametreOpt: ListParametresDef .
+
+    $default  reduce using rule 47 (ListParametreOpt)
+
+
+State 48
+
+   53 ListParametresDef: ParametreDef . ',' ListParametresDef
+   54                  | ParametreDef .
+
+    ','  shift, and go to state 78
+
+    $default  reduce using rule 54 (ListParametresDef)
+
+
+State 49
+
+   52 Parametre: VarOpt . Id ':' ClassId
+   55 ParametreDef: VarOpt . Id ':' ClassId AFF Expression
+
+    Id  shift, and go to state 79
+
+
+State 50
+
+    8 Objet: OBJ ClassId IS '{' . ListChampOpt ListMethodeOpt '}'
+
+    VAR  shift, and go to state 17
+
+    $default  reduce using rule 85 (ListChampOpt)
+
+    ListChampOpt  go to state 80
+    ListChamp     go to state 81
+    Champ         go to state 42
+
+
+State 51
+
+   88 Champ: VAR Id . ':' ClassId DeclExpressionOpt ';'
+
+    ':'  shift, and go to state 82
+
+
+State 52
+
+   20 Instruction: IF Operation . THEN InstIfElse ELSE InstIfElse
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+
+    THEN   shift, and go to state 83
+    ADD    shift, and go to state 65
+    SUB    shift, and go to state 66
+    PROD   shift, and go to state 67
+    QUOT   shift, and go to state 68
+    REST   shift, and go to state 69
+    AND    shift, and go to state 70
+    RelOp  shift, and go to state 71
+
+
+State 53
+
+   34 Operation: ArgumentOuCible .
+
+    $default  reduce using rule 34 (Operation)
+
+
+State 54
+
+   18 Instruction: RETURN ';' .
+
+    $default  reduce using rule 18 (Instruction)
+
+
+State 55
+
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+   32          | ADD Operation .
+
+    PROD  shift, and go to state 67
+    QUOT  shift, and go to state 68
+    REST  shift, and go to state 69
+
+    $default  reduce using rule 32 (Operation)
+
+
+State 56
+
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+   33          | SUB Operation .
+
+    PROD  shift, and go to state 67
+    QUOT  shift, and go to state 68
+    REST  shift, and go to state 69
+
+    $default  reduce using rule 33 (Operation)
+
+
+State 57
+
+   35 Instanciation: NEW ClassId . '(' ListArgumentsOpt ')'
+
+    '('  shift, and go to state 84
+
+
+State 58
+
+   83 Message: Id '(' . ListArgumentsOpt ')'
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    $default  reduce using rule 64 (ListArgumentsOpt)
+
+    Expression        go to state 85
+    Operation         go to state 33
+    Instanciation     go to state 34
+    ListArgumentsOpt  go to state 86
+    ListArguments     go to state 87
+    ArgumentOuCible   go to state 53
+    ThisSelect        go to state 36
+    ListSelection     go to state 37
+    SelWithClassID    go to state 38
+    Selection         go to state 39
+    Message           go to state 40
+
+
+State 59
+
+   71 ThisSelect: THIS DOT . ListSelection
+   72           | THIS DOT . Selection
+
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    '('      shift, and go to state 28
+
+    ListSelection   go to state 88
+    SelWithClassID  go to state 38
+    Selection       go to state 89
+    Message         go to state 40
+
+
+State 60
+
+   77 SelWithClassID: ClassId .
+   82 Selection: '(' ClassId . Expression ')'
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    $default  reduce using rule 77 (SelWithClassID)
+
+    Expression       go to state 90
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 61
+
+   81 Selection: '(' Expression . ')'
+
+    ')'  shift, and go to state 91
+
+
+State 62
+
+   11 Bloc: '{' ListInstructionsOpt '}' .
+
+    $default  reduce using rule 11 (Bloc)
+
+
+State 63
+
+   15 ListInstructions: Instruction ListInstructions .
+
+    $default  reduce using rule 15 (ListInstructions)
+
+
+State 64
+
+   17 Instruction: Expression ';' .
+
+    $default  reduce using rule 17 (Instruction)
+
+
+State 65
+
+   26 Operation: Operation ADD . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 92
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 66
+
+   27 Operation: Operation SUB . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 93
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 67
+
+   28 Operation: Operation PROD . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 94
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 68
+
+   29 Operation: Operation QUOT . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 95
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 69
+
+   30 Operation: Operation REST . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 96
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 70
+
+   31 Operation: Operation AND . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 97
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 71
+
+   25 Operation: Operation RelOp . Operation
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Operation        go to state 98
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 72
+
+   19 Instruction: ArgumentOuCible AFF . Expression ';'
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Expression       go to state 99
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 73
+
+   74 ListSelection: SelWithClassID DOT . Selection
+
+    Id    shift, and go to state 23
+    Cstr  shift, and go to state 25
+    '('   shift, and go to state 28
+
+    Selection  go to state 100
+    Message    go to state 40
+
+
+State 74
+
+   12 Bloc: '{' ListChamp IS . ListInstructions '}'
+
+    IF       shift, and go to state 18
+    RETURN   shift, and go to state 19
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    ListInstructions  go to state 101
+    Instruction       go to state 31
+    Expression        go to state 32
+    Operation         go to state 33
+    Instanciation     go to state 34
+    ArgumentOuCible   go to state 35
+    ThisSelect        go to state 36
+    ListSelection     go to state 37
+    SelWithClassID    go to state 38
+    Selection         go to state 39
+    Message           go to state 40
+
+
+State 75
+
+   86 ListChamp: Champ ListChamp .
+
+    $default  reduce using rule 86 (ListChamp)
+
+
+State 76
+
+   36 Classe: CLASS ClassId '(' ListParametreOpt ')' . ExtendsOpt BlocOpt IS CorpsClasse
+
+    EXTENDS  shift, and go to state 102
+
+    $default  reduce using rule 61 (ExtendsOpt)
+
+    ExtendsOpt  go to state 103
+    Extends     go to state 104
+
+
+State 77
+
+   49 ListParametres: Parametre ',' . ListParametres
+   50               | Parametre ',' . ListParametresDef
+
+    VAR  shift, and go to state 43
+
+    $default  reduce using rule 57 (VarOpt)
+
+    ListParametres     go to state 105
+    Parametre          go to state 46
+    ListParametresDef  go to state 106
+    ParametreDef       go to state 48
+    VarOpt             go to state 49
+
+
+State 78
+
+   53 ListParametresDef: ParametreDef ',' . ListParametresDef
+
+    VAR  shift, and go to state 43
+
+    $default  reduce using rule 57 (VarOpt)
+
+    ListParametresDef  go to state 107
+    ParametreDef       go to state 48
+    VarOpt             go to state 108
+
+
+State 79
+
+   52 Parametre: VarOpt Id . ':' ClassId
+   55 ParametreDef: VarOpt Id . ':' ClassId AFF Expression
+
+    ':'  shift, and go to state 109
+
+
+State 80
+
+    8 Objet: OBJ ClassId IS '{' ListChampOpt . ListMethodeOpt '}'
+
+    OVERRIDE  shift, and go to state 110
+
+    DEF       reduce using rule 90 (OverrideOpt)
+    $default  reduce using rule 39 (ListMethodeOpt)
+
+    ListMethodeOpt  go to state 111
+    ListMethode     go to state 112
+    Methode         go to state 113
+    OverrideOpt     go to state 114
+
+
+State 81
+
+   84 ListChampOpt: ListChamp .
+
+    $default  reduce using rule 84 (ListChampOpt)
+
+
+State 82
+
+   88 Champ: VAR Id ':' . ClassId DeclExpressionOpt ';'
+
+    ClassId  shift, and go to state 115
+
+
+State 83
+
+   20 Instruction: IF Operation THEN . InstIfElse ELSE InstIfElse
+
+    IF       shift, and go to state 18
+    RETURN   shift, and go to state 19
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '{'      shift, and go to state 12
+    '('      shift, and go to state 28
+
+    Bloc             go to state 116
+    Instruction      go to state 117
+    InstIfElse       go to state 118
+    Expression       go to state 32
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ArgumentOuCible  go to state 35
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 84
+
+   35 Instanciation: NEW ClassId '(' . ListArgumentsOpt ')'
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    $default  reduce using rule 64 (ListArgumentsOpt)
+
+    Expression        go to state 85
+    Operation         go to state 33
+    Instanciation     go to state 34
+    ListArgumentsOpt  go to state 119
+    ListArguments     go to state 87
+    ArgumentOuCible   go to state 53
+    ThisSelect        go to state 36
+    ListSelection     go to state 37
+    SelWithClassID    go to state 38
+    Selection         go to state 39
+    Message           go to state 40
+
+
+State 85
+
+   65 ListArguments: Expression . ',' ListArguments
+   66              | Expression .
+
+    ','  shift, and go to state 120
+
+    $default  reduce using rule 66 (ListArguments)
+
+
+State 86
+
+   83 Message: Id '(' ListArgumentsOpt . ')'
+
+    ')'  shift, and go to state 121
+
+
+State 87
+
+   63 ListArgumentsOpt: ListArguments .
+
+    $default  reduce using rule 63 (ListArgumentsOpt)
+
+
+State 88
+
+   71 ThisSelect: THIS DOT ListSelection .
+   75 SelWithClassID: ListSelection .
+
+    DOT       reduce using rule 75 (SelWithClassID)
+    $default  reduce using rule 71 (ThisSelect)
+
+
+State 89
+
+   72 ThisSelect: THIS DOT Selection .
+   76 SelWithClassID: Selection .
+
+    DOT       reduce using rule 76 (SelWithClassID)
+    $default  reduce using rule 72 (ThisSelect)
+
+
+State 90
+
+   82 Selection: '(' ClassId Expression . ')'
+
+    ')'  shift, and go to state 122
+
+
+State 91
+
+   81 Selection: '(' Expression ')' .
+
+    $default  reduce using rule 81 (Selection)
+
+
+State 92
+
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   26          | Operation ADD Operation .
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+
+    PROD  shift, and go to state 67
+    QUOT  shift, and go to state 68
+    REST  shift, and go to state 69
+
+    $default  reduce using rule 26 (Operation)
+
+
+State 93
+
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   27          | Operation SUB Operation .
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+
+    PROD  shift, and go to state 67
+    QUOT  shift, and go to state 68
+    REST  shift, and go to state 69
+
+    $default  reduce using rule 27 (Operation)
+
+
+State 94
+
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   28          | Operation PROD Operation .
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+
+    $default  reduce using rule 28 (Operation)
+
+
+State 95
+
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   29          | Operation QUOT Operation .
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+
+    $default  reduce using rule 29 (Operation)
+
+
+State 96
+
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   30          | Operation REST Operation .
+   31          | Operation . AND Operation
+
+    PROD  shift, and go to state 67
+    QUOT  shift, and go to state 68
+
+    $default  reduce using rule 30 (Operation)
+
+
+State 97
+
+   25 Operation: Operation . RelOp Operation
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+   31          | Operation AND Operation .
+
+    PROD  shift, and go to state 67
+    QUOT  shift, and go to state 68
+    REST  shift, and go to state 69
+
+    $default  reduce using rule 31 (Operation)
+
+
+State 98
+
+   25 Operation: Operation . RelOp Operation
+   25          | Operation RelOp Operation .
+   26          | Operation . ADD Operation
+   27          | Operation . SUB Operation
+   28          | Operation . PROD Operation
+   29          | Operation . QUOT Operation
+   30          | Operation . REST Operation
+   31          | Operation . AND Operation
+
+    ADD   shift, and go to state 65
+    SUB   shift, and go to state 66
+    PROD  shift, and go to state 67
+    QUOT  shift, and go to state 68
+    REST  shift, and go to state 69
+    AND   shift, and go to state 70
+
+    $default  reduce using rule 25 (Operation)
+
+
+State 99
+
+   19 Instruction: ArgumentOuCible AFF Expression . ';'
+
+    ';'  shift, and go to state 123
+
+
+State 100
+
+   74 ListSelection: SelWithClassID DOT Selection .
+
+    $default  reduce using rule 74 (ListSelection)
+
+
+State 101
+
+   12 Bloc: '{' ListChamp IS ListInstructions . '}'
+
+    '}'  shift, and go to state 124
+
+
+State 102
+
+   62 Extends: EXTENDS . ClassId '(' ListArgumentsOpt ')'
+
+    ClassId  shift, and go to state 125
+
+
+State 103
+
+   36 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt . BlocOpt IS CorpsClasse
+
+    '{'  shift, and go to state 12
+
+    $default  reduce using rule 10 (BlocOpt)
+
+    BlocOpt  go to state 126
+    Bloc     go to state 127
+
+
+State 104
+
+   60 ExtendsOpt: Extends .
+
+    $default  reduce using rule 60 (ExtendsOpt)
+
+
+State 105
+
+   49 ListParametres: Parametre ',' ListParametres .
+
+    $default  reduce using rule 49 (ListParametres)
+
+
+State 106
+
+   50 ListParametres: Parametre ',' ListParametresDef .
+
+    $default  reduce using rule 50 (ListParametres)
+
+
+State 107
+
+   53 ListParametresDef: ParametreDef ',' ListParametresDef .
+
+    $default  reduce using rule 53 (ListParametresDef)
+
+
+State 108
+
+   55 ParametreDef: VarOpt . Id ':' ClassId AFF Expression
+
+    Id  shift, and go to state 128
+
+
+State 109
+
+   52 Parametre: VarOpt Id ':' . ClassId
+   55 ParametreDef: VarOpt Id ':' . ClassId AFF Expression
+
+    ClassId  shift, and go to state 129
+
+
+State 110
+
+   89 OverrideOpt: OVERRIDE .
+
+    $default  reduce using rule 89 (OverrideOpt)
+
+
+State 111
+
+    8 Objet: OBJ ClassId IS '{' ListChampOpt ListMethodeOpt . '}'
+
+    '}'  shift, and go to state 130
+
+
+State 112
+
+   38 ListMethodeOpt: ListMethode .
+
+    $default  reduce using rule 38 (ListMethodeOpt)
+
+
+State 113
+
+   40 ListMethode: Methode . ListMethode
+   41            | Methode .
+
+    OVERRIDE  shift, and go to state 110
+
+    DEF       reduce using rule 90 (OverrideOpt)
+    $default  reduce using rule 41 (ListMethode)
+
+    ListMethode  go to state 131
+    Methode      go to state 113
+    OverrideOpt  go to state 114
+
+
+State 114
+
+   42 Methode: OverrideOpt . DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
+   43        | OverrideOpt . DEF Id '(' ListParametreOpt ')' NomClasseOpt IS Bloc
+
+    DEF  shift, and go to state 132
+
+
+State 115
+
+   88 Champ: VAR Id ':' ClassId . DeclExpressionOpt ';'
+
+    AFF  shift, and go to state 133
+
+    $default  reduce using rule 59 (DeclExpressionOpt)
+
+    DeclExpressionOpt  go to state 134
+
+
+State 116
+
+   22 InstIfElse: Bloc .
+
+    $default  reduce using rule 22 (InstIfElse)
+
+
+State 117
+
+   21 InstIfElse: Instruction .
+
+    $default  reduce using rule 21 (InstIfElse)
+
+
+State 118
+
+   20 Instruction: IF Operation THEN InstIfElse . ELSE InstIfElse
+
+    ELSE  shift, and go to state 135
+
+
+State 119
+
+   35 Instanciation: NEW ClassId '(' ListArgumentsOpt . ')'
+
+    ')'  shift, and go to state 136
+
+
+State 120
+
+   65 ListArguments: Expression ',' . ListArguments
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Expression       go to state 85
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ListArguments    go to state 137
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 121
+
+   83 Message: Id '(' ListArgumentsOpt ')' .
+
+    $default  reduce using rule 83 (Message)
+
+
+State 122
+
+   82 Selection: '(' ClassId Expression ')' .
+
+    $default  reduce using rule 82 (Selection)
+
+
+State 123
+
+   19 Instruction: ArgumentOuCible AFF Expression ';' .
+
+    $default  reduce using rule 19 (Instruction)
+
+
+State 124
+
+   12 Bloc: '{' ListChamp IS ListInstructions '}' .
+
+    $default  reduce using rule 12 (Bloc)
+
+
+State 125
+
+   62 Extends: EXTENDS ClassId . '(' ListArgumentsOpt ')'
+
+    '('  shift, and go to state 138
+
+
+State 126
+
+   36 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt . IS CorpsClasse
+
+    IS  shift, and go to state 139
+
+
+State 127
+
+    9 BlocOpt: Bloc .
+
+    $default  reduce using rule 9 (BlocOpt)
+
+
+State 128
+
+   55 ParametreDef: VarOpt Id . ':' ClassId AFF Expression
+
+    ':'  shift, and go to state 140
+
+
+State 129
+
+   52 Parametre: VarOpt Id ':' ClassId .
+   55 ParametreDef: VarOpt Id ':' ClassId . AFF Expression
+
+    AFF  shift, and go to state 141
+
+    $default  reduce using rule 52 (Parametre)
+
+
+State 130
+
+    8 Objet: OBJ ClassId IS '{' ListChampOpt ListMethodeOpt '}' .
+
+    $default  reduce using rule 8 (Objet)
+
+
+State 131
+
+   40 ListMethode: Methode ListMethode .
+
+    $default  reduce using rule 40 (ListMethode)
+
+
+State 132
+
+   42 Methode: OverrideOpt DEF . Id '(' ListParametreOpt ')' ':' ClassId AFF Expression
+   43        | OverrideOpt DEF . Id '(' ListParametreOpt ')' NomClasseOpt IS Bloc
+
+    Id  shift, and go to state 142
+
+
+State 133
+
+   58 DeclExpressionOpt: AFF . Expression
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Expression       go to state 143
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 134
+
+   88 Champ: VAR Id ':' ClassId DeclExpressionOpt . ';'
+
+    ';'  shift, and go to state 144
+
+
+State 135
+
+   20 Instruction: IF Operation THEN InstIfElse ELSE . InstIfElse
+
+    IF       shift, and go to state 18
+    RETURN   shift, and go to state 19
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '{'      shift, and go to state 12
+    '('      shift, and go to state 28
+
+    Bloc             go to state 116
+    Instruction      go to state 117
+    InstIfElse       go to state 145
+    Expression       go to state 32
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ArgumentOuCible  go to state 35
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 136
+
+   35 Instanciation: NEW ClassId '(' ListArgumentsOpt ')' .
+
+    $default  reduce using rule 35 (Instanciation)
+
+
+State 137
+
+   65 ListArguments: Expression ',' ListArguments .
+
+    $default  reduce using rule 65 (ListArguments)
+
+
+State 138
+
+   62 Extends: EXTENDS ClassId '(' . ListArgumentsOpt ')'
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    $default  reduce using rule 64 (ListArgumentsOpt)
+
+    Expression        go to state 85
+    Operation         go to state 33
+    Instanciation     go to state 34
+    ListArgumentsOpt  go to state 146
+    ListArguments     go to state 87
+    ArgumentOuCible   go to state 53
+    ThisSelect        go to state 36
+    ListSelection     go to state 37
+    SelWithClassID    go to state 38
+    Selection         go to state 39
+    Message           go to state 40
+
+
+State 139
+
+   36 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS . CorpsClasse
+
+    '{'  shift, and go to state 147
+
+    CorpsClasse  go to state 148
+
+
+State 140
+
+   55 ParametreDef: VarOpt Id ':' . ClassId AFF Expression
+
+    ClassId  shift, and go to state 149
+
+
+State 141
+
+   55 ParametreDef: VarOpt Id ':' ClassId AFF . Expression
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Expression       go to state 150
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 142
+
+   42 Methode: OverrideOpt DEF Id . '(' ListParametreOpt ')' ':' ClassId AFF Expression
+   43        | OverrideOpt DEF Id . '(' ListParametreOpt ')' NomClasseOpt IS Bloc
+
+    '('  shift, and go to state 151
+
+
+State 143
+
+   58 DeclExpressionOpt: AFF Expression .
+
+    $default  reduce using rule 58 (DeclExpressionOpt)
+
+
+State 144
+
+   88 Champ: VAR Id ':' ClassId DeclExpressionOpt ';' .
+
+    $default  reduce using rule 88 (Champ)
+
+
+State 145
+
+   20 Instruction: IF Operation THEN InstIfElse ELSE InstIfElse .
+
+    $default  reduce using rule 20 (Instruction)
+
+
+State 146
+
+   62 Extends: EXTENDS ClassId '(' ListArgumentsOpt . ')'
+
+    ')'  shift, and go to state 152
+
+
+State 147
+
+   37 CorpsClasse: '{' . ListChampOpt ListMethodeOpt '}'
+
+    VAR  shift, and go to state 17
+
+    $default  reduce using rule 85 (ListChampOpt)
+
+    ListChampOpt  go to state 153
+    ListChamp     go to state 81
+    Champ         go to state 42
+
+
+State 148
+
+   36 Classe: CLASS ClassId '(' ListParametreOpt ')' ExtendsOpt BlocOpt IS CorpsClasse .
+
+    $default  reduce using rule 36 (Classe)
+
+
+State 149
+
+   55 ParametreDef: VarOpt Id ':' ClassId . AFF Expression
+
+    AFF  shift, and go to state 141
+
+
+State 150
+
+   55 ParametreDef: VarOpt Id ':' ClassId AFF Expression .
+
+    $default  reduce using rule 55 (ParametreDef)
+
+
+State 151
+
+   42 Methode: OverrideOpt DEF Id '(' . ListParametreOpt ')' ':' ClassId AFF Expression
+   43        | OverrideOpt DEF Id '(' . ListParametreOpt ')' NomClasseOpt IS Bloc
+
+    VAR  shift, and go to state 43
+
+    Id        reduce using rule 57 (VarOpt)
+    $default  reduce using rule 48 (ListParametreOpt)
+
+    ListParametreOpt   go to state 154
+    ListParametres     go to state 45
+    Parametre          go to state 46
+    ListParametresDef  go to state 47
+    ParametreDef       go to state 48
+    VarOpt             go to state 49
+
+
+State 152
+
+   62 Extends: EXTENDS ClassId '(' ListArgumentsOpt ')' .
+
+    $default  reduce using rule 62 (Extends)
+
+
+State 153
+
+   37 CorpsClasse: '{' ListChampOpt . ListMethodeOpt '}'
+
+    OVERRIDE  shift, and go to state 110
+
+    DEF       reduce using rule 90 (OverrideOpt)
+    $default  reduce using rule 39 (ListMethodeOpt)
+
+    ListMethodeOpt  go to state 155
+    ListMethode     go to state 112
+    Methode         go to state 113
+    OverrideOpt     go to state 114
+
+
+State 154
+
+   42 Methode: OverrideOpt DEF Id '(' ListParametreOpt . ')' ':' ClassId AFF Expression
+   43        | OverrideOpt DEF Id '(' ListParametreOpt . ')' NomClasseOpt IS Bloc
+
+    ')'  shift, and go to state 156
+
+
+State 155
+
+   37 CorpsClasse: '{' ListChampOpt ListMethodeOpt . '}'
+
+    '}'  shift, and go to state 157
+
+
+State 156
+
+   42 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' . ':' ClassId AFF Expression
+   43        | OverrideOpt DEF Id '(' ListParametreOpt ')' . NomClasseOpt IS Bloc
+
+    ':'  shift, and go to state 158
+
+    $default  reduce using rule 45 (NomClasseOpt)
+
+    NomClasseOpt  go to state 159
+
+
+State 157
+
+   37 CorpsClasse: '{' ListChampOpt ListMethodeOpt '}' .
+
+    $default  reduce using rule 37 (CorpsClasse)
+
+
+State 158
+
+   42 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' . ClassId AFF Expression
+   44 NomClasseOpt: ':' . ClassId
+
+    ClassId  shift, and go to state 160
+
+
+State 159
+
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt . IS Bloc
+
+    IS  shift, and go to state 161
+
+
+State 160
+
+   42 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId . AFF Expression
+   44 NomClasseOpt: ':' ClassId .
+
+    AFF  shift, and go to state 162
+
+    $default  reduce using rule 44 (NomClasseOpt)
+
+
+State 161
+
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS . Bloc
+
+    '{'  shift, and go to state 12
+
+    Bloc  go to state 163
+
+
+State 162
+
+   42 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF . Expression
+
+    ADD      shift, and go to state 20
+    SUB      shift, and go to state 21
+    NEW      shift, and go to state 22
+    Id       shift, and go to state 23
+    ClassId  shift, and go to state 24
+    Cstr     shift, and go to state 25
+    Cste     shift, and go to state 26
+    THIS     shift, and go to state 27
+    '('      shift, and go to state 28
+
+    Expression       go to state 164
+    Operation        go to state 33
+    Instanciation    go to state 34
+    ArgumentOuCible  go to state 53
+    ThisSelect       go to state 36
+    ListSelection    go to state 37
+    SelWithClassID   go to state 38
+    Selection        go to state 39
+    Message          go to state 40
+
+
+State 163
+
+   43 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' NomClasseOpt IS Bloc .
+
+    $default  reduce using rule 43 (Methode)
+
+
+State 164
+
+   42 Methode: OverrideOpt DEF Id '(' ListParametreOpt ')' ':' ClassId AFF Expression .
+
+    $default  reduce using rule 42 (Methode)

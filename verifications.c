@@ -3,6 +3,10 @@
 #include "tp.h"
 #include "tp_y.h"
 
+extern char *strdup(const char*);
+
+extern void setError(int code);
+
 bool verifSurcharges(classeP c){
     classeP maClasse = c;
     if(maClasse == NIL(classe) ) return true;
@@ -15,6 +19,7 @@ bool verifSurcharges(classeP c){
 
 bool verifSurcharges2(classeP maClasse){
     
+<<<<<<< HEAD
 
     /* On verifie que 2 methodes de la meme classe n'ont pas un meme nom */
     methodP methodes2 = methodes;
@@ -47,10 +52,24 @@ bool verifSurcharges2(classeP maClasse){
             }
             if(methodP == NIL(method)){ /* si c'est vide : c'est que l'on a parcouru toutes les methodes de la mere sans trouver notre methode mere, ou que l'on a pas de methodes dans la mere*/
                 return false;
+=======
+    /* Si c'est la meme classe */
+    if(maClasse == maClasse2){
+        methodP methodes = maClasse->lmethodes;
+        while(methodes == NIL(methode) ){        
+            methodP methodes2 = methodes;
+            while(methodes2->next != NIL(methode) ){ /*Tant que on peut comparer des methodes */
+                methodes2 = methodes2->next;
+                if(strcmp(methodes,methodes2) == 0) return false;
+>>>>>>> verifsParam
             }
         }
     }
     /* -------------------------- */
     return true;
+<<<<<<< HEAD
 
 }
+=======
+}
+>>>>>>> verifsParam
