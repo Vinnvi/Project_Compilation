@@ -257,7 +257,6 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     /* definition des classes prefinies*/
     affichageClasses();
     affichageObjets();
-    affichageMethodes();
 
 
     printf("Début analyse. Les erreurs s'afficheront ci-dessous.\n");
