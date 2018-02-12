@@ -600,7 +600,7 @@ VarDeclP idToDecl(char* id){
   if (!id){
       printf("Recherche à entrée nulle.\n");
       abort();
-  } 
+  }
   int compte = 0;
   if (!environnement.sommet){
     printf("Pas de variables");

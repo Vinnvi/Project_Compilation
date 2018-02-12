@@ -779,3 +779,19 @@ int verifTailleListe(VarDeclP liste)
 	}
 	return taille;
 }
+
+/* verifier que aucune classe n'herite de Void Integer String */
+bool verifClassesConstantes(classeP classes){
+	/* classes correspond a toutes nos classes */
+	while(classes != NIL(classe) ){
+		if(classes->super != NIL(classe))
+			if(strcmp(classes->super->name,"Void") == 0)
+				return false;
+			if(strcmp(classes->super->name,"Integer") == 0)
+				return false;
+			if(strcmp(classes->super->name,"String") == 0)
+				return false;
+		classes = classes->next;
+	}
+	return false;
+}
