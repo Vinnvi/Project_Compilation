@@ -94,7 +94,7 @@ typedef unsigned char bool;
 #define TYPE_ERROR	42	/* type checking problem */
 #define OTHER_CONTEXTUAL_ERROR	43 /* replace by something more precise */
 #define EVAL_ERROR	50	/* dubious when writing a compiler ! */
-#define UNEXPECTED	10O
+#define UNEXPECTED	100
 
 /* structures necessaires pour le programme */
 typedef struct _Classe classe, *classeP;
@@ -270,6 +270,7 @@ void associationObjet(objectP obj);
 void attributionType(VarDeclP listeVar);
 void initClasses();
 
+
 /* Partie verifs contextuelles */
 char* typeExpr(TreeP arbreExpression,classeP classe);
 bool verifSurcharges(classeP c);
@@ -280,3 +281,11 @@ bool verificationCast(char* fille,char* mere);
 bool verificationChamp(TreeP arbreExpression,classeP classe);
 char* typeFonction(char* name,classeP maClasse);
 char* typeAttribut(char* name,classeP maClasse);
+int verifParam(methodP meth, VarDeclP params);
+bool verifRetour(methodP meth, classeP typeTest);
+void verifMethClasse();
+bool verifSuper(classeP temoin, classeP test);
+
+methodP recupMethodClass(classeP check, char* idTest);
+
+int verifTailleListe(VarDeclP liste);

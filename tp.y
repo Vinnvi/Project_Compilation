@@ -121,7 +121,6 @@ ListMethode : Methode ListMethode   {$$ = $1; $1->next = $2;}
 ;
 
 Methode : OverrideOpt DEF Id '('ListParametreOpt')' ':' ClassId AFF Expression  { $$ = makeMethod($1, $3, $5, $8, $10); }
-
 |  OverrideOpt DEF Id '('ListParametreOpt')' NomClasseOpt IS Bloc       { $$ = makeMethod($1, $3, $5, $7, $9); }
 ;
 
@@ -195,7 +194,7 @@ Selection : Id                  {$$ = makeLeafStr(EID, $1);}
 | '(' ClassId Expression ')'    {$$ = makeTree(CAST, 2, $2, $3);}
 ;
 
-Message : Id '('ListArgumentsOpt')' {$$ = makeTree(MSG, 2, makeLeafStr(EID,$1), $3);}
+Message : Id '('ListArgumentsOpt')' {$$ = makeTree(MSG, 2,makeLeafStr(EID,$1), $3); /*verifMethClasse($1, $3); */}
 ;
 
 ListChampOpt : ListChamp    {$$ = $1;}

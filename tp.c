@@ -53,23 +53,23 @@ int main(int argc, char **argv) {
     if (argv[i][0] == '-') {
       switch (argv[i][1]) {
       case 'd': case 'D':
-	debug = TRUE; continue;
+  debug = TRUE; continue;
       case 'v': case 'V':
-	verbose = TRUE; continue;
+  verbose = TRUE; continue;
       case 'e': case 'E':
-	noCode = TRUE; continue;
+  noCode = TRUE; continue;
       case '?': case 'h': case 'H':
-	fprintf(stderr, "Appel: tp -v -e -d -o file.out programme.txt\n");
-	exit(USAGE_ERROR);
+  fprintf(stderr, "Appel: tp -v -e -d -o file.out programme.txt\n");
+  exit(USAGE_ERROR);
       case'o':
-	  if ((out= fopen(argv[++i], "w")) == NULL) {
-	    fprintf(stderr, "erreur: Cannot open %s\n", argv[i]);
-	    exit(USAGE_ERROR);
-	  }
-	break;
+    if ((out= fopen(argv[++i], "w")) == NULL) {
+      fprintf(stderr, "erreur: Cannot open %s\n", argv[i]);
+      exit(USAGE_ERROR);
+    }
+  break;
       default:
-	fprintf(stderr, "Option inconnue: %c\n", argv[i][1]);
-	exit(USAGE_ERROR);
+  fprintf(stderr, "Option inconnue: %c\n", argv[i][1]);
+  exit(USAGE_ERROR);
       }
     } else break;
   }
@@ -295,9 +295,9 @@ void initClasses(){
 
 /* Créateur de structure classe */
 classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constructeurP, TreeP corps){
-	classeP nouvClasse = NEW(1, classe);
-	nouvClasse->name = nameP;
-	nouvClasse->parametres = parametresP;
+  classeP nouvClasse = NEW(1, classe);
+  nouvClasse->name = nameP;
+  nouvClasse->parametres = parametresP;
     methodesTemp= NIL(method);
     int i =0;
     while(i<indexTab){
@@ -309,6 +309,7 @@ classeP makeClass(char* nameP,  VarDeclP parametresP, TreeP superP, TreeP constr
     indexTab = 0;
     nouvClasse->lmethodes = methodesTemp;
     methodesTemp = NIL(method);
+
 
 	nouvClasse->constructeur = constructeurP;
     nouvClasse->super = getClasseMere(superP);
@@ -333,11 +334,13 @@ methodP makeMethod(bool redefP, char* nameP, VarDeclP paramP, char* typeRetourP,
   if (!classes) initClasses();
   nouvMethode->nomTypeRetour = typeRetourP;
   nouvMethode->typeRetour = idToClass(typeRetourP);
+
+  nouvMethode->body = bodyP;
     /* TODO gérer les overrides */
-	nouvMethode->next = NIL(method);
+  nouvMethode->next = NIL(method);
   addMethode(nouvMethode);
   addMethodeTemp(nouvMethode);
-	return nouvMethode;
+  return nouvMethode;
 }
 
 /* Créateur de structure VarDecl */
@@ -724,6 +727,64 @@ char* recupEtiquette(short op){
 		case 56 : return "EAFFDECL";
         default : return "ERREUR";
 
-    }
+    }   
+    
+}
 
+
+
+
+/*Fonction de test d'un appel de méthode*/
+void verifMethClasse(char* idTemoin, VarDeclP paramTest)
+{
+  classeP test = NEW(1,classe);
+  test = classes;
+  if(strcmp(test->name,"Void") != 0 && strcmp(test->name,"String") != 0 && strcmp(test->name,"Integer") != 0)
+  {
+    methodP listMethod = recupMethodClass(test, idTemoin);
+    
+      switch(verifParam(listMethod,paramTest))
+      {
+        case 2 :
+          printf("\n/*******[%s] Erreur type paramètre incorrect*******/\n ", idTemoin);
+        break;
+        case 3 :
+          printf("\n/*******[%s] Erreur nombre de paramètres incorrect*******/\n ", idTemoin);
+        break;
+        case 4 :
+          printf("\n/*******[%s] Erreur présence paramètres*******/\n ", idTemoin);
+        break;
+        case 5 :
+          printf("\n/*******[%s] Erreur type paramètre void*******/\n ", idTemoin);
+        break;          
+        default:
+          printf("\n/*******[%s] No problem*******/\n", idTemoin);
+      }    
+  }
+}
+
+/*Fonction récupérant une méthode à partir d'un Id*/
+methodP recupMethodClass(classeP listTemoin, char* idTest)
+{
+  classeP check = listTemoin;
+  if(strcmp(idTest,"println") == 0)
+  {
+    return NULL;
+  }
+  methodP temp = NEW(1,method);
+  temp = check->lmethodes;
+  while(temp != NIL(method))
+  {
+    if(strcmp(temp->name, idTest) == 0)
+    {
+      return temp;
+    }
+    temp = temp->next;
+  }
+  if(check->super != NIL(classe))
+  {
+    return recupMethodClass(check->super, idTest);
+  }
+  printf("\n/*******[%s] Methode introuvable *******/\n ", idTest);
+  exit(0);
 }

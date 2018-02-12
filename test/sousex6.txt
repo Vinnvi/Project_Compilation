@@ -1,7 +1,0 @@
-{ /* Bloc qui correspond au programme principal */
-  var p1: Point := new Point(1, 5, "p1");
-  var test: Integer := -3*6;
-is
-  p2.move(p1.getx(), p1.gety());
-  
-}
