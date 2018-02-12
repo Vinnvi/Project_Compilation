@@ -1852,7 +1852,7 @@ yyreduce:
 
   case 85:
 #line 198 "tp.y" /* yacc.c:1646  */
-    {(yyval.pT) = makeTree(MSG, 2, (yyvsp[-3].S), (yyvsp[-1].pT));}
+    {(yyval.pT) = makeTree(MSG, 2, (yyvsp[-3].S), (yyvsp[-1].pT)); verifMethClasse((yyvsp[-3].S), (yyvsp[-1].pT));}
 #line 1857 "tp_y.c" /* yacc.c:1646  */
     break;
 

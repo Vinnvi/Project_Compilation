@@ -195,7 +195,7 @@ Selection : Id                  {$$ = makeLeafStr(EID, $1);}
 | '(' ClassId Expression ')'    {$$ = makeTree(CAST, 2, $2, $3);}
 ;
 
-Message : Id '('ListArgumentsOpt')' {$$ = makeTree(MSG, 2, $1, $3);}
+Message : Id '('ListArgumentsOpt')' {$$ = makeTree(MSG, 2, $1, $3); verifMethClasse($1, $3);}
 ;
 
 ListChampOpt : ListChamp    {$$ = $1;}

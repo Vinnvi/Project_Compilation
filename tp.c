@@ -214,8 +214,6 @@ void lancerCompilation(TreeP defClasses, TreeP root){
   /*affichageArbre(root,0);*/
     
     /* definition des classes prefinies*/
-    verifMethClasse(root);
-    verifMethObjet();
     affichageClasses();
     affichageObjets();
     affichageMethodes();
@@ -631,95 +629,57 @@ char* recupEtiquette(short op){
 
 
 
-
-void verifMethClasse(TreeP arbreTest)
+/*Fonction de test d'un appel de méthode*/
+void verifMethClasse(char* idTemoin, VarDeclP paramTest)
 {
-  classeP test = NEW(1,classe); 
+  classeP test = NEW(1,classe);
   test = classes;
-  while(test->next != NIL(classe))
+  if(strcmp(test->name,"Void") != 0 && strcmp(test->name,"String") != 0 && strcmp(test->name,"Integer") != 0)
   {
-    if(strcmp(test->name,"Void") != 0 && strcmp(test->name,"String") != 0 && strcmp(test->name,"Integer") != 0)
-    {
-      switch(verifMethodeClasse(test,test->lmethodes))
-      {
-        case 0: 
-          printf("\n/*******[%s] Erreur type retour *******/\n ", test->name);
-        break;
-        case 2 :
-          printf("\n/*******[%s] Erreur type paramètre incorrect*******/\n ", test->name);
-        break;
-        case 3 :
-          printf("\n/*******[%s] Erreur nombre de paramètres incorrect*******/\n ", test->name);
-        break;
-        case 4 :
-          printf("\n/*******[%s] Erreur présence paramètres*******/\n ", test->name);
-        break;
-        case 5 :
-          printf("\n/*******[%s] Erreur type paramètre void*******/\n ", test->name);
-        break;
-        case 8 :
-          printf("\n/*******[%s] Methode non déclarée*******/\n", test->name);
-        break;
-        default:
-          printf("\n/*******[%s] No problem*******/\n", test->name);
-      }
-
-    }
+    methodP listMethod = recupMethodClass(test, idTemoin);
     
-    test = test->next;
-  }
-}
-
-void verifMethObjet()
-{
-  objectP test = NEW(1,object); 
-  test = objets;
-  if(test != NIL(object))
-  {
-    while(test->next != NIL(object))
-    {
-      switch(verifMethodeObjet(test,test->lmethodes))
+      switch(verifParam(listMethod,paramTest))
       {
-        case 0: 
-          printf("\n/*******[%s] Erreur type retour*******/\n ", test->name);
-        break;
         case 2 :
-          printf("\n/*******[%s] Erreur type paramètre incorrect*******/\n ", test->name);
+          printf("\n/*******[%s] Erreur type paramètre incorrect*******/\n ", idTemoin);
         break;
         case 3 :
-          printf("\n/*******[%s] Erreur nombre de paramètres incorrect*******/\n ", test->name);
+          printf("\n/*******[%s] Erreur nombre de paramètres incorrect*******/\n ", idTemoin);
         break;
         case 4 :
-          printf("\n/*******[%s] Erreur présence paramètres*******/\n ", test->name);
+          printf("\n/*******[%s] Erreur présence paramètres*******/\n ", idTemoin);
         break;
         case 5 :
-          printf("\n/*******[%s] Erreur type paramètre void*******/\n ", test->name);
-        break;
-        case 8 :
-          printf("\n/*******[%s] Methode non déclarée*******/\n", test->name);
-        break;
+          printf("\n/*******[%s] Erreur type paramètre void*******/\n ", idTemoin);
+        break;          
         default:
-          printf("\n/*******[%s] No problem*******/\n", test->name);
-      }
-
-      test = test->next;
-    }
+          printf("\n/*******[%s] No problem*******/\n", idTemoin);
+      }    
   }
-  
 }
 
-
-void chercheMSG(TreeP arbre)
+/*Fonction récupérant une méthode à partir d'un Id*/
+methodP recupMethodClass(classeP listTemoin, char* idTest)
 {
-  if(arbre != NIL(Tree))
+  classeP check = listTemoin;
+  if(strcmp(idTest,"println") == 0)
   {
-    while(arbre->u.children[0] != NIL(Tree))
-    {
-      if(strcmp(recupEtiquette(arbre->op),"MSG") !=0)
-      {
-        printf("%s\n",recupEtiquette(arbre->op));
-      }
-      arbre = arbre->u.children[0];
-    }
+    return NULL;
   }
+  methodP temp = NEW(1,method);
+  temp = check->lmethodes;
+  while(temp != NIL(method))
+  {
+    if(strcmp(temp->name, idTest) == 0)
+    {
+      return temp;
+    }
+    temp = temp->next;
+  }
+  if(check->super != NIL(classe))
+  {
+    return recupMethodClass(check->super, idTest);
+  }
+  printf("\n/*******[%s] Methode introuvable *******/\n ", idTest);
+  exit(0);
 }

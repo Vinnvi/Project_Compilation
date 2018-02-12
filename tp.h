@@ -267,12 +267,11 @@ void associationClasse(classeP cl);
 void associationObjet(objectP obj);
 void initClasses();
 
-int verifMethodeClasse(classeP classtemoin, methodP methtest);
 int verifParam(methodP meth, VarDeclP params);
 bool verifRetour(methodP meth, classeP typeTest);
 void verifMethClasse();
-void verifMethObjet();
 bool verifSuper(classeP temoin, classeP test);
-int verifMethodeObjet(objectP objecttemoin, methodP methtest);
 
-void chercheMSG(TreeP arbre);
+methodP recupMethodClass(classeP check, char* idTest);
+
+int verifTailleListe(VarDeclP liste);
