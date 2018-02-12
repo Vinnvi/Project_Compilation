@@ -4,12 +4,12 @@ START
 ---- Parametres de la Classe
 ---- Constructeur de la Classe
 ---------- DEBUT CorpsCLasse
----- Définition du champ x 
----- Définition du champ y 
----- Définition du champ z 
----- Définition du champ w 
----- Définition du champ w2 
----- Définition du champ w3 
+---- Definition du champ x 
+---- Definition du champ y 
+---- Definition du champ z 
+---- Definition du champ w 
+---- Definition du champ w2 
+---- Definition du champ w3 
 ---- Definition de la methode printAll
 Void_printAll: NOP
 WRITES
@@ -55,13 +55,9 @@ WRITES
 Void_setName: NOP
 PUSHL -1
 -- Instruction avec affectation
-ALLOC 1
-DUPN 1
 ---- Definition de la methode getz
 Void_getz: NOP
 -- Instruction avec affectation
-ALLOC 1
-DUPN 1
 Variable result, quelle adresse renvoyer?
 PUSHG addr(result)(-1)
 STORE 0
@@ -74,8 +70,6 @@ Void_getx: NOP
 
 ---------------------------- DEBUT Bloc Principal
 ---- Définition du champ p1 
-ALLOC 6
-DUPN 1
 -- Nouvelle Instanciation de type  : Point
 ALLOC 6
 DUPN 1
@@ -88,8 +82,6 @@ PUSHI 5
 STORE 0
 STORE 0
 ---- Définition du champ p2 
-ALLOC 6
-DUPN 1
 -- Nouvelle Instanciation de type  : Point
 ALLOC 6
 DUPN 1

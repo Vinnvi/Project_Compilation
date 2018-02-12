@@ -18,7 +18,6 @@ typedef struct _Variable {
 
 /* Couches de portée des différentes variables */
 typedef struct _Level {
-    int offset;
     VariableP varLevel;        /* Premier symbole du level */
     struct _Level* next;
 } Level, *LevelP;
