@@ -278,7 +278,6 @@ void lancerCompilation(TreeP defClasses, TreeP root){
     lancerGeneration(defClasses,fileToWrite);
     fprintf(fileToWrite, "---------------------------- DEBUT Bloc Principal\n");
     generBloc(root);
-    freeStack();
     fprintf(fileToWrite, "---------------------------- FIN Bloc Principal\n");
     fprintf(fileToWrite, "\n");
     /* fclose(fileToWrite);*/
